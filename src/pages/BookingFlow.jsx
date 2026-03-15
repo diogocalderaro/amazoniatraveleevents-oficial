@@ -1,279 +1,455 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { ChevronRight, Calendar, User, CreditCard, CheckCircle, ArrowLeft, ShieldCheck } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { 
+  Calendar, MapPin, Trash2, Check, ArrowRight, 
+  ChevronRight, CreditCard, Banknote, User, 
+  Phone, Mail, Home as HomeIcon, Map as CityIcon, 
+  Globe, CheckCircle2, ChevronLeft, X, AlertTriangle
+} from 'lucide-react';
+
+import { useCart } from '../context/CartContext';
 
 const BookingFlow = () => {
-  const { id } = useParams();
+  const { cartItems, removeFromCart, cartTotal } = useCart();
   const [step, setStep] = useState(1);
-  
+  const [paymentMethod, setPaymentMethod] = useState('paypal');
+  const [itemToRemove, setItemToRemove] = useState(null);
+  const navigate = useNavigate();
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [step]);
 
-  const nextStep = () => setStep(prev => Math.min(prev + 1, 4));
-  const prevStep = () => setStep(prev => Math.max(prev - 1, 1));
+  const handleDeleteClick = (item) => {
+    setItemToRemove(item);
+  };
 
-  // Step Indicators
-  const renderStepper = () => (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '3rem', flexWrap: 'wrap' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: step >= 1 ? 'var(--color-primary)' : 'var(--color-text-muted)', fontWeight: step >= 1 ? 700 : 500 }}>
-        <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: step >= 1 ? 'var(--color-primary)' : '#E2E8F0', color: step >= 1 ? 'var(--color-secondary)' : 'var(--color-text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>1</div>
-        <span>Dates</span>
-      </div>
-      <ChevronRight size={16} className="text-muted" />
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: step >= 2 ? 'var(--color-primary)' : 'var(--color-text-muted)', fontWeight: step >= 2 ? 700 : 500 }}>
-        <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: step >= 2 ? 'var(--color-primary)' : '#E2E8F0', color: step >= 2 ? 'var(--color-secondary)' : 'var(--color-text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>2</div>
-        <span>Details</span>
-      </div>
-      <ChevronRight size={16} className="text-muted" />
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: step >= 3 ? 'var(--color-primary)' : 'var(--color-text-muted)', fontWeight: step >= 3 ? 700 : 500 }}>
-        <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: step >= 3 ? 'var(--color-primary)' : '#E2E8F0', color: step >= 3 ? 'var(--color-secondary)' : 'var(--color-text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>3</div>
-        <span>Payment</span>
-      </div>
-      <ChevronRight size={16} className="text-muted" />
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: step >= 4 ? 'var(--color-accent)' : 'var(--color-text-muted)', fontWeight: step >= 4 ? 700 : 500 }}>
-        <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: step >= 4 ? 'var(--color-accent)' : '#E2E8F0', color: step >= 4 ? '#fff' : 'var(--color-text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>4</div>
-        <span>Done</span>
+  const confirmDelete = () => {
+    if (itemToRemove) {
+      removeFromCart(itemToRemove.id);
+      setItemToRemove(null);
+    }
+  };
+
+  const renderStepHeader = (smallText, mainTitle) => (
+    <div style={{ marginBottom: '2.5rem' }}>
+      <p style={{ color: '#7EB53F', fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.5rem' }}>{smallText}</p>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+        <h1 style={{ fontSize: '2.5rem', fontWeight: 800, color: '#333' }}>{mainTitle}</h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', color: '#666' }}>
+           <Link to="/" style={{ textDecoration: 'none', color: '#7EB53F' }}>Casa</Link> 
+           <span style={{ color: '#ccc' }}>/</span> 
+           <span style={{ color: '#7EB53F' }}>Páginas</span> 
+           <span style={{ color: '#ccc' }}>/</span> 
+           <span>{mainTitle}</span>
+        </div>
       </div>
     </div>
   );
 
+  const renderProgress = () => (
+    <div style={{ position: 'relative', marginBottom: '4rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 10px' }}>
+      <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '2px', backgroundColor: '#e2e8f0', transform: 'translateY(-50%)', zIndex: 1 }}></div>
+      <div style={{ position: 'absolute', top: '50%', left: 0, width: `${(step - 1) * 50}%`, height: '2px', backgroundColor: '#7EB53F', transform: 'translateY(-50%)', zIndex: 2, transition: 'width 0.3s ease' }}></div>
+      
+      {[1, 2, 3].map((num) => (
+        <div key={num} style={{ 
+          width: '28px', 
+          height: '28px', 
+          borderRadius: '50%', 
+          backgroundColor: step >= num ? '#7EB53F' : '#fff', 
+          border: `2px solid ${step >= num ? '#7EB53F' : '#e2e8f0'}`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: step >= num ? '#fff' : '#ccc',
+          fontSize: '0.8rem',
+          fontWeight: 700,
+          zIndex: 3,
+          boxShadow: '0 0 0 4px #f8fafc'
+        }}>
+          {num}
+        </div>
+      ))}
+    </div>
+  );
+
   return (
-    <div className="booking-page" style={{ backgroundColor: 'var(--color-bg-alt)', minHeight: '80vh', padding: '4rem 0' }}>
-      <div className="container" style={{ maxWidth: '800px' }}>
+    <div className="booking-process" style={{ backgroundColor: '#f4f7f6', minHeight: '100vh', padding: '4rem 0' }}>
+      
+      {/* Confirmation Modal */}
+      {itemToRemove && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 3000,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem'
+        }}>
+          <div style={{
+            backgroundColor: '#fff', borderRadius: '16px', padding: '2rem',
+            maxWidth: '400px', width: '100%', boxShadow: '0 20px 60px rgba(0,0,0,0.2)',
+            textAlign: 'center'
+          }}>
+            <div style={{ color: '#ef4444', marginBottom: '1.5rem', display: 'flex', justifyContent: 'center' }}>
+               <AlertTriangle size={48} />
+            </div>
+            <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '1rem' }}>Remover item?</h3>
+            <p style={{ color: '#666', marginBottom: '2rem' }}>Tem certeza que deseja remover "{itemToRemove.title}" do seu carrinho?</p>
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <button 
+                onClick={() => setItemToRemove(null)}
+                style={{ flex: 1, padding: '0.85rem', borderRadius: '8px', border: '1px solid #ddd', backgroundColor: '#fff', fontWeight: 700, cursor: 'pointer' }}
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={confirmDelete}
+                style={{ flex: 1, padding: '0.85rem', borderRadius: '8px', border: 'none', backgroundColor: '#ef4444', color: '#fff', fontWeight: 700, cursor: 'pointer' }}
+              >
+                Remover
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="container">
         
-        {step < 4 && (
-          <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-            <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Secure Checkout</h1>
-            <p style={{ color: 'var(--color-text-muted)' }}>Complete your reservation for the Himalayan Adventure Trail</p>
+        {step === 1 && (
+          <div className="fade-in">
+            {renderStepHeader("RESERVAS", "Carrinho de compras")}
+            {renderProgress()}
+            
+            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 340px', gap: '2rem', alignItems: 'start' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                {cartItems.length === 0 ? (
+                  <div style={{ backgroundColor: '#fff', borderRadius: '12px', padding: '4rem 2rem', textAlign: 'center' }}>
+                     <div style={{ color: '#ccc', marginBottom: '1.5rem' }}><ShoppingCart size={64} /></div>
+                     <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '1rem' }}>Seu carrinho está vazio</h3>
+                     <Link to="/" className="btn btn-primary" style={{ padding: '0.75rem 2rem' }}>Explorar Destinos</Link>
+                  </div>
+                ) : cartItems.map((item) => (
+                  <div key={item.id} style={{ 
+                    backgroundColor: '#fff', 
+                    borderRadius: '12px', 
+                    padding: '1.25rem', 
+                    display: 'flex', 
+                    gap: '1.5rem',
+                    boxShadow: '0 2px 10px rgba(0,0,0,0.03)'
+                  }}>
+                    <Link to={`/tour/${item.id}`}>
+                      <img src={item.image} alt={item.title} style={{ width: '180px', height: '120px', borderRadius: '8px', objectFit: 'cover' }} />
+                    </Link>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <Link to={`/tour/${item.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                          <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem' }}>{item.title}</h3>
+                        </Link>
+                        <div style={{ textAlign: 'right' }}>
+                          <span style={{ fontSize: '1.25rem', fontWeight: 800 }}>R$ {item.price}</span>
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '0.5rem', color: '#666', fontSize: '0.9rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Calendar size={14} className="text-primary" /> {item.duration}</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><MapPin size={14} className="text-primary" /> {item.destinations}</div>
+                      </div>
+                      <p style={{ fontSize: '0.9rem', color: '#444', marginBottom: '0.25rem' }}>
+                        <strong>Data da turnê:</strong> {item.date}
+                      </p>
+                      <p style={{ fontSize: '0.9rem', color: '#444' }}>
+                        <strong>Convidados:</strong> {item.guests}
+                      </p>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+                       <button 
+                         onClick={() => handleDeleteClick(item)}
+                         style={{ 
+                         background: 'none', 
+                         border: 'none', 
+                         color: '#ef4444', 
+                         display: 'flex', 
+                         alignItems: 'center', 
+                         gap: '4px', 
+                         fontSize: '0.85rem', 
+                         fontWeight: 600,
+                         cursor: 'pointer'
+                       }}>
+                         <Trash2 size={16} /> Remover
+                       </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              <div style={{ position: 'sticky', top: '100px' }}>
+                <div style={{ backgroundColor: '#fff', padding: '2rem', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '1.5rem' }}>
+                    <span style={{ fontWeight: 700 }}>Total ({cartItems.length}):</span>
+                    <span style={{ fontSize: '1.75rem', fontWeight: 800 }}>R$ {cartTotal}</span>
+                  </div>
+                  <p style={{ fontSize: '0.8rem', color: '#999', fontStyle: 'italic', textAlign: 'right', marginBottom: '2rem' }}>
+                    * Todos os impostos e taxas incluídos
+                  </p>
+                  
+                  <button 
+                    disabled={cartItems.length === 0}
+                    onClick={() => setStep(2)}
+                    style={{
+                      width: '100%',
+                      padding: '1rem',
+                      backgroundColor: cartItems.length === 0 ? '#ccc' : '#7EB53F',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: '8px',
+                      fontSize: '1rem',
+                      fontWeight: 700,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      cursor: cartItems.length === 0 ? 'not-allowed' : 'pointer',
+                      transition: 'all 0.2s ease',
+                      marginBottom: '2rem'
+                    }}
+                  >
+                    <CheckCircle2 size={18} /> Confira
+                  </button>
+                  
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                      <div style={{ color: '#7EB53F', marginTop: '2px' }}><Check size={16} strokeWidth={3} /></div>
+                      <div>
+                        <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>Não pague nada hoje</div>
+                        <div style={{ color: '#999', fontSize: '0.8rem' }}>Reserve agora e pague depois</div>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                      <div style={{ color: '#7EB53F', marginTop: '2px' }}><Check size={16} strokeWidth={3} /></div>
+                      <div>
+                        <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>Cancelamento gratuito</div>
+                        <div style={{ color: '#999', fontSize: '0.8rem' }}>Até 24h antes da turnê</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
-        {step < 4 && renderStepper()}
+        {step === 2 && (
+          <div className="fade-in">
+            {renderStepHeader("RESERVAS", "Confira")}
+            {renderProgress()}
 
-        <div className="card" style={{ padding: '2rem' }}>
-          
-          {/* STEP 1: Date & Travelers */}
-          {step === 1 && (
-            <div className="step-1 fade-in">
-              <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <Calendar className="text-primary" /> Select Travel Dates
-              </h2>
-              
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '2rem' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.5rem', color: 'var(--color-text-muted)' }}>Start Date</label>
-                  <input type="date" style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid #E2E8F0', outline: 'none', fontFamily: 'var(--font-body)' }} defaultValue="2026-05-15" />
-                </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.5rem', color: 'var(--color-text-muted)' }}>End Date</label>
-                  <input type="date" style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid #E2E8F0', outline: 'none', fontFamily: 'var(--font-body)', backgroundColor: '#F8FAFC' }} defaultValue="2026-05-19" readOnly />
-                </div>
-              </div>
-
-              <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '3rem' }}>
-                <User className="text-primary" /> Travelers
-              </h2>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '3rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', border: '1px solid #E2E8F0', borderRadius: 'var(--radius-md)' }}>
-                  <div>
-                    <div style={{ fontWeight: 600 }}>Adults</div>
-                    <div style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>Age 18+</div>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                     <button style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid #E2E8F0', backgroundColor: '#fff', cursor: 'pointer' }}>-</button>
-                     <span style={{ fontWeight: 600, minWidth: '20px', textAlign: 'center' }}>2</span>
-                     <button style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid #E2E8F0', backgroundColor: '#fff', cursor: 'pointer' }}>+</button>
-                  </div>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', border: '1px solid #E2E8F0', borderRadius: 'var(--radius-md)' }}>
-                  <div>
-                    <div style={{ fontWeight: 600 }}>Children</div>
-                    <div style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>Age 12-17</div>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                     <button style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid #E2E8F0', backgroundColor: '#fff', cursor: 'pointer', color: '#CBD5E1' }}>-</button>
-                     <span style={{ fontWeight: 600, minWidth: '20px', textAlign: 'center' }}>0</span>
-                     <button style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid #E2E8F0', backgroundColor: '#fff', cursor: 'pointer' }}>+</button>
+            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 380px) 1fr', gap: '2rem', alignItems: 'start' }}>
+              {/* Summary Column */}
+              <div style={{ backgroundColor: '#fff', padding: '2rem', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '1.5rem', borderBottom: '1px solid #eee', paddingBottom: '1.5rem' }}>1. Turnês selecionados</h2>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                  {cartItems.map((item) => (
+                    <div key={item.id} style={{ borderBottom: '1px solid #f5f5f5', paddingBottom: '1.5rem' }}>
+                      <Link to={`/tour/${item.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <h4 style={{ fontWeight: 700, marginBottom: '0.5rem' }}>{item.title}</h4>
+                      </Link>
+                      <div style={{ display: 'flex', gap: '1rem', color: '#999', fontSize: '0.8rem', marginBottom: '0.5rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Calendar size={12} /> {item.duration}</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><MapPin size={12} /> {item.destinations}</div>
+                      </div>
+                      <p style={{ fontSize: '0.8rem', color: '#666', marginBottom: '0.25rem' }}>Data da turnê: {item.date}</p>
+                      <p style={{ fontSize: '0.8rem', color: '#666', marginBottom: '0.5rem' }}>Convidados: {item.guests}</p>
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                        <span style={{ fontWeight: 800, fontSize: '1.1rem' }}>R$ {item.price}</span>
+                      </div>
+                    </div>
+                  ))}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginTop: '1rem' }}>
+                    <span style={{ fontWeight: 700 }}>Total ({cartItems.length}):</span>
+                    <span style={{ fontSize: '1.75rem', fontWeight: 800 }}>R$ {cartTotal}</span>
                   </div>
                 </div>
               </div>
 
-              {/* Order Summary preview */}
-              <div style={{ backgroundColor: '#F8FAFC', padding: '1.5rem', borderRadius: 'var(--radius-md)', marginBottom: '2rem' }}>
-                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontWeight: 600 }}>
-                    <span>Himalayan Adventure Trail x 2</span>
-                    <span>$1,798</span>
-                 </div>
-                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>
-                    <span>Taxes & Fees</span>
-                    <span>$120</span>
-                 </div>
-                 <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '1rem', borderTop: '1px dashed #CBD5E1', fontWeight: 800, fontSize: '1.25rem', color: 'var(--color-secondary)' }}>
-                    <span>Total</span>
-                    <span>$1,918</span>
-                 </div>
-              </div>
+              {/* Form Column */}
+              <div style={{ backgroundColor: '#fff', padding: '2.5rem', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '2.5rem', borderBottom: '1px solid #eee', paddingBottom: '1.5rem' }}>2. Reserva e Pagamento</h2>
+                
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '1.5rem' }}>Suas informações</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: '1.5rem', marginBottom: '3rem' }}>
+                  <div className="input-field">
+                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#444', marginBottom: '0.5rem' }}>Primeiro nome<span style={{ color: '#ef4444' }}>*</span></label>
+                    <input type="text" style={{ width: '100%', padding: '0.85rem', borderRadius: '8px', border: '1px solid #ddd', outline: 'none' }} placeholder="Ex: João" />
+                  </div>
+                  <div className="input-field">
+                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#444', marginBottom: '0.5rem' }}>Sobrenome<span style={{ color: '#ef4444' }}>*</span></label>
+                    <input type="text" style={{ width: '100%', padding: '0.85rem', borderRadius: '8px', border: '1px solid #ddd', outline: 'none' }} placeholder="Ex: Silva" />
+                  </div>
+                  <div className="input-field">
+                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#444', marginBottom: '0.5rem' }}>Telefone<span style={{ color: '#ef4444' }}>*</span></label>
+                    <input type="tel" style={{ width: '100%', padding: '0.85rem', borderRadius: '8px', border: '1px solid #ddd', outline: 'none' }} placeholder="(92) 99XXX-XXXX" />
+                  </div>
+                  <div className="input-field">
+                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#444', marginBottom: '0.5rem' }}>E-mail<span style={{ color: '#ef4444' }}>*</span></label>
+                    <input type="email" style={{ width: '100%', padding: '0.85rem', borderRadius: '8px', border: '1px solid #ddd', outline: 'none' }} placeholder="email@exemplo.com" />
+                  </div>
+                  <div className="input-field">
+                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#444', marginBottom: '0.5rem' }}>Endereço<span style={{ color: '#ef4444' }}>*</span></label>
+                    <input type="text" style={{ width: '100%', padding: '0.85rem', borderRadius: '8px', border: '1px solid #ddd', outline: 'none' }} placeholder="Rua, Número, Bairro" />
+                  </div>
+                  <div className="input-field">
+                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#444', marginBottom: '0.5rem' }}>Cidade<span style={{ color: '#ef4444' }}>*</span></label>
+                    <input type="text" style={{ width: '100%', padding: '0.85rem', borderRadius: '8px', border: '1px solid #ddd', outline: 'none' }} placeholder="Ex: Manaus" />
+                  </div>
+                </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <button className="btn btn-primary" onClick={nextStep}>
-                  Continue to Details <ChevronRight size={18} />
-                </button>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '1.5rem' }}>Método de pagamento</h3>
+                <div style={{ marginBottom: '2.5rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '1.5rem' }}>
+                    <span style={{ fontWeight: 700, fontSize: '1.1rem' }}>Total:</span>
+                    <span style={{ fontSize: '1.5rem', fontWeight: 800 }}>R$ {cartTotal}</span>
+                  </div>
+                  
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '0.5rem 0', cursor: 'pointer' }}>
+                      <input 
+                        type="radio" 
+                        name="payment" 
+                        checked={paymentMethod === 'cash'} 
+                        onChange={() => setPaymentMethod('cash')}
+                        style={{ width: '18px', height: '18px', accentColor: '#7EB53F' }} 
+                      />
+                      <span style={{ fontSize: '0.95rem', color: '#444' }}>Pague no local (Dinheiro/Cartão)</span>
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '0.5rem 0', cursor: 'pointer' }}>
+                      <input 
+                        type="radio" 
+                        name="payment" 
+                        checked={paymentMethod === 'paypal'} 
+                        onChange={() => setPaymentMethod('paypal')}
+                        style={{ width: '18px', height: '18px', accentColor: '#7EB53F' }} 
+                      />
+                      <span style={{ fontSize: '0.95rem', color: '#444', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                        Pague via PayPal / Cartão
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" style={{ height: '16px' }} />
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" style={{ height: '12px' }} />
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" style={{ height: '16px' }} />
+                      </span>
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '0.5rem 0', cursor: 'pointer' }}>
+                      <input 
+                        type="radio" 
+                        name="payment" 
+                        checked={paymentMethod === 'pix'} 
+                        onChange={() => setPaymentMethod('pix')}
+                        style={{ width: '18px', height: '18px', accentColor: '#7EB53F' }} 
+                      />
+                      <span style={{ fontSize: '0.95rem', color: '#444', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        Pagar com PIX
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/Logo_pix.png" alt="Pix" style={{ height: '16px' }} />
+                      </span>
+                    </label>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                  <button 
+                    onClick={() => setStep(1)}
+                    style={{
+                      padding: '1rem 2rem',
+                      backgroundColor: '#fff',
+                      color: '#666',
+                      border: '1px solid #ddd',
+                      borderRadius: '8px',
+                      fontSize: '0.9rem',
+                      fontWeight: 700,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Voltar
+                  </button>
+                  <button 
+                    onClick={() => setStep(3)}
+                    style={{
+                      flex: 1,
+                      padding: '1rem 2.5rem',
+                      backgroundColor: '#7EB53F',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: '8px',
+                      fontSize: '1rem',
+                      fontWeight: 700,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <CheckCircle2 size={18} /> Finalizar Reserva e Pagamento
+                  </button>
+                </div>
               </div>
             </div>
-          )}
+          </div>
+        )}
 
-          {/* STEP 2: Passenger Details */}
-          {step === 2 && (
-            <div className="step-2 fade-in">
-              <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <User className="text-primary" /> Lead Traveler Details
+        {step === 3 && (
+          <div className="fade-in" style={{ maxWidth: '900px', margin: '0 auto' }}>
+            {renderStepHeader("RESERVAS", "Concluído")}
+            {renderProgress()}
+
+            <div style={{ backgroundColor: '#fff', padding: '4rem 3rem', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.05)', textAlign: 'center' }}>
+              <div style={{ color: '#7EB53F', marginBottom: '2rem', display: 'flex', justifyContent: 'center' }}>
+                 <CheckCircle2 size={100} strokeWidth={1.5} />
+              </div>
+              <h2 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '1.5rem', color: '#333' }}>
+                Reserva Realizada com Sucesso!
               </h2>
               
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.5rem', color: 'var(--color-text-muted)' }}>First Name</label>
-                  <input type="text" placeholder="John" style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid #E2E8F0', outline: 'none', fontFamily: 'var(--font-body)' }} />
-                </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.5rem', color: 'var(--color-text-muted)' }}>Last Name</label>
-                  <input type="text" placeholder="Doe" style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid #E2E8F0', outline: 'none', fontFamily: 'var(--font-body)' }} />
-                </div>
+              <div style={{ fontSize: '1.25rem', color: '#666', lineHeight: 1.8, marginBottom: '3rem', maxWidth: '600px', margin: '0 auto 3rem auto' }}>
+                <p>Recebemos seu pedido. Um consultor da <strong>Amazonia Travel</strong> entrará em contato em breve para confirmar todos os detalhes da sua aventura.</p>
+                <p style={{ marginTop: '1rem' }}>Obrigado por nos escolher!</p>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '2rem' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.5rem', color: 'var(--color-text-muted)' }}>Email Address</label>
-                  <input type="email" placeholder="john@example.com" style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid #E2E8F0', outline: 'none', fontFamily: 'var(--font-body)' }} />
-                </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.5rem', color: 'var(--color-text-muted)' }}>Phone Number</label>
-                  <input type="tel" placeholder="+1 (555) 000-0000" style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid #E2E8F0', outline: 'none', fontFamily: 'var(--font-body)' }} />
-                </div>
-              </div>
-
-              <h3 style={{ fontSize: '1.125rem', marginBottom: '1rem' }}>Additional Options</h3>
-              <div style={{ padding: '1rem', border: '1px solid #E2E8F0', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
-                <input type="checkbox" id="insurance" style={{ width: '20px', height: '20px', accentColor: 'var(--color-primary)' }} />
-                <label htmlFor="insurance" style={{ flex: 1, cursor: 'pointer' }}>
-                  <div style={{ fontWeight: 600 }}>Add Travel Insurance (+$45/person)</div>
-                  <div style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>Highly recommended for international trips. Covers medical, cancellation and lost baggage.</div>
-                </label>
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <button className="btn" style={{ padding: '0.5rem 1rem', color: 'var(--color-text-muted)' }} onClick={prevStep}>
-                  <ArrowLeft size={18} /> Back
-                </button>
-                <button className="btn btn-primary" onClick={nextStep}>
-                  Continue to Payment <ChevronRight size={18} />
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 3: Payment */}
-          {step === 3 && (
-            <div className="step-3 fade-in">
-              <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <CreditCard className="text-primary" /> Payment Method
-              </h2>
-
-              <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
-                <div style={{ flex: 1, border: '2px solid var(--color-primary)', borderRadius: 'var(--radius-md)', padding: '1rem', textAlign: 'center', backgroundColor: '#FFFDF5', cursor: 'pointer' }}>
-                  <CreditCard size={24} style={{ margin: '0 auto 0.5rem auto' }} className="text-primary" />
-                  <div style={{ fontWeight: 600 }}>Credit Card</div>
-                </div>
-                <div style={{ flex: 1, border: '1px solid #E2E8F0', borderRadius: 'var(--radius-md)', padding: '1rem', textAlign: 'center', cursor: 'pointer', color: 'var(--color-text-muted)' }}>
-                  <div style={{ fontWeight: 800, fontSize: '1.25rem', marginBottom: '0.25rem', color: '#003087', letterSpacing: '-1px' }}>PayPal</div>
-                </div>
-              </div>
-
-              <div style={{ marginBottom: '1.5rem' }}>
-                 <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.5rem', color: 'var(--color-text-muted)' }}>Card Number</label>
-                 <div style={{ position: 'relative' }}>
-                    <input type="text" placeholder="0000 0000 0000 0000" style={{ width: '100%', padding: '0.75rem 0.75rem 0.75rem 2.5rem', borderRadius: 'var(--radius-md)', border: '1px solid #E2E8F0', outline: 'none', fontFamily: 'var(--font-body)', fontSize: '1.125rem' }} />
-                    <CreditCard size={20} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-muted)' }} />
-                 </div>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '2rem' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.5rem', color: 'var(--color-text-muted)' }}>Expiry Date</label>
-                  <input type="text" placeholder="MM/YY" style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid #E2E8F0', outline: 'none', fontFamily: 'var(--font-body)' }} />
-                </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.5rem', color: 'var(--color-text-muted)' }}>CVC</label>
-                  <input type="text" placeholder="123" style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid #E2E8F0', outline: 'none', fontFamily: 'var(--font-body)' }} />
-                </div>
-              </div>
-              
-              <div style={{ marginBottom: '2rem' }}>
-                 <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.5rem', color: 'var(--color-text-muted)' }}>Name on Card</label>
-                 <input type="text" placeholder="John Doe" style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid #E2E8F0', outline: 'none', fontFamily: 'var(--font-body)' }} />
-              </div>
-
-              <div style={{ backgroundColor: '#F8FAFC', padding: '1.5rem', borderRadius: 'var(--radius-md)', marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                 <div>
-                    <div style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>Total Amount to Pay</div>
-                    <div style={{ fontWeight: 800, fontSize: '1.5rem', color: 'var(--color-secondary)' }}>$1,918.00</div>
-                 </div>
-                 <ShieldCheck size={32} className="text-accent" />
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <button className="btn" style={{ padding: '0.5rem 1rem', color: 'var(--color-text-muted)' }} onClick={prevStep}>
-                  <ArrowLeft size={18} /> Back
-                </button>
-                <button className="btn btn-accent" style={{ padding: '1rem 2rem', fontSize: '1.125rem' }} onClick={nextStep}>
-                  Confirm & Pay <CheckCircle size={18} style={{ marginLeft: '0.5rem' }} />
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 4: Success Message */}
-          {step === 4 && (
-            <div className="step-4 fade-in" style={{ textAlign: 'center', padding: '3rem 1rem' }}>
-              <div style={{ width: '80px', height: '80px', borderRadius: '50%', backgroundColor: 'var(--color-accent-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 2rem auto', color: 'var(--color-accent)', border: '4px solid #fff', boxShadow: '0 0 0 4px var(--color-accent-light)' }}>
-                 <CheckCircle size={48} />
-              </div>
-              
-              <h1 style={{ fontSize: '3rem', marginBottom: '1rem', color: 'var(--color-secondary)' }}>Booking Confirmed!</h1>
-              <p style={{ color: 'var(--color-text-muted)', fontSize: '1.125rem', marginBottom: '2rem', maxWidth: '500px', margin: '0 auto 2rem auto', lineHeight: 1.6 }}>
-                Pack your bags! Your reservation for the Himalayan Adventure Trail has been successfully processed. An email receipt and itinerary have been sent to <strong>john@example.com</strong>.
-              </p>
-
-              <div style={{ backgroundColor: '#F8FAFC', padding: '2rem', borderRadius: 'var(--radius-md)', marginBottom: '3rem', maxWidth: '400px', margin: '0 auto 3rem auto', textAlign: 'left' }}>
-                 <div style={{ marginBottom: '1rem', borderBottom: '1px solid #E2E8F0', paddingBottom: '1rem' }}>
-                    <div style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>Booking Reference</div>
-                    <div style={{ fontWeight: 800, fontSize: '1.25rem', color: 'var(--color-secondary)' }}>AMZ-998274-HK</div>
-                 </div>
-                 <div style={{ marginBottom: '1rem' }}>
-                    <div style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>Dates</div>
-                    <div style={{ fontWeight: 600 }}>May 15 - May 19, 2026</div>
-                 </div>
-                 <div>
-                    <div style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>Travelers</div>
-                    <div style={{ fontWeight: 600 }}>2 Adults</div>
-                 </div>
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
-                <Link to="/" className="btn btn-outline" style={{ padding: '0.75rem 2rem' }}>
-                  Return to Home
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem' }}>
+                <Link to="/" style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '8px', 
+                  backgroundColor: '#7EB53F',
+                  color: '#fff', 
+                  padding: '1rem 2.5rem',
+                  borderRadius: '100px',
+                  textDecoration: 'none', 
+                  fontWeight: 700,
+                  fontSize: '1.1rem',
+                  transition: 'transform 0.2s'
+                }}
+                onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
+                onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+                >
+                  Voltar para o Início <ArrowRight size={20} />
                 </Link>
-                <button className="btn btn-primary" style={{ padding: '0.75rem 2rem' }}>
-                  Manage Booking
-                </button>
               </div>
-
             </div>
-          )}
+          </div>
+        )}
 
-        </div>
       </div>
+
+      <style>{`
+        .fade-in {
+          animation: fadeIn 0.4s ease-in-out;
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .text-primary { color: #7EB53F; }
+        .input-field input:focus, .input-field select:focus {
+           border-color: #7EB53F !important;
+           box-shadow: 0 0 0 2px rgba(126, 181, 63, 0.1);
+        }
+      `}</style>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Phone, Mail, Instagram, Facebook, Twitter, Check } from 'lucide-react';
+import { MapPin, Phone, Mail, Instagram, Facebook, Check } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -12,12 +12,12 @@ const Footer = () => {
     }}>
       <div className="container" style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-        gap: '2rem',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gap: '4rem',
         marginBottom: '3rem'
       }}>
         
-        {/* Column 1: Brand Info */}
+        {/* Column 1: Brand Info & Payments */}
         <div>
           <div style={{
             fontFamily: 'var(--font-heading)',
@@ -36,7 +36,7 @@ const Footer = () => {
           <p style={{ color: 'rgba(255,255,255,0.6)', marginBottom: '1.5rem', fontSize: '0.875rem' }}>
             Criando jornadas personalizadas para você descobrir o mundo. Viva aventuras inesquecíveis com nossos pacotes selecionados.
           </p>
-          <div style={{ display: 'flex', gap: '1rem' }}>
+          <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
             <a href="#" style={{ 
               width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.1)', 
               display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', transition: 'all 0.3s ease'
@@ -56,16 +56,24 @@ const Footer = () => {
               <Instagram size={20} />
             </a>
           </div>
+          
+          <p style={{ fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.75rem', color: '#fff' }}>Aceitamos:</p>
+          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', filter: 'brightness(0) invert(1) opacity(0.8)' }}>
+             <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" style={{ height: '18px' }} />
+             <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" style={{ height: '18px' }} />
+             <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/Logo_pix.png" alt="Pix" style={{ height: '18px' }} />
+             <img src="https://upload.wikimedia.org/wikipedia/pt/b/bd/Elo_logo.png" alt="Elo" style={{ height: '18px' }} />
+          </div>
         </div>
 
-        {/* Column 2: Links */}
+        {/* Column 2: Highlights */}
         <div>
           <h4 style={{ fontSize: '1.25rem', marginBottom: '1.5rem', color: '#fff' }}>Destaques</h4>
           <ul style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            <li><Link to="/about" style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.875rem', transition: 'color 0.2s' }} onMouseEnter={(e) => e.target.style.color = '#fff'} onMouseLeave={(e) => e.target.style.color = 'rgba(255,255,255,0.6)'}>Sobre a Agência</Link></li>
-            <li><Link to="/destinations" style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.875rem', transition: 'color 0.2s' }} onMouseEnter={(e) => e.target.style.color = '#fff'} onMouseLeave={(e) => e.target.style.color = 'rgba(255,255,255,0.6)'}>Destinos</Link></li>
-            <li><Link to="/contact" style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.875rem', transition: 'color 0.2s' }} onMouseEnter={(e) => e.target.style.color = '#fff'} onMouseLeave={(e) => e.target.style.color = 'rgba(255,255,255,0.6)'}>Contato</Link></li>
-            <li><Link to="/blog" style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.875rem', transition: 'color 0.2s' }} onMouseEnter={(e) => e.target.style.color = '#fff'} onMouseLeave={(e) => e.target.style.color = 'rgba(255,255,255,0.6)'}>Blog</Link></li>
+            <li><Link to="/about" style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.875rem' }}>Sobre a Agência</Link></li>
+            <li><Link to="/destinations" style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.875rem' }}>Destinos</Link></li>
+            <li><Link to="/contact" style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.875rem' }}>Contato</Link></li>
+            <li><Link to="/blog" style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.875rem' }}>Blog</Link></li>
           </ul>
         </div>
 
@@ -79,45 +87,6 @@ const Footer = () => {
             <li><Link to="/terms" style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.875rem' }}>Termos e Condições</Link></li>
           </ul>
         </div>
-
-        {/* Column 4: Newsletter */}
-        <div>
-          <h4 style={{ fontSize: '1.25rem', marginBottom: '1.5rem', color: '#fff' }}>Newsletter</h4>
-          <p style={{ color: 'rgba(255,255,255,0.6)', marginBottom: '1rem', fontSize: '0.875rem' }}>
-            Seja o primeiro a saber sobre novos passeios, dicas e ofertas especiais.
-          </p>
-          <form style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }} onSubmit={(e) => e.preventDefault()}>
-            <input 
-              type="email" 
-              placeholder="Seu melhor e-mail" 
-              style={{
-                width: '100%',
-                padding: '0.75rem 1rem',
-                borderRadius: 'var(--radius-md)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                backgroundColor: 'rgba(255,255,255,0.05)',
-                color: '#fff',
-                outline: 'none',
-                fontFamily: 'var(--font-body)',
-                fontSize: '0.875rem'
-              }}
-            />
-            <button className="btn btn-primary" style={{ padding: '0.75rem 1rem', display: 'flex', justifyContent: 'center' }}>
-              Inscrever-se <Check size={18} />
-            </button>
-          </form>
-          
-          <div style={{ marginTop: '2rem' }}>
-            <p style={{ fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.75rem', color: '#fff' }}>Aceitamos:</p>
-            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', filter: 'brightness(0) invert(1) opacity(0.8)' }}>
-               <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" style={{ height: '20px' }} />
-               <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" style={{ height: '20px' }} />
-               <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/Logo_pix.png" alt="Pix" style={{ height: '20px' }} />
-               <img src="https://upload.wikimedia.org/wikipedia/pt/b/bd/Elo_logo.png" alt="Elo" style={{ height: '20px' }} />
-            </div>
-          </div>
-        </div>
-
       </div>
 
       {/* Bottom Footer */}
@@ -130,7 +99,6 @@ const Footer = () => {
         paddingTop: '2rem',
         borderTop: '1px solid rgba(255,255,255,0.1)'
       }}>
-        
         <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'rgba(255,255,255,0.5)', fontSize: '0.875rem' }}>
             <Phone size={16} /> (92) 99123-4567
@@ -142,7 +110,6 @@ const Footer = () => {
             <MapPin size={16} /> Manaus, Amazonas - Brasil
           </div>
         </div>
-
         <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.875rem' }}>
           ©2024 Amazonia Travel. Todos os direitos reservados.
         </div>

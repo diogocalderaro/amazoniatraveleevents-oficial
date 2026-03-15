@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ShoppingCart } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import logo from '../assets/logo.png';
+import { useCart } from '../context/CartContext';
 
-const Header = ({ onOpenCart }) => {
+const Header = () => {
+  const { cartItems } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
 
@@ -84,16 +86,30 @@ const Header = ({ onOpenCart }) => {
         </nav>
 
         {/* Action Buttons */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <button 
-            onClick={onOpenCart}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+          {/* Language Switcher */}
+          <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', paddingRight: '0.75rem', borderRight: '1px solid rgba(0,0,0,0.1)' }}>
+            <button title="Português" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}>
+              <img src="https://flagcdn.com/w40/br.png" alt="Brasil" style={{ width: '24px', height: 'auto', borderRadius: '2px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }} />
+            </button>
+            <button title="English" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}>
+              <img src="https://flagcdn.com/w40/us.png" alt="USA" style={{ width: '24px', height: 'auto', borderRadius: '2px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }} />
+            </button>
+            <button title="Español" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}>
+              <img src="https://flagcdn.com/w40/es.png" alt="Espanha" style={{ width: '24px', height: 'auto', borderRadius: '2px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }} />
+            </button>
+          </div>
+
+          <Link 
+            to="/checkout"
             style={{
               background: 'none',
               border: 'none',
               cursor: 'pointer',
               padding: '0.5rem',
               position: 'relative',
-              color: '#000'
+              color: '#000',
+              textDecoration: 'none'
             }}
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-shopping-cart"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
@@ -111,8 +127,8 @@ const Header = ({ onOpenCart }) => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
-            }}>3</span>
-          </button>
+            }}>{cartItems.length}</span>
+          </Link>
 
           {/* Mobile Menu Button */}
           <button 

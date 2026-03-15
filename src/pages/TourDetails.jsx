@@ -1,16 +1,34 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { 
   MapPin, Star, Clock, Calendar, Check, Users, Navigation, 
   ChevronRight, Share2, Heart, ShieldCheck, Info, FileText, 
   Image as ImageIcon, ListChecks, Map, MessageSquare, Plus, ShoppingCart
 } from 'lucide-react';
+import { useCart } from '../context/CartContext';
 
 const TourDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { addToCart } = useCart();
   const [selectedDate, setSelectedDate] = useState('');
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
+
+  const handleAddToCart = () => {
+    const tourData = {
+      id: id || 'amazon-adventure',
+      title: "Expedição Amazônia Profunda",
+      duration: "5 dias",
+      destinations: "3 Destinos",
+      date: selectedDate || "A combinar",
+      guests: `${adults} adultos - ${children} crianças`,
+      price: "1250.00",
+      image: "https://images.unsplash.com/photo-1542385151-efd9000785a0?q=80&w=800"
+    };
+    addToCart(tourData);
+    navigate('/checkout');
+  };
 
   // Scroll to top on load
   useEffect(() => {
@@ -340,7 +358,9 @@ const TourDetails = () => {
                   </div>
                 </div>
 
-                <button style={{
+                <button 
+                  onClick={handleAddToCart}
+                  style={{
                   width: '100%',
                   padding: '1.25rem',
                   borderRadius: '15px',
@@ -419,7 +439,9 @@ const TourDetails = () => {
             <h2 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '1rem' }}>Reserve esta aventura hoje!</h2>
             <p style={{ fontSize: '1.1rem', color: 'rgba(255,255,255,0.7)', maxWidth: '600px' }}>Não deixe para depois. As vagas para nossas expedições são limitadas para garantir exclusividade e preservação.</p>
           </div>
-          <button style={{
+          <button 
+            onClick={handleAddToCart}
+            style={{
             padding: '1.5rem 3.5rem',
             backgroundColor: '#FFD700',
             color: '#000',
