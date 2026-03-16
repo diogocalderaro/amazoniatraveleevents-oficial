@@ -20,8 +20,8 @@ const Home = () => {
     { src: "https://images.unsplash.com/photo-1520690214124-2405c5217036?q=80&w=1000", title: "Reflexos na Água" },
     { src: "https://images.unsplash.com/photo-1440342359743-84fcb8c21f21?q=80&w=1000", title: "Rio Negro" },
     { src: "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1000", title: "Cachoeiras de Figueiredo" },
-    { src: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=1000", title: "Anoitecer na Selva" },
-    { src: "https://images.unsplash.com/photo-1582234372722-50d7ccc30ebe?q=80&w=1000", title: "Cultura Local" }
+    { src: "https://images.unsplash.com/photo-1589923188900-85dae523342b?q=80&w=1000", title: "Cultura Local" },
+    { src: "https://images.unsplash.com/photo-1440342359743-84fcb8c21f21?q=80&w=1000", title: "Fauna Regional" }
   ];
 
   return (
@@ -223,7 +223,7 @@ const Home = () => {
               />
               {/* Image 3 (Bottom) */}
               <img 
-                src="https://images.unsplash.com/photo-1581333100576-b73bbe92c19a?q=80&w=600" 
+                src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?q=80&w=600" 
                 alt="Exploração 3" 
                 style={{ 
                   position: 'absolute', bottom: '0', left: '0',
@@ -313,7 +313,7 @@ const Home = () => {
           }}>
             {/* Package 1 */}
             <Link to="/tour/amazon-adventure" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <div className="package-card" style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '20px', boxShadow: '0 10px 30px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', height: '100%', transition: 'transform 0.3s ease' }}>
+              <div className="package-card" style={{ backgroundColor: '#fff', padding: '1rem', borderRadius: '20px', boxShadow: '0 10px 30px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', height: '100%', transition: 'transform 0.3s ease' }}>
                 <div style={{ position: 'relative', borderRadius: '15px', overflow: 'hidden', marginBottom: '1.5rem' }}>
                   <img src={pkgHimalaya} alt="Aventura na Selva" style={{ width: '100%', height: '240px', objectFit: 'cover' }} />
                   <div style={{ position: 'absolute', top: '1rem', right: '1rem', backgroundColor: '#fff', padding: '0.25rem 0.5rem', borderRadius: '8px', fontSize: '0.875rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -334,9 +334,6 @@ const Home = () => {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.875rem', color: '#64748b' }}>
                       <Clock size={16} /> 5 Dias
                     </div>
-                    <div style={{ backgroundColor: '#FFD700', color: '#000', padding: '0.75rem', borderRadius: '10px', display: 'flex', alignItems: 'center' }}>
-                      <Calendar size={20} />
-                    </div>
                   </div>
                 </div>
               </div>
@@ -344,7 +341,7 @@ const Home = () => {
 
             {/* Package 2 */}
             <Link to="/tour/encontro-das-aguas" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <div className="package-card" style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '20px', boxShadow: '0 10px 30px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', height: '100%', transition: 'transform 0.3s ease' }}>
+              <div className="package-card" style={{ backgroundColor: '#fff', padding: '1rem', borderRadius: '20px', boxShadow: '0 10px 30px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', height: '100%', transition: 'transform 0.3s ease' }}>
                 <div style={{ position: 'relative', borderRadius: '15px', overflow: 'hidden', marginBottom: '1.5rem' }}>
                   <img src={pkgEurope} alt="Encontro das Águas" style={{ width: '100%', height: '240px', objectFit: 'cover' }} />
                   <div style={{ position: 'absolute', top: '1rem', right: '1rem', backgroundColor: '#fff', padding: '0.25rem 0.5rem', borderRadius: '8px', fontSize: '0.875rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -365,9 +362,6 @@ const Home = () => {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.875rem', color: '#64748b' }}>
                       <Clock size={16} /> 7 Dias
                     </div>
-                    <div style={{ backgroundColor: '#FFD700', color: '#000', padding: '0.75rem', borderRadius: '10px', display: 'flex', alignItems: 'center' }}>
-                      <Calendar size={20} />
-                    </div>
                   </div>
                 </div>
               </div>
@@ -375,7 +369,7 @@ const Home = () => {
 
             {/* Package 3 */}
             <Link to="/tour/anavilhanas" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <div className="package-card" style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '20px', boxShadow: '0 10px 30px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', height: '100%', transition: 'transform 0.3s ease' }}>
+              <div className="package-card" style={{ backgroundColor: '#fff', padding: '1rem', borderRadius: '20px', boxShadow: '0 10px 30px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', height: '100%', transition: 'transform 0.3s ease' }}>
                 <div style={{ position: 'relative', borderRadius: '15px', overflow: 'hidden', marginBottom: '1.5rem' }}>
                   <img src={pkgBeach} alt="Anavilhanas" style={{ width: '100%', height: '240px', objectFit: 'cover' }} />
                   <div style={{ position: 'absolute', top: '1rem', right: '1rem', backgroundColor: '#fff', padding: '0.25rem 0.5rem', borderRadius: '8px', fontSize: '0.875rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -395,9 +389,6 @@ const Home = () => {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.875rem', color: '#64748b' }}>
                       <Clock size={16} /> 10 Dias
-                    </div>
-                    <div style={{ backgroundColor: '#FFD700', color: '#000', padding: '0.75rem', borderRadius: '10px', display: 'flex', alignItems: 'center' }}>
-                      <Calendar size={20} />
                     </div>
                   </div>
                 </div>
