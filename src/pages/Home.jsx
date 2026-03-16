@@ -17,11 +17,11 @@ const Home = () => {
     { src: "https://images.unsplash.com/photo-1542385151-efd9000785a0?q=80&w=1000", title: "Encontro das Águas" },
     { src: "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?q=80&w=1000", title: "Floresta Amazônica" },
     { src: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1000", title: "Pôr do sol no Rio" },
-    { src: "https://images.unsplash.com/photo-1534067783941-51c9c23eccfd?q=80&w=1000", title: "Montanhas e Selva" },
+    { src: "https://images.unsplash.com/photo-1520690214124-2405c5217036?q=80&w=1000", title: "Reflexos na Água" },
     { src: "https://images.unsplash.com/photo-1440342359743-84fcb8c21f21?q=80&w=1000", title: "Rio Negro" },
     { src: "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1000", title: "Cachoeiras de Figueiredo" },
-    { src: "https://images.unsplash.com/photo-1511119097762-b9e71e98d927?q=80&w=1000", title: "Arquipélago de Anavilhanas" },
-    { src: "https://images.unsplash.com/photo-1541416550224-c3c32fd2200f?q=80&w=1000", title: "Fauna Silvestre" }
+    { src: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=1000", title: "Anoitecer na Selva" },
+    { src: "https://images.unsplash.com/photo-1582234372722-50d7ccc30ebe?q=80&w=1000", title: "Cultura Local" }
   ];
 
   return (
@@ -412,44 +412,87 @@ const Home = () => {
       </section>
 
       {/* Benefits Section */}
-      <section style={{ backgroundColor: '#fff', padding: '6rem 0', borderBottom: '1px solid #f1f5f9' }}>
+      <section style={{ backgroundColor: '#fff', padding: '10rem 0', borderBottom: '1px solid #f1f5f9' }}>
         <div className="container">
            <div style={{ 
              display: 'grid', 
-             gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-             gap: '3rem',
+             gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+             gap: '4rem',
              textAlign: 'center'
            }}>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
-                 <div style={{ width: '80px', height: '80px', borderRadius: '50%', backgroundColor: '#fefce8', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFD700' }}>
-                   <PlaneTakeoff size={36} />
+              {/* Step 1 */}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                 <div style={{ position: 'relative', marginBottom: '2rem' }}>
+                    <div style={{ 
+                      width: '240px', height: '240px', borderRadius: '50%', backgroundColor: '#f4f7f6', 
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden'
+                    }}>
+                      <img 
+                        src="https://images.unsplash.com/photo-1542385151-efd9000785a0?q=80&w=400" 
+                        alt="Seleção" 
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }} 
+                      />
+                    </div>
+                    <div style={{ 
+                      position: 'absolute', bottom: '-15px', left: '50%', transform: 'translateX(-50%)',
+                      backgroundColor: '#2563eb', color: '#fff', padding: '0.4rem 1.5rem', 
+                      borderRadius: '50px', fontSize: '1rem', fontWeight: 700, whiteSpace: 'nowrap'
+                    }}>
+                      Passo 01
+                    </div>
                  </div>
-                 <h4 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Reserva Fácil</h4>
-                 <p style={{ color: '#64748b', fontSize: '0.9rem' }}>Sua viagem em poucos cliques.</p>
+                 <h4 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '1rem' }}>Selecione seu Tour</h4>
+                 <p style={{ color: '#64748b', fontSize: '1.1rem', lineHeight: 1.6 }}>Escolha entre nossos roteiros exclusivos ou personalize sua própria expedição pela selva.</p>
               </div>
               
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
-                 <div style={{ width: '80px', height: '80px', borderRadius: '50%', backgroundColor: '#f0fdfa', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0d9488' }}>
-                   <ShieldCheck size={36} />
+              {/* Step 2 */}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                 <div style={{ position: 'relative', marginBottom: '2rem' }}>
+                    <div style={{ 
+                      width: '240px', height: '240px', borderRadius: '50%', backgroundColor: '#f4f7f6', 
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden'
+                    }}>
+                      <img 
+                        src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=400" 
+                        alt="Pagamento" 
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }} 
+                      />
+                    </div>
+                    <div style={{ 
+                      position: 'absolute', bottom: '-15px', left: '50%', transform: 'translateX(-50%)',
+                      backgroundColor: '#2563eb', color: '#fff', padding: '0.4rem 1.5rem', 
+                      borderRadius: '50px', fontSize: '1rem', fontWeight: 700, whiteSpace: 'nowrap'
+                    }}>
+                      Passo 02
+                    </div>
                  </div>
-                 <h4 style={{ fontSize: '1.25rem', fontWeight: 800 }}>100% Seguro</h4>
-                 <p style={{ color: '#64748b', fontSize: '0.9rem' }}>Transações criptografadas.</p>
+                 <h4 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '1rem' }}>Pague de forma segura</h4>
+                 <p style={{ color: '#64748b', fontSize: '1.1rem', lineHeight: 1.6 }}>Preencha suas informações e complete a reserva usando nosso gateway de pagamento seguro.</p>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
-                 <div style={{ width: '80px', height: '80px', borderRadius: '50%', backgroundColor: '#fff7ed', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ca8a04' }}>
-                   <Star size={36} />
+              {/* Step 3 */}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                 <div style={{ position: 'relative', marginBottom: '2rem' }}>
+                    <div style={{ 
+                      width: '240px', height: '240px', borderRadius: '50%', backgroundColor: '#f4f7f6', 
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden'
+                    }}>
+                      <img 
+                        src="https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?q=80&w=400" 
+                        alt="Confirmação" 
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }} 
+                      />
+                    </div>
+                    <div style={{ 
+                      position: 'absolute', bottom: '-15px', left: '50%', transform: 'translateX(-50%)',
+                      backgroundColor: '#2563eb', color: '#fff', padding: '0.4rem 1.5rem', 
+                      borderRadius: '50px', fontSize: '1rem', fontWeight: 700, whiteSpace: 'nowrap'
+                    }}>
+                      Passo 03
+                    </div>
                  </div>
-                 <h4 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Melhores Guias</h4>
-                 <p style={{ color: '#64748b', fontSize: '0.9rem' }}>Especialistas certificados.</p>
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
-                 <div style={{ width: '80px', height: '80px', borderRadius: '50%', backgroundColor: '#fef2f2', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#dc2626' }}>
-                   <HeartHandshake size={36} />
-                 </div>
-                 <h4 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Suporte 24h</h4>
-                 <p style={{ color: '#64748b', fontSize: '0.9rem' }}>Sempre aqui para você.</p>
+                 <h4 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '1rem' }}>Confirme e Aproveite</h4>
+                 <p style={{ color: '#64748b', fontSize: '1.1rem', lineHeight: 1.6 }}>Nossa equipe entrará em contato com os detalhes finais do tour e informações sobre o seu guia.</p>
               </div>
            </div>
         </div>
