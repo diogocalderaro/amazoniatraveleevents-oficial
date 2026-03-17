@@ -34,9 +34,9 @@ const BookingFlow = () => {
   const renderStepHeader = (smallText, mainTitle) => (
     <div style={{ marginBottom: '2.5rem' }}>
       <p style={{ color: '#7EB53F', fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.5rem' }}>{smallText}</p>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-        <h1 style={{ fontSize: '2.5rem', fontWeight: 800, color: '#333' }}>{mainTitle}</h1>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', color: '#666' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: '1rem' }}>
+        <h1 style={{ fontSize: 'clamp(2rem, 5vw, 2.5rem)', fontWeight: 800, color: '#333' }}>{mainTitle}</h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', color: '#666' }} className="hide-mobile">
            <Link to="/" style={{ textDecoration: 'none', color: '#7EB53F' }}>Casa</Link> 
            <span style={{ color: '#ccc' }}>/</span> 
            <span style={{ color: '#7EB53F' }}>Páginas</span> 
@@ -119,7 +119,7 @@ const BookingFlow = () => {
             {renderStepHeader("RESERVAS", "Carrinho de compras")}
             {renderProgress()}
             
-            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 340px', gap: '2rem', alignItems: 'start' }}>
+            <div className="booking-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 340px', gap: '2rem', alignItems: 'start' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                 {cartItems.length === 0 ? (
                   <div style={{ backgroundColor: '#fff', borderRadius: '12px', padding: '4rem 2rem', textAlign: 'center' }}>
@@ -128,18 +128,19 @@ const BookingFlow = () => {
                      <Link to="/" className="btn btn-primary" style={{ padding: '0.75rem 2rem' }}>Explorar Destinos</Link>
                   </div>
                 ) : cartItems.map((item) => (
-                  <div key={item.id} style={{ 
+                  <div key={item.id} className="cart-item" style={{ 
                     backgroundColor: '#fff', 
                     borderRadius: '12px', 
                     padding: '1.25rem', 
                     display: 'flex', 
                     gap: '1.5rem',
-                    boxShadow: '0 2px 10px rgba(0,0,0,0.03)'
+                    boxShadow: '0 2px 10px rgba(0,0,0,0.03)',
+                    flexWrap: 'wrap'
                   }}>
-                    <Link to={`/tour/${item.id}`}>
-                      <img src={item.image} alt={item.title} style={{ width: '180px', height: '120px', borderRadius: '8px', objectFit: 'cover' }} />
+                    <Link to={`/tour/${item.id}`} style={{ minWidth: '150px' }}>
+                      <img src={item.image} alt={item.title} loading="lazy" style={{ width: '100%', maxWidth: '180px', height: '120px', borderRadius: '8px', objectFit: 'cover' }} />
                     </Link>
-                    <div style={{ flex: 1 }}>
+                    <div style={{ flex: 1, minWidth: '250px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                         <Link to={`/tour/${item.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                           <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem' }}>{item.title}</h3>
@@ -148,7 +149,7 @@ const BookingFlow = () => {
                           <span style={{ fontSize: '1.25rem', fontWeight: 800 }}>R$ {item.price}</span>
                         </div>
                       </div>
-                      <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '0.5rem', color: '#666', fontSize: '0.9rem' }}>
+                      <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '0.5rem', color: '#666', fontSize: '0.9rem', flexWrap: 'wrap' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Calendar size={14} className="text-primary" /> {item.duration}</div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><MapPin size={14} className="text-primary" /> {item.destinations}</div>
                       </div>
@@ -159,7 +160,7 @@ const BookingFlow = () => {
                         <strong>Convidados:</strong> {item.guests}
                       </p>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-end', marginLeft: 'auto' }}>
                        <button 
                          onClick={() => handleDeleteClick(item)}
                          style={{ 
@@ -241,7 +242,7 @@ const BookingFlow = () => {
             {renderStepHeader("RESERVAS", "Confira")}
             {renderProgress()}
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 380px) 1fr', gap: '2rem', alignItems: 'start' }}>
+            <div className="booking-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 380px) 1fr', gap: '2rem', alignItems: 'start' }}>
               {/* Summary Column */}
               <div style={{ backgroundColor: '#fff', padding: '2rem', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
                 <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '1.5rem', borderBottom: '1px solid #eee', paddingBottom: '1.5rem' }}>1. Turnês selecionados</h2>
@@ -448,6 +449,19 @@ const BookingFlow = () => {
         .input-field input:focus, .input-field select:focus {
            border-color: #7EB53F !important;
            box-shadow: 0 0 0 2px rgba(126, 181, 63, 0.1);
+        }
+        @media (max-width: 991px) {
+          .booking-grid {
+            grid-template-columns: 1fr !important;
+          }
+          .hide-mobile { display: none !important; }
+        }
+        @media (max-width: 480px) {
+          .cart-item {
+            flex-direction: column;
+            align-items: stretch !important;
+          }
+          .cart-item img { width: 100% !important; max-width: none !important; }
         }
       `}</style>
     </div>

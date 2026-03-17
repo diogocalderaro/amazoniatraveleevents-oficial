@@ -3,9 +3,18 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { 
   MapPin, Star, Clock, Calendar, Check, Users, Navigation, 
   ChevronRight, Share2, Heart, ShieldCheck, Info, FileText, 
-  Image as ImageIcon, ListChecks, Map, MessageSquare, Plus, ShoppingCart
+  Image as ImageIcon, ListChecks, Map, MessageSquare, Plus, ShoppingCart,
+  CheckCircle2, X
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+
+// Import gallery images
+import gal010 from '../assets/galeria/010.jpg';
+import gal011 from '../assets/galeria/011.jpg';
+import gal012 from '../assets/galeria/012.jpg';
+import gal013 from '../assets/galeria/013.jpg';
+import gal001 from '../assets/galeria/001.jpg';
+import gal002 from '../assets/galeria/002.jpg';
 
 const TourDetails = () => {
   const { id } = useParams();
@@ -14,26 +23,7 @@ const TourDetails = () => {
   const [selectedDate, setSelectedDate] = useState('');
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
-
-  const handleAddToCart = () => {
-    const tourData = {
-      id: id || 'amazon-adventure',
-      title: "Expedição Amazônia Profunda",
-      duration: "5 dias",
-      destinations: "3 Destinos",
-      date: selectedDate || "A combinar",
-      guests: `${adults} adultos - ${children} crianças`,
-      price: "1250.00",
-      image: "https://images.unsplash.com/photo-1542385151-efd9000785a0?q=80&w=800"
-    };
-    addToCart(tourData);
-    navigate('/checkout');
-  };
-
-  // Scroll to top on load
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+  const [activeTab, setActiveTab] = useState('sobre');
 
   const tourData = {
     title: "Exploração Encontro das Águas",
@@ -42,6 +32,7 @@ const TourDetails = () => {
     rating: 4.9,
     reviews: 128,
     duration: "7 Dias / 6 Noites",
+    destinations: "3 Destinos",
     groupSize: "Máx 12 Pessoas",
     languages: "Português, Inglês",
     tourType: "Aventura e Natureza",
@@ -55,12 +46,12 @@ const TourDetails = () => {
       "Refeições regionais autênticas inclusas."
     ],
     gallery: [
-      "https://images.unsplash.com/photo-1542385151-efd9000785a0?q=80&w=1978&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?q=80&w=2072&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1581333100576-b73bbe92c19a?q=80&w=2000&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1589556264800-08ae9e129a8a?q=80&w=2000&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=2000&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1582234372722-50d7ccc30ebe?q=80&w=2000&auto=format&fit=crop"
+      gal010,
+      gal011,
+      gal012,
+      gal013,
+      gal001,
+      gal002
     ],
     itinerary: [
       { day: "Dia 1", title: "Chegada em Manaus", desc: "Boas-vindas à Amazônia! Traslado do aeroporto para o hotel. À noite, briefing com a equipe sobre a expedição." },
@@ -83,221 +74,198 @@ const TourDetails = () => {
     ]
   };
 
+  const handleAddToCart = () => {
+    const cartData = {
+      id: id || 'amazon-adventure',
+      title: tourData.title,
+      duration: tourData.duration,
+      destinations: tourData.destinations,
+      date: selectedDate || "A combinar",
+      guests: `${adults} adultos - ${children} crianças`,
+      price: "1250.00",
+      image: tourData.gallery[1]
+    };
+    addToCart(cartData);
+    navigate('/checkout');
+  };
+
+  // Scroll to top on load
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  // Logic to detect active section on scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = ['sobre', 'fotos', 'itinerario', 'politicas'];
+      const scrollPosition = window.scrollY + 250;
+
+      for (const section of sections) {
+        const element = document.getElementById(section);
+        if (element) {
+          const offsetTop = element.offsetTop;
+          const height = element.offsetHeight;
+          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + height) {
+            setActiveTab(section);
+          }
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <div className="tour-details-page" style={{ backgroundColor: '#f8fafc' }}>
       {/* Hero Section */}
       <section style={{
         position: 'relative',
-        height: '70vh',
-        minHeight: '500px',
-        backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url(${tourData.gallery[0]})`,
+        height: '60vh',
+        minHeight: '400px',
+        backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5)), url(${tourData.gallery[1]})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
         alignItems: 'center',
-        color: '#fff',
-        textAlign: 'center'
+        color: '#fff'
       }}>
         <div className="container">
-          <p style={{ 
-            fontSize: '1rem', 
-            fontWeight: 700, 
-            letterSpacing: '3px', 
-            textTransform: 'uppercase', 
-            marginBottom: '1rem',
-            textShadow: '0 2px 4px rgba(0,0,0,0.5)'
-          }}>
-            A partir de R$ {tourData.price}
-          </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1.5rem', backgroundColor: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(10px)', width: 'fit-content', padding: '0.5rem 1.25rem', borderRadius: '50px', fontSize: '0.9rem', fontWeight: 600 }}>
+             <MapPin size={16} /> {tourData.location}
+          </div>
           <h1 style={{ 
-            fontSize: 'clamp(2.5rem, 8vw, 5rem)', 
+            fontSize: 'clamp(2.5rem, 6vw, 4rem)', 
             fontWeight: 800, 
-            marginBottom: '2rem',
             lineHeight: 1.1,
-            textShadow: '0 5px 15px rgba(0,0,0,0.5)'
+            textShadow: '0 4px 20px rgba(0,0,0,0.6)',
+            maxWidth: '800px',
+            color: '#fff'
           }}>
             {tourData.title}
           </h1>
-          
-          <div style={{
-            backgroundColor: '#fff',
-            color: '#000',
-            padding: '1rem 2rem',
-            borderRadius: '100px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '1.5rem',
-            boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
-            transform: 'translateY(50%)',
-            position: 'absolute',
-            bottom: 0,
-            left: '50%',
-            transformOrigin: 'center',
-            transform: 'translateX(-50%) translateY(50%)'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Star size={20} fill="#FFD700" color="#FFD700" />
-              <span style={{ fontWeight: 800, fontSize: '1.25rem' }}>{tourData.rating}</span>
-            </div>
-            <div style={{ height: '24px', width: '1px', backgroundColor: '#e2e8f0' }}></div>
-            <div style={{ fontWeight: 600 }}>{tourData.reviews} Avaliações</div>
-            <div style={{ display: 'flex', gap: '1rem', marginLeft: '1rem' }}>
-               <button style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#64748b' }}><Share2 size={20} /></button>
-               <button style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#64748b' }}><Heart size={20} /></button>
-            </div>
-          </div>
         </div>
       </section>
 
-      <div style={{ padding: '5rem 0 3rem 0' }}>
-        <div className="container">
-          {/* Quick Info Bar */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: '2rem',
-            padding: '2.5rem',
-            backgroundColor: '#fff',
-            borderRadius: '20px',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
-            marginBottom: '4rem'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <div style={{ color: '#000', backgroundColor: '#FFD700', padding: '0.75rem', borderRadius: '12px' }}><Clock size={24} /></div>
-              <div><p style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>Duração</p> <p style={{ fontWeight: 700 }}>{tourData.duration}</p></div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <div style={{ color: '#000', backgroundColor: '#FFD700', padding: '0.75rem', borderRadius: '12px' }}><Users size={24} /></div>
-              <div><p style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>Tamanho do Grupo</p> <p style={{ fontWeight: 700 }}>{tourData.groupSize}</p></div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <div style={{ color: '#000', backgroundColor: '#FFD700', padding: '0.75rem', borderRadius: '12px' }}><MessageSquare size={24} /></div>
-              <div><p style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>Idiomas</p> <p style={{ fontWeight: 700 }}>{tourData.languages}</p></div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <div style={{ color: '#000', backgroundColor: '#FFD700', padding: '0.75rem', borderRadius: '12px' }}><Map size={24} /></div>
-              <div><p style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>Tipo de Tour</p> <p style={{ fontWeight: 700 }}>{tourData.tourType}</p></div>
-            </div>
-          </div>
+      {/* Internal Navigation Tabs */}
+      <div style={{ backgroundColor: '#fff', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: '70px', zIndex: 100 }}>
+        <div className="container" style={{ display: 'flex', gap: '2rem', overflowX: 'auto' }}>
+          {[
+            { id: 'sobre', label: 'Sobre', icon: <Info size={18} /> },
+            { id: 'fotos', label: 'Fotos', icon: <ImageIcon size={18} /> },
+            { id: 'itinerario', label: 'Itinerário', icon: <ListChecks size={18} /> },
+            { id: 'politicas', label: 'Políticas', icon: <FileText size={18} /> }
+          ].map((tab) => (
+            <a 
+              key={tab.id} 
+              href={`#${tab.id}`} 
+              onClick={(e) => {
+                e.preventDefault();
+                const element = document.getElementById(tab.id);
+                if (element) {
+                  const offset = 150;
+                  const elementPosition = element.getBoundingClientRect().top;
+                  const offsetPosition = elementPosition + window.pageYOffset - offset;
+                  window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                }
+              }}
+              style={{ 
+                padding: '1.5rem 0', 
+                color: activeTab === tab.id ? '#000' : '#64748b', 
+                textDecoration: 'none', 
+                fontWeight: 700, 
+                fontSize: '0.95rem',
+                borderBottom: `3px solid ${activeTab === tab.id ? '#FFD700' : 'transparent'}`,
+                transition: 'all 0.3s',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              {tab.icon} {tab.label}
+            </a>
+          ))}
+        </div>
+      </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '4rem', alignItems: 'start' }}>
+      <div className="container" style={{ padding: '4rem 0' }}>
+         <div className="tour-details-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 380px', gap: '4rem', alignItems: 'start' }}>
             {/* Left Column Content */}
             <div>
-              {/* About Section */}
-              <section id="about" style={{ marginBottom: '4rem' }}>
+               {/* Sobre Section */}
+               <section id="sobre" style={{ marginBottom: '4rem' }}>
                 <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
                    <Info size={32} className="text-primary" /> Sobre o Pacote
                 </h2>
-                <div style={{ backgroundColor: '#fff', padding: '2.5rem', borderRadius: '20px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1.5rem' }}>O que esperar:</h3>
-                  <ul style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem', marginBottom: '2.5rem' }}>
-                    {tourData.highlights.map((h, i) => (
-                      <li key={i} style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
-                        <div style={{ color: '#22c55e', marginTop: '3px' }}><Check size={20} strokeWidth={3} /></div>
-                        <span style={{ color: '#475569', fontSize: '0.95rem' }}>{h}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <p style={{ color: '#64748b', lineHeight: 1.8, fontSize: '1.05rem' }}>{tourData.description}</p>
+                <p style={{ fontSize: '1.125rem', color: '#475569', lineHeight: 1.8, marginBottom: '2rem' }}>
+                  {tourData.description}
+                </p>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
+                  {tourData.highlights.map((item, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#334155', fontWeight: 600 }}>
+                      <div style={{ backgroundColor: '#f0fdf4', color: '#16a34a', padding: '6px', borderRadius: '50%' }}><Check size={18} /></div>
+                      {item}
+                    </div>
+                  ))}
                 </div>
               </section>
 
-              {/* Gallery Section */}
-              <section id="gallery" style={{ marginBottom: '4rem' }}>
+               {/* Gallery Section */}
+               <section id="fotos" style={{ marginBottom: '4rem' }}>
                 <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
                    <ImageIcon size={32} className="text-primary" /> Galeria de Fotos
                 </h2>
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: '2fr 1fr',
-                  gridTemplateRows: 'repeat(2, 200px)',
-                  gap: '1rem',
-                  borderRadius: '20px',
-                  overflow: 'hidden'
-                }}>
-                  <div style={{ gridRow: 'span 2' }}>
-                    <img src={tourData.gallery[1]} alt="Gallery" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  </div>
-                  <div>
-                    <img src={tourData.gallery[2]} alt="Gallery" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  </div>
-                  <div>
-                    <img src={tourData.gallery[3]} alt="Gallery" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  </div>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginTop: '1rem' }}>
-                    <img src={tourData.gallery[4]} alt="Gallery" style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '15px' }} />
-                    <img src={tourData.gallery[5]} alt="Gallery" style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '15px' }} />
-                    <div style={{ position: 'relative', height: '150px', borderRadius: '15px', overflow: 'hidden' }}>
-                      <img src={tourData.gallery[0]} alt="Gallery" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, cursor: 'pointer' }}>
-                        +15 fotos
-                      </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+                  {tourData.gallery.map((img, i) => (
+                    <div key={i} style={{ borderRadius: '12px', overflow: 'hidden', height: '200px' }}>
+                      <img src={img} alt={`Gallery ${i}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     </div>
+                  ))}
                 </div>
               </section>
 
-              {/* Itinerary Section */}
-              <section id="itinerary" style={{ marginBottom: '4rem' }}>
+               {/* Itinerary Section */}
+               <section id="itinerario" style={{ marginBottom: '4rem' }}>
                 <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
                    <ListChecks size={32} className="text-primary" /> Roteiro da Viagem
                 </h2>
-                <div style={{ backgroundColor: '#fff', padding: '2.5rem', borderRadius: '20px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem', position: 'relative' }}>
-                    <div style={{ position: 'absolute', left: '15px', top: '10px', bottom: '10px', width: '2px', backgroundColor: '#e2e8f0' }}></div>
-                    {tourData.itinerary.map((item, i) => (
-                      <div key={i} style={{ position: 'relative', paddingLeft: '3rem' }}>
-                        <div style={{ 
-                          position: 'absolute', 
-                          left: 0, 
-                          top: 0, 
-                          width: '32px', 
-                          height: '32px', 
-                          borderRadius: '50%', 
-                          backgroundColor: i === 0 ? '#FFD700' : '#fff', 
-                          border: '2px solid #FFD700', 
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          zIndex: 2,
-                          fontSize: '0.85rem',
-                          fontWeight: 800
-                        }}>{i + 1}</div>
-                        <h4 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem' }}>
-                          <span style={{ color: '#000' }}>{item.day}:</span> {item.title}
-                        </h4>
-                        <p style={{ color: '#64748b', lineHeight: 1.7 }}>{item.desc}</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                  {tourData.itinerary.map((item, i) => (
+                    <div key={i} style={{ display: 'flex', gap: '2rem', borderLeft: '3px solid #FFD700', paddingLeft: '2rem', paddingBottom: '1rem' }}>
+                      <div style={{ flexShrink: 0 }}>
+                        <div style={{ backgroundColor: '#000', color: '#FFD700', width: '60px', height: '60px', borderRadius: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '0.9rem' }}>{item.day}</div>
                       </div>
-                    ))}
-                  </div>
+                      <div>
+                        <h4 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.5rem' }}>{item.title}</h4>
+                        <p style={{ color: '#64748b' }}>{item.desc}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </section>
 
-              {/* Policy Section */}
-              <section id="policy" style={{ marginBottom: '4rem' }}>
+               {/* Policy Section */}
+               <section id="politicas" style={{ marginBottom: '4rem' }}>
                 <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
                    <FileText size={32} className="text-primary" /> Políticas do Tour
                 </h2>
-                <div style={{ backgroundColor: '#fff', padding: '2.5rem', borderRadius: '20px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem' }}>
-                  <div>
-                    <h3 style={{ fontSize: '1.125rem', fontWeight: 700, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                       O que está incluso:
-                    </h3>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+                  <div style={{ backgroundColor: '#fff', padding: '2rem', borderRadius: '20px', border: '1px solid #f1f5f9' }}>
+                    <h4 style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.5rem', color: '#16a34a' }}><CheckCircle2 size={24} /> O QUE ESTÁ INCLUSO</h4>
                     <ul style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                       {tourData.included.map((item, i) => (
-                        <li key={i} style={{ display: 'flex', gap: '0.75rem', color: '#475569', fontSize: '0.95rem' }}>
-                          <Check size={18} className="text-primary" /> {item}
+                        <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#64748b', fontSize: '0.95rem' }}>
+                          <div style={{ color: '#16a34a' }}><Check size={18} /></div> {item}
                         </li>
                       ))}
                     </ul>
                   </div>
-                  <div>
-                    <h3 style={{ fontSize: '1.125rem', fontWeight: 700, marginBottom: '1.5rem' }}>Não incluso:</h3>
+                  <div style={{ backgroundColor: '#fff', padding: '2rem', borderRadius: '20px', border: '1px solid #f1f5f9' }}>
+                    <h4 style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.5rem', color: '#ef4444' }}><X size={24} /> NÃO INCLUSO</h4>
                     <ul style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                       {tourData.excluded.map((item, i) => (
-                        <li key={i} style={{ display: 'flex', gap: '0.75rem', color: '#475569', fontSize: '0.95rem' }}>
+                        <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#64748b', fontSize: '0.95rem' }}>
                           <div style={{ color: '#ef4444' }}><Plus size={18} style={{ transform: 'rotate(45deg)' }} /></div> {item}
                         </li>
                       ))}
@@ -307,8 +275,8 @@ const TourDetails = () => {
               </section>
             </div>
 
-            {/* Sticky Sidebar Booking Widget */}
-            <div style={{ position: 'sticky', top: '100px' }}>
+             {/* Sticky Sidebar Booking Widget */}
+             <div style={{ position: 'sticky', top: '160px' }}>
               <div style={{ 
                 backgroundColor: '#fff', 
                 padding: '2.5rem', 
@@ -339,7 +307,7 @@ const TourDetails = () => {
                       <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.5rem', color: '#334155' }}>ADULTOS</label>
                       <select 
                         value={adults}
-                        onChange={(e) => setAdults(e.target.value)}
+                        onChange={(e) => setAdults(parseInt(e.target.value))}
                         style={{ width: '100%', padding: '1rem', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', fontWeight: 600 }}
                       >
                         {[1,2,3,4,5,6].map(n => <option key={n} value={n}>{n}</option>)}
@@ -349,7 +317,7 @@ const TourDetails = () => {
                       <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.5rem', color: '#334155' }}>CRIANÇAS</label>
                       <select 
                         value={children}
-                        onChange={(e) => setChildren(e.target.value)}
+                        onChange={(e) => setChildren(parseInt(e.target.value))}
                         style={{ width: '100%', padding: '1rem', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', fontWeight: 600 }}
                       >
                         {[0,1,2,3,4].map(n => <option key={n} value={n}>{n}</option>)}
@@ -406,7 +374,6 @@ const TourDetails = () => {
               </div>
             </div>
           </div>
-        </div>
       </div>
 
       {/* Reviews Banner Section */}
@@ -435,8 +402,8 @@ const TourDetails = () => {
         color: '#fff'
       }}>
         <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '2rem' }}>
-          <div>
-            <h2 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '1rem' }}>Reserve esta aventura hoje!</h2>
+           <div>
+             <h2 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '1rem', color: '#fff' }}>Reserve esta aventura hoje!</h2>
             <p style={{ fontSize: '1.1rem', color: 'rgba(255,255,255,0.7)', maxWidth: '600px' }}>Não deixe para depois. As vagas para nossas expedições são limitadas para garantir exclusividade e preservação.</p>
           </div>
           <button 
@@ -459,6 +426,22 @@ const TourDetails = () => {
           </button>
         </div>
       </section>
+      <style>{`
+        .tour-details-grid {
+          display: grid;
+        }
+        @media (max-width: 991px) {
+          .tour-details-grid {
+            grid-template-columns: 1fr !important;
+          }
+          .tour-stats-bar {
+            padding: 0.5rem 1rem !important;
+            font-size: 0.8rem !important;
+            border-radius: 50px !important;
+          }
+          .hide-mobile { display: none !important; }
+        }
+      `}</style>
     </div>
   );
 };

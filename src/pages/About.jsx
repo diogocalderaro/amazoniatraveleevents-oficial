@@ -3,7 +3,7 @@ import { CheckCircle2, Users, Target, ShieldCheck, Heart } from 'lucide-react';
 
 const About = () => {
   return (
-    <div className="about-page" style={{ paddingTop: '5rem' }}>
+    <div className="about-page">
       {/* Page Header */}
       <section style={{ 
         backgroundColor: '#000', 
@@ -16,7 +16,7 @@ const About = () => {
       }}>
         <div className="container">
           <p style={{ color: '#FFD700', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '1rem' }}>Conheça nossa história</p>
-          <h1 style={{ fontSize: '4rem', fontWeight: 900, marginBottom: '2rem' }}>Sobre a Amazonia Travel</h1>
+          <h1 style={{ fontSize: 'clamp(2.5rem, 8vw, 4rem)', fontWeight: 900, marginBottom: '2rem', color: '#fff' }}>Sobre a Amazonia Travel</h1>
         </div>
       </section>
 
@@ -28,6 +28,7 @@ const About = () => {
               <img 
                 src="https://images.unsplash.com/photo-1542385151-efd9000785a0?q=80&w=800" 
                 alt="Nossa Missão" 
+                loading="lazy"
                 style={{ width: '100%', borderRadius: '20px', boxShadow: '0 20px 40px rgba(0,0,0,0.1)' }} 
               />
             </div>
@@ -106,6 +107,7 @@ const About = () => {
                    <img 
                      src={member.img} 
                      alt={member.name} 
+                     loading="lazy"
                      style={{ width: '180px', height: '180px', borderRadius: '50%', objectFit: 'cover', marginBottom: '1.5rem', border: '5px solid #f1f5f9' }} 
                    />
                    <h4 style={{ fontSize: '1.25rem', fontWeight: 800 }}>{member.name}</h4>

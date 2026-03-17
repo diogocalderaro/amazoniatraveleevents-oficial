@@ -1,27 +1,74 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { 
-  Calendar, User, Search, MapPin, Star, PlaneTakeoff, 
-  ShieldCheck, HeartHandshake, Clock, X, CheckCircle, Phone 
+  Play, MapPin, Star, Calendar, Clock, 
+  ChevronRight, ArrowRight, Shield, Award, 
+  Compass, Check, X, Search, User, CheckCircle2, Phone, ChevronDown, ChevronUp
 } from 'lucide-react';
 
-/* Using the generated placeholder images */
+/* Using the local assets images */
 import pkgHimalaya from '../assets/pkg-himalaya.png';
 import pkgEurope from '../assets/pkg-europe.png';
 import pkgBeach from '../assets/pkg-beach.png';
 
+// Import gallery images
+import gal001 from '../assets/galeria/001.jpg';
+import gal002 from '../assets/galeria/002.jpg';
+import gal003 from '../assets/galeria/003.jpg';
+import gal004 from '../assets/galeria/004.jpg';
+import gal005 from '../assets/galeria/005.jpg';
+import gal006 from '../assets/galeria/006.jpg';
+import gal008 from '../assets/galeria/008.jpg';
+import gal009 from '../assets/galeria/009.jpg';
+import gal010 from '../assets/galeria/010.jpg';
+import gal011 from '../assets/galeria/011.jpg';
+import gal012 from '../assets/galeria/012.jpg';
+
 const Home = () => {
+  const navigate = useNavigate();
   const [selectedImage, setSelectedImage] = useState(null);
+  const [activeFaq, setActiveFaq] = useState(null);
+
+  const toggleFaq = (index) => {
+    setActiveFaq(activeFaq === index ? null : index);
+  };
+
+  const faqs = [
+    { 
+      question: "Quais serviços sua agência de viagens oferece?", 
+      answer: "Oferecemos uma ampla gama de serviços, incluindo reserva de hotéis, passagens aéreas, passeios guiados personalizados, expedições pela selva, transporte fluvial e suporte local completo em Manaus e região." 
+    },
+    { 
+      question: "Vocês oferecem pacotes de viagem personalizados?", 
+      answer: "Sim! Somos especialistas em criar roteiros sob medida de acordo com seus interesses, tempo disponível e orçamento. Seja para aventura solo ou viagem em família." 
+    },
+    { 
+      question: "Posso reservar voos, hotéis e passeios separadamente?", 
+      answer: "Nossa agência oferece flexibilidade total. Você pode optar por pacotes 'all-inclusive' ou reservar apenas os serviços específicos que necessita, como guias especializados ou estadias em jungle lodges." 
+    },
+    { 
+      question: "Você oferece assistência para visto?", 
+      answer: "Prestamos orientações gerais sobre os requisitos de entrada no Brasil para estrangeiros e auxiliamos com a documentação necessária para viajantes brasileiros em destinos internacionais parceiros." 
+    },
+    { 
+      question: "Quais métodos de pagamento você aceita?", 
+      answer: "Aceitamos todos os principais cartões de crédito (Visa, Mastercard, Amex), PayPal, transferências bancárias e PIX." 
+    },
+    { 
+      question: "Quais Documentos de Viagem São Necessários?", 
+      answer: "Para destinos nacionais, RG ou CNH original com foto. Para estrangeiros, passaporte válido. Dependendo da região da Amazônia, recomenda-se o comprovante de vacinação contra febre amarela." 
+    }
+  ];
 
   const galleryImages = [
-    { src: "https://images.unsplash.com/photo-1542385151-efd9000785a0?q=80&w=1000", title: "Encontro das Águas" },
-    { src: "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?q=80&w=1000", title: "Floresta Amazônica" },
-    { src: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1000", title: "Pôr do sol no Rio" },
-    { src: "https://images.unsplash.com/photo-1520690214124-2405c5217036?q=80&w=1000", title: "Reflexos na Água" },
-    { src: "https://images.unsplash.com/photo-1440342359743-84fcb8c21f21?q=80&w=1000", title: "Rio Negro" },
-    { src: "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1000", title: "Cachoeiras de Figueiredo" },
-    { src: "https://images.unsplash.com/photo-1589923188900-85dae523342b?q=80&w=1000", title: "Cultura Local" },
-    { src: "https://images.unsplash.com/photo-1440342359743-84fcb8c21f21?q=80&w=1000", title: "Fauna Regional" }
+    { src: gal001, title: "Encontro das Águas" },
+    { src: gal002, title: "Floresta Amazônica" },
+    { src: gal003, title: "Pôr do sol no Rio" },
+    { src: gal004, title: "Reflexos na Água" },
+    { src: gal005, title: "Rio Negro" },
+    { src: gal006, title: "Cachoeiras de Figueiredo" },
+    { src: gal008, title: "Cultura Local" },
+    { src: gal009, title: "Fauna Regional" }
   ];
 
   return (
@@ -50,11 +97,14 @@ const Home = () => {
               src={selectedImage.src} 
               alt={selectedImage.title} 
               style={{ 
-                width: '100%',
+                maxWidth: '100%',
+                maxHeight: '80vh',
+                width: 'auto',
                 height: 'auto',
                 borderRadius: '8px', 
                 boxShadow: '0 0 50px rgba(0,0,0,0.5)',
-                animation: 'zoom 0.3s ease'
+                animation: 'zoom 0.3s ease',
+                objectFit: 'contain'
               }} 
             />
             <div style={{
@@ -103,7 +153,7 @@ const Home = () => {
         <div className="container">
           <div style={{ 
             display: 'grid', 
-            gridTemplateColumns: 'minmax(0, 1.2fr) minmax(0, 0.8fr)', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
             gap: '2rem', 
             alignItems: 'center',
             position: 'relative', 
@@ -127,16 +177,16 @@ const Home = () => {
                 fontWeight: 900,
                 letterSpacing: '-2px'
               }}>
-                EXPLORE<br/>CONOSCO
+                EXPLORE<br className="hide-mobile"/>CONOSCO
               </h1>
 
               {/* Discount Badge */}
-              <div style={{
+              <div className="discount-badge" style={{
                 position: 'absolute',
                 top: '5%',
-                left: '35%',
-                width: '180px',
-                height: '180px',
+                right: '5%',
+                width: '150px',
+                height: '150px',
                 backgroundColor: '#FFD700',
                 borderRadius: '50%',
                 display: 'flex',
@@ -166,7 +216,7 @@ const Home = () => {
                    ].map((feat, i) => (
                      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <div style={{ color: '#FFD700' }}>
-                           <CheckCircle size={18} fill="#FFD700" color="#000" />
+                           <CheckCircle2 size={18} fill="#FFD700" color="#000" />
                         </div>
                         <span style={{ fontWeight: 600, color: 'rgba(255,255,255,0.8)' }}>{feat}</span>
                      </div>
@@ -196,11 +246,12 @@ const Home = () => {
             </div>
 
             {/* Tilted Images Container */}
-            <div style={{ position: 'relative', height: '500px' }}>
+            <div className="hero-images hide-mobile" style={{ position: 'relative', height: '500px' }}>
               {/* Image 1 (Top Left) */}
               <img 
-                src="https://images.unsplash.com/photo-1542385151-efd9000785a0?q=80&w=600" 
+                src={gal010} 
                 alt="Exploração 1" 
+                loading="lazy"
                 style={{ 
                   position: 'absolute', top: '0', left: '-50px',
                   width: '320px', height: '220px', objectFit: 'cover',
@@ -211,8 +262,9 @@ const Home = () => {
               />
               {/* Image 2 (Middle) */}
               <img 
-                src="https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?q=80&w=600" 
+                src={gal011} 
                 alt="Exploração 2" 
+                loading="lazy"
                 style={{ 
                   position: 'absolute', top: '25%', right: '-40px',
                   width: '380px', height: '260px', objectFit: 'cover',
@@ -223,8 +275,9 @@ const Home = () => {
               />
               {/* Image 3 (Bottom) */}
               <img 
-                src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?q=80&w=600" 
+                src={gal012} 
                 alt="Exploração 3" 
+                loading="lazy"
                 style={{ 
                   position: 'absolute', bottom: '0', left: '0',
                   width: '350px', height: '240px', objectFit: 'cover',
@@ -238,13 +291,13 @@ const Home = () => {
         </div>
 
         {/* Floating Search Bar */}
-        <div className="container" style={{
+        <div className="container search-container" style={{
           position: 'absolute',
-          bottom: '-40px',
+          bottom: '-60px',
           left: '50%',
           transform: 'translateX(-50%)',
           zIndex: 30,
-          width: '100%',
+          width: '95%',
           maxWidth: '1200px'
         }}>
           <div className="search-bar glass" style={{
@@ -257,9 +310,9 @@ const Home = () => {
             boxShadow: '0 20px 50px rgba(0,0,0,0.1)',
             border: '1px solid #f1f5f9'
           }}>
-            <div style={{ flex: 1, minWidth: '200px', display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 1rem', borderRight: '1px solid #E2E8F0' }}>
+            <div style={{ flex: 1, minWidth: '250px', display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 1rem', borderRight: '1px solid #E2E8F0' }} className="search-field">
               <MapPin style={{ color: '#FFD700' }} />
-              <div>
+              <div style={{ width: '100%' }}>
                 <p style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase' }}>Para onde?</p>
                 <select style={{ border: 'none', background: 'transparent', width: '100%', outline: 'none', fontWeight: 600, fontSize: '16px' }}>
                   <option>Selecione o local</option>
@@ -287,12 +340,14 @@ const Home = () => {
                   </select>
               </div>
             </div>
-            <button className="btn btn-primary" style={{
+            <button 
+              onClick={() => navigate('/search')}
+              className="btn btn-primary" style={{
               minWidth: '140px', height: '60px', borderRadius: '12px',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               gap: '0.5rem', backgroundColor: '#000', color: '#fff', border: 'none'
             }}>
-              <Search size={24} /> <span style={{ fontWeight: 700 }}>BUSCAR</span>
+              <Search size={22} /> <span style={{ fontWeight: 700 }}>BUSCAR</span>
             </button>
           </div>
         </div>
@@ -308,92 +363,62 @@ const Home = () => {
 
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-            gap: '2.5rem'
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gap: '2rem'
           }}>
-            {/* Package 1 */}
-            <Link to="/tour/amazon-adventure" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <div className="package-card" style={{ backgroundColor: '#fff', padding: '1rem', borderRadius: '20px', boxShadow: '0 10px 30px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', height: '100%', transition: 'transform 0.3s ease' }}>
-                <div style={{ position: 'relative', borderRadius: '15px', overflow: 'hidden', marginBottom: '1.5rem' }}>
-                  <img src={pkgHimalaya} alt="Aventura na Selva" style={{ width: '100%', height: '240px', objectFit: 'cover' }} />
-                  <div style={{ position: 'absolute', top: '1rem', right: '1rem', backgroundColor: '#fff', padding: '0.25rem 0.5rem', borderRadius: '8px', fontSize: '0.875rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <Star size={16} fill="#FFD700" color="#FFD700" /> 4.9
-                  </div>
+            {[
+              { id: 'amazon-adventure', title: 'Trilha de Aventura na Selva', price: '899', oldPrice: '1100', img: gal001, rating: '4.9', reviews: '128', days: '5 dias', dest: '3 Destinos' },
+              { id: 'encontro-das-aguas', title: 'Expedição Encontro das Águas', price: '1250', oldPrice: '1500', img: gal002, rating: '4.8', reviews: '95', days: '7 dias', dest: '2 Destinos' },
+              { id: 'anavilhanas', title: 'Sossego em Anavilhanas', price: '2200', oldPrice: '2600', img: gal003, rating: '5.0', reviews: '54', days: '10 dias', dest: '4 Destinos' },
+              { id: 'culture-manaus', title: 'Imersão Cultural em Manaus', price: '450', oldPrice: '600', img: gal004, rating: '4.7', reviews: '210', days: '3 dias', dest: '1 Destino' }
+            ].map((pkg) => (
+              <div key={pkg.id} className="package-card-new" style={{ backgroundColor: '#fff', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ position: 'relative', height: '200px' }}>
+                  <Link to={`/tour/${pkg.id}`}>
+                    <img src={pkg.img} alt={pkg.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </Link>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
-                  <MapPin size={16} color="#FFD700" /> Manaus, Amazonas
-                </div>
-                <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '1rem' }}>Trilha de Aventura na Selva</h3>
                 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid #f1f5f9' }}>
-                  <div>
-                    <span style={{ fontSize: '1.5rem', fontWeight: 800, color: '#000' }}>R$ 899</span>
-                    <span style={{ fontSize: '0.875rem', color: '#94a3b8' }}> / pessoa</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.875rem', color: '#64748b' }}>
-                      <Clock size={16} /> 5 Dias
+                <div style={{ padding: '1.25rem' }}>
+                  <Link to={`/tour/${pkg.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '0.75rem', lineHeight: 1.3, height: '2.8rem', overflow: 'hidden' }}>
+                      {pkg.title}
+                    </h3>
+                  </Link>
+                  
+                  <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.75rem', color: '#64748b', fontSize: '0.8rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <Calendar size={12} color="#7EB53F" /> {pkg.days}
                     </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <MapPin size={12} color="#7EB53F" /> {pkg.dest}
+                    </div>
+                  </div>
+                  
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '1.25rem' }}>
+                    <span style={{ fontWeight: 800, fontSize: '0.85rem' }}>{pkg.rating}</span>
+                    <div style={{ display: 'flex', gap: '1px' }}>
+                      {[1, 2, 3, 4, 5].map(s => <Star key={s} size={10} fill="#FFD700" color="#FFD700" />)}
+                    </div>
+                    <span style={{ color: '#94a3b8', fontSize: '0.75rem' }}>({pkg.reviews} avaliações)</span>
+                  </div>
+                  
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.75rem', borderTop: '1px solid #f1f5f9' }}>
+                    <div>
+                      <span style={{ fontSize: '0.75rem', color: '#94a3b8', textDecoration: 'line-through', marginRight: '6px' }}>R$ {pkg.oldPrice}</span>
+                      <span style={{ fontSize: '1.1rem', fontWeight: 800, color: '#000' }}>R$ {pkg.price}</span>
+                    </div>
+                    <Link to={`/tour/${pkg.id}`} style={{ 
+                      width: '36px', height: '36px', borderRadius: '50%', 
+                      backgroundColor: 'var(--color-accent)', color: '#fff', 
+                      display: 'flex', alignItems: 'center', justifyContent: 'center'
+                    }}>
+                      <ArrowRight size={18} />
+                    </Link>
                   </div>
                 </div>
               </div>
-            </Link>
-
-            {/* Package 2 */}
-            <Link to="/tour/encontro-das-aguas" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <div className="package-card" style={{ backgroundColor: '#fff', padding: '1rem', borderRadius: '20px', boxShadow: '0 10px 30px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', height: '100%', transition: 'transform 0.3s ease' }}>
-                <div style={{ position: 'relative', borderRadius: '15px', overflow: 'hidden', marginBottom: '1.5rem' }}>
-                  <img src={pkgEurope} alt="Encontro das Águas" style={{ width: '100%', height: '240px', objectFit: 'cover' }} />
-                  <div style={{ position: 'absolute', top: '1rem', right: '1rem', backgroundColor: '#fff', padding: '0.25rem 0.5rem', borderRadius: '8px', fontSize: '0.875rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <Star size={16} fill="#FFD700" color="#FFD700" /> 4.8
-                  </div>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
-                  <MapPin size={16} color="#FFD700" /> Rio Negro e Solimões
-                </div>
-                <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '1rem' }}>Expedição Encontro das Águas</h3>
-                
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid #f1f5f9' }}>
-                  <div>
-                    <span style={{ fontSize: '1.5rem', fontWeight: 800, color: '#000' }}>R$ 1250</span>
-                    <span style={{ fontSize: '0.875rem', color: '#94a3b8' }}> / pessoa</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.875rem', color: '#64748b' }}>
-                      <Clock size={16} /> 7 Dias
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Link>
-
-            {/* Package 3 */}
-            <Link to="/tour/anavilhanas" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <div className="package-card" style={{ backgroundColor: '#fff', padding: '1rem', borderRadius: '20px', boxShadow: '0 10px 30px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', height: '100%', transition: 'transform 0.3s ease' }}>
-                <div style={{ position: 'relative', borderRadius: '15px', overflow: 'hidden', marginBottom: '1.5rem' }}>
-                  <img src={pkgBeach} alt="Anavilhanas" style={{ width: '100%', height: '240px', objectFit: 'cover' }} />
-                  <div style={{ position: 'absolute', top: '1rem', right: '1rem', backgroundColor: '#fff', padding: '0.25rem 0.5rem', borderRadius: '8px', fontSize: '0.875rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <Star size={16} fill="#FFD700" color="#FFD700" /> 5.0
-                  </div>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
-                  <MapPin size={16} color="#FFD700" /> Novo Airão, AM
-                </div>
-                <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '1rem' }}>Sossego no Arquipélago Anavilhanas</h3>
-                
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid #f1f5f9' }}>
-                  <div>
-                    <span style={{ fontSize: '1.5rem', fontWeight: 800, color: '#000' }}>R$ 2200</span>
-                    <span style={{ fontSize: '0.875rem', color: '#94a3b8' }}> / pessoa</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.875rem', color: '#64748b' }}>
-                      <Clock size={16} /> 10 Dias
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Link>
+            ))}
           </div>
           
           <div style={{ textAlign: 'center', marginTop: '4rem' }}>
@@ -402,90 +427,42 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Benefits Section */}
-      <section style={{ backgroundColor: '#fff', padding: '10rem 0', borderBottom: '1px solid #f1f5f9' }}>
+      {/* FAQ Section */}
+      <section style={{ backgroundColor: '#fff', padding: '10rem 0', position: 'relative', overflow: 'hidden' }}>
         <div className="container">
-           <div style={{ 
-             display: 'grid', 
-             gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-             gap: '4rem',
-             textAlign: 'center'
-           }}>
-              {/* Step 1 */}
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                 <div style={{ position: 'relative', marginBottom: '2rem' }}>
-                    <div style={{ 
-                      width: '240px', height: '240px', borderRadius: '50%', backgroundColor: '#f4f7f6', 
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden'
-                    }}>
-                      <img 
-                        src="https://images.unsplash.com/photo-1542385151-efd9000785a0?q=80&w=400" 
-                        alt="Seleção" 
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }} 
-                      />
-                    </div>
-                    <div style={{ 
-                      position: 'absolute', bottom: '-15px', left: '50%', transform: 'translateX(-50%)',
-                      backgroundColor: '#2563eb', color: '#fff', padding: '0.4rem 1.5rem', 
-                      borderRadius: '50px', fontSize: '1rem', fontWeight: 700, whiteSpace: 'nowrap'
-                    }}>
-                      Passo 01
-                    </div>
-                 </div>
-                 <h4 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '1rem' }}>Selecione seu Tour</h4>
-                 <p style={{ color: '#64748b', fontSize: '1.1rem', lineHeight: 1.6 }}>Escolha entre nossos roteiros exclusivos ou personalize sua própria expedição pela selva.</p>
-              </div>
-              
-              {/* Step 2 */}
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                 <div style={{ position: 'relative', marginBottom: '2rem' }}>
-                    <div style={{ 
-                      width: '240px', height: '240px', borderRadius: '50%', backgroundColor: '#f4f7f6', 
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden'
-                    }}>
-                      <img 
-                        src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=400" 
-                        alt="Pagamento" 
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }} 
-                      />
-                    </div>
-                    <div style={{ 
-                      position: 'absolute', bottom: '-15px', left: '50%', transform: 'translateX(-50%)',
-                      backgroundColor: '#2563eb', color: '#fff', padding: '0.4rem 1.5rem', 
-                      borderRadius: '50px', fontSize: '1rem', fontWeight: 700, whiteSpace: 'nowrap'
-                    }}>
-                      Passo 02
-                    </div>
-                 </div>
-                 <h4 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '1rem' }}>Pague de forma segura</h4>
-                 <p style={{ color: '#64748b', fontSize: '1.1rem', lineHeight: 1.6 }}>Preencha suas informações e complete a reserva usando nosso gateway de pagamento seguro.</p>
-              </div>
+          <div className="section-title">
+            <h2 style={{ fontSize: '3.5rem', fontWeight: 900, textAlign: 'center', marginBottom: '1rem', color: '#000' }}>Perguntas e Respostas</h2>
+            <p style={{ textAlign: 'center', color: '#64748b', marginBottom: '5rem', fontSize: '1.25rem' }}>Estamos comprometidos em oferecer mais do que apenas produtos — proporcionamos experiências excepcionais.</p>
+          </div>
 
-              {/* Step 3 */}
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                 <div style={{ position: 'relative', marginBottom: '2rem' }}>
-                    <div style={{ 
-                      width: '240px', height: '240px', borderRadius: '50%', backgroundColor: '#f4f7f6', 
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden'
-                    }}>
-                      <img 
-                        src="https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?q=80&w=400" 
-                        alt="Confirmação" 
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }} 
-                      />
-                    </div>
-                    <div style={{ 
-                      position: 'absolute', bottom: '-15px', left: '50%', transform: 'translateX(-50%)',
-                      backgroundColor: '#2563eb', color: '#fff', padding: '0.4rem 1.5rem', 
-                      borderRadius: '50px', fontSize: '1rem', fontWeight: 700, whiteSpace: 'nowrap'
-                    }}>
-                      Passo 03
-                    </div>
-                 </div>
-                 <h4 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '1rem' }}>Confirme e Aproveite</h4>
-                 <p style={{ color: '#64748b', fontSize: '1.1rem', lineHeight: 1.6 }}>Nossa equipe entrará em contato com os detalhes finais do tour e informações sobre o seu guia.</p>
+          <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+            {faqs.map((faq, index) => (
+              <div key={index} style={{ marginBottom: '1.5rem', borderRadius: '12px', border: activeFaq === index ? '2px solid #3b82f6' : '1px solid #e2e8f0', backgroundColor: activeFaq === index ? '#fff' : '#f8fafc', overflow: 'hidden', transition: 'all 0.3s ease' }}>
+                <button 
+                  onClick={() => toggleFaq(index)}
+                  style={{
+                    width: '100%',
+                    padding: '2rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    border: 'none',
+                    background: 'none',
+                    cursor: 'pointer',
+                    textAlign: 'left'
+                  }}
+                >
+                  <span style={{ fontSize: '1.2rem', fontWeight: 700, color: '#000' }}>{faq.question}</span>
+                  {activeFaq === index ? <ChevronUp size={24} color="#3b82f6" /> : <ChevronDown size={24} color="#64748b" />}
+                </button>
+                {activeFaq === index && (
+                  <div style={{ padding: '0 2rem 2rem 2rem', color: '#64748b', fontSize: '1.1rem', lineHeight: 1.8 }}>
+                    {faq.answer}
+                  </div>
+                )}
               </div>
-           </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -623,6 +600,14 @@ const Home = () => {
         @keyframes zoom {
           from { transform: scale(0.9); opacity: 0; }
           to { transform: scale(1); opacity: 1; }
+        }
+        @media (max-width: 768px) {
+          .hide-mobile { display: none !important; }
+          .search-bar { flex-direction: column; align-items: stretch !important; gap: 1rem; }
+          .search-field { border-right: none !important; border-bottom: 1px solid #E2E8F0; padding-bottom: 1rem !important; }
+          .search-container { position: relative !important; bottom: 0 !important; left: 0 !important; transform: none !important; margin-top: -8rem; width: 100% !important; }
+          .hero { padding-bottom: 10rem !important; }
+          .discount-badge { width: 100px !important; height: 100px !important; top: -20px !important; right: 0 !important; transform: rotate(10deg) scale(0.8) !important; }
         }
       `}</style>
 

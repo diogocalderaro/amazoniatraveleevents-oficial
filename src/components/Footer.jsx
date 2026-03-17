@@ -1,121 +1,135 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Phone, Mail, Instagram, Facebook, Check } from 'lucide-react';
+import { MapPin, Phone, Mail, Globe, Instagram, Facebook, Twitter, Youtube, ExternalLink } from 'lucide-react';
 
 const Footer = () => {
   return (
     <footer style={{
-      backgroundColor: '#000',
-      paddingTop: 'var(--spacing-xl)',
-      paddingBottom: 'var(--spacing-lg)',
-      color: 'rgba(255,255,255,0.7)'
+      backgroundColor: '#001a2c',
+      paddingTop: '5rem',
+      paddingBottom: '2rem',
+      color: '#fff',
+      fontFamily: 'var(--font-heading)'
     }}>
       <div className="container" style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-        gap: '4rem',
-        marginBottom: '3rem'
+        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+        gap: '3rem',
+        marginBottom: '4rem'
       }}>
         
-        {/* Column 1: Brand Info & Payments */}
+        {/* Column 1: Brand & Social */}
         <div>
           <div style={{
-            fontFamily: 'var(--font-heading)',
             fontWeight: 800,
-            fontSize: '1.5rem',
+            fontSize: '1.8rem',
             color: '#fff',
-            letterSpacing: '-0.5px',
-            lineHeight: 1,
-            marginBottom: '1rem'
+            marginBottom: '1.5rem',
+            lineHeight: 1
           }}>
             AMAZONIA<br/>
-            <span style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '1px', color: '#fff' }}>
-              TRAVEL E EVENTS<span style={{ color: '#FFD700' }}>X</span>
-            </span>
+            <span style={{ fontSize: '0.9rem', color: '#FFD700', letterSpacing: '2px' }}>TRAVEL</span>
           </div>
-          <p style={{ color: 'rgba(255,255,255,0.6)', marginBottom: '1.5rem', fontSize: '0.875rem' }}>
-            Criando jornadas personalizadas para você descobrir o mundo. Viva aventuras inesquecíveis com nossos pacotes selecionados.
+          <p style={{ color: 'rgba(255,255,255,0.7)', marginBottom: '2rem', fontSize: '0.95rem', lineHeight: 1.6, maxWidth: '280px' }}>
+            A Amazonia Travel Agency oferece passeios únicos e memoráveis, proporcionando experiências enriquecedoras no coração da selva.
           </p>
-          <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
-            <a href="#" style={{ 
-              width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.1)', 
-              display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', transition: 'all 0.3s ease'
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#FFD700'}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)'}
-            >
-              <Facebook size={20} />
-            </a>
-            <a href="#" style={{ 
-              width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.1)', 
-              display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', transition: 'all 0.3s ease'
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#FFD700'}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)'}
-            >
-              <Instagram size={20} />
-            </a>
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            {[Facebook, Twitter, Youtube, Instagram].map((Icon, i) => (
+              <a key={i} href="#" style={{ color: 'rgba(255,255,255,0.8)', transition: 'color 0.3s' }} onMouseEnter={(e) => e.target.style.color = '#FFD700'} onMouseLeave={(e) => e.target.style.color = 'rgba(255,255,255,0.8)'}>
+                <Icon size={20} />
+              </a>
+            ))}
+          </div>
+        </div>
+
+        {/* Column 2: Contact Info */}
+        <div>
+          <h4 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '2rem' }}>Informações de Contato</h4>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            <div style={{ display: 'flex', gap: '12px', color: 'rgba(255,255,255,0.7)', fontSize: '0.95rem' }}>
+              <MapPin size={20} style={{ color: '#FFD700', flexShrink: 0 }} />
+              <span>Av. Eduardo Ribeiro, 123, Centro, Manaus, AM.</span>
+            </div>
+            <div style={{ display: 'flex', gap: '12px', color: 'rgba(255,255,255,0.7)', fontSize: '0.95rem' }}>
+              <Phone size={20} style={{ color: '#FFD700', flexShrink: 0 }} />
+              <span>+55 92 99123-4567</span>
+            </div>
+            <div style={{ display: 'flex', gap: '12px', color: 'rgba(255,255,255,0.7)', fontSize: '0.95rem' }}>
+              <Mail size={20} style={{ color: '#FFD700', flexShrink: 0 }} />
+              <span>booking@amazonia.com</span>
+            </div>
+            <div style={{ display: 'flex', gap: '12px', color: 'rgba(255,255,255,0.7)', fontSize: '0.95rem' }}>
+              <ExternalLink size={20} style={{ color: '#FFD700', flexShrink: 0 }} />
+              <span>www.amazonia-travel.com</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Column 3: Links */}
+        <div>
+          <h4 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '2rem' }}>Viagem Amazonia</h4>
+          <ul style={{ display: 'flex', flexDirection: 'column', gap: '1rem', listStyle: 'none', padding: 0 }}>
+            {['Sobre nós', 'Destinos', 'Amazonia Tours', 'Visão sobre viagens', 'Entre em contato conosco'].map((link, i) => (
+              <li key={i}>
+                <Link to="#" style={{ color: 'rgba(255,255,255,0.7)', textDecoration: 'none', transition: 'padding-left 0.3s' }} onMouseEnter={(e) => e.target.style.paddingLeft = '5px'} onMouseLeave={(e) => e.target.style.paddingLeft = '0'}>
+                  {link}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Column 4: Payment & WhatsApp */}
+        <div>
+          <h4 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '1rem', color: '#FFD700' }}>Formas de pagamento</h4>
+          <p style={{ color: 'rgba(255,255,255,0.9)', marginBottom: '1.5rem', fontSize: '1rem', fontWeight: 600 }}>
+            Adquira seus Tours com Segurança. Pague com:
+          </p>
+          
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '2.5rem' }}>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" style={{ height: '30px', backgroundColor: '#fff', padding: '5px', borderRadius: '4px' }} />
+            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" style={{ height: '30px', backgroundColor: '#fff', padding: '5px', borderRadius: '4px' }} />
+            <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png" alt="Mastercard" style={{ height: '30px', backgroundColor: '#fff', padding: '5px', borderRadius: '4px' }} />
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/American_Express_logo.svg/1200px-American_Express_logo.svg.png" alt="Amex" style={{ height: '30px', backgroundColor: '#fff', padding: '5px', borderRadius: '4px' }} />
           </div>
           
-          <p style={{ fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.75rem', color: '#fff' }}>Aceitamos:</p>
-          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', filter: 'brightness(0) invert(1) opacity(0.8)' }}>
-             <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" style={{ height: '18px' }} />
-             <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" style={{ height: '18px' }} />
-             <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/Logo_pix.png" alt="Pix" style={{ height: '18px' }} />
-             <img src="https://upload.wikimedia.org/wikipedia/pt/b/bd/Elo_logo.png" alt="Elo" style={{ height: '18px' }} />
-          </div>
-        </div>
-
-        {/* Column 2: Highlights */}
-        <div>
-          <h4 style={{ fontSize: '1.25rem', marginBottom: '1.5rem', color: '#fff' }}>Destaques</h4>
-          <ul style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            <li><Link to="/about" style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.875rem' }}>Sobre a Agência</Link></li>
-            <li><Link to="/destinations" style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.875rem' }}>Destinos</Link></li>
-            <li><Link to="/contact" style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.875rem' }}>Contato</Link></li>
-            <li><Link to="/blog" style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.875rem' }}>Blog</Link></li>
-          </ul>
-        </div>
-
-        {/* Column 3: Useful Links */}
-        <div>
-          <h4 style={{ fontSize: '1.25rem', marginBottom: '1.5rem', color: '#fff' }}>Links Úteis</h4>
-          <ul style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            <li><Link to="/" style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.875rem' }}>Início</Link></li>
-            <li><Link to="/plans" style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.875rem' }}>Categorias</Link></li>
-            <li><Link to="/faq" style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.875rem' }}>Nossa Equipe</Link></li>
-            <li><Link to="/terms" style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.875rem' }}>Termos e Condições</Link></li>
-          </ul>
+          <a href="https://wa.me/5592991867133" target="_blank" rel="noopener noreferrer" style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '12px', 
+            color: '#fff', 
+            fontSize: '1.4rem', 
+            fontWeight: 800, 
+            textDecoration: 'none' 
+          }}>
+            <div style={{ backgroundColor: '#25D366', width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12.031 6.172c-2.32 0-4.519.903-6.16 2.544-1.64 1.64-2.543 3.838-2.544 6.159 0 1.302.28 2.569.824 3.733l-1.076 3.929 4.02-1.055c1.121.611 2.379.932 3.655.933h.001c2.321 0 4.519-.903 6.16-2.544 1.64-1.64 2.543-3.839 2.544-6.16 0-1.303-.28-2.57-.824-3.733l-1.077-3.929-3.925 1.056c-1.12-.612-2.378-.933-3.655-.934zm.001 1.056c1.096 0 2.172.274 3.136.8L15.65 8.27l2.454-.658-.658 2.454.242.483c.525.964.8 2.04.8 3.137 0 1.966-.765 3.812-2.155 5.202-1.39 1.39-3.236 2.156-5.202 2.156h-.001c-1.096 0-2.172-.274-3.137-.8l-.482-.242-2.455.658.658-2.454-.242-.483c-.525-.964-.8-2.041-.8-3.138 0-1.966.765-3.811 2.155-5.202 1.39-1.39 3.236-2.156 5.202-2.156z"/></svg>
+            </div>
+            +55 92 99186-7133
+          </a>
         </div>
       </div>
 
-      {/* Bottom Footer */}
-      <div className="container" style={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: '1rem',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingTop: '2rem',
-        borderTop: '1px solid rgba(255,255,255,0.1)'
-      }}>
-        <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'rgba(255,255,255,0.5)', fontSize: '0.875rem' }}>
-            <Phone size={16} /> (92) 99123-4567
+      {/* Bottom Bar */}
+      <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '2rem' }}>
+        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+          <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.9rem' }}>
+            © Agência de Viagens Amazonia 2024. Todos os direitos reservados.
+          </p>
+          <div style={{ display: 'flex', gap: '2rem' }}>
+            <Link to="#" style={{ color: 'rgba(255,255,255,0.5)', textDecoration: 'none', fontSize: '0.9rem' }}>Política de Privacidade</Link>
+            <Link to="#" style={{ color: 'rgba(255,255,255,0.5)', textDecoration: 'none', fontSize: '0.9rem' }}>Termos de Uso</Link>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'rgba(255,255,255,0.5)', fontSize: '0.875rem' }}>
-            <Mail size={16} /> contato@amazoniaevents.com
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'rgba(255,255,255,0.5)', fontSize: '0.875rem' }}>
-            <MapPin size={16} /> Manaus, Amazonas - Brasil
-          </div>
-        </div>
-        <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.875rem' }}>
-          ©2024 Amazonia Travel. Todos os direitos reservados.
         </div>
       </div>
     </footer>
   );
 };
 
+// Helper for Chevron (not imported from lucide-react in replacement, adding it here)
+const ChevronDown = ({ size }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+);
+
 export default Footer;
+

@@ -43,12 +43,12 @@ const Blog = () => {
   ];
 
   return (
-    <div className="blog-page" style={{ paddingTop: '5rem' }}>
+    <div className="blog-page">
       {/* Blog Header */}
-      <section style={{ backgroundColor: '#f8fafc', padding: '6rem 0' }}>
+      <section style={{ backgroundColor: '#000', padding: '6rem 0', color: '#fff' }}>
         <div className="container" style={{ textAlign: 'center' }}>
-          <h1 style={{ fontSize: '3.5rem', fontWeight: 900, marginBottom: '1.5rem' }}>Blog Amazonia Travel</h1>
-          <p style={{ fontSize: '1.25rem', color: '#64748b', maxWidth: '700px', margin: '0 auto' }}>
+          <h1 style={{ fontSize: 'clamp(2.5rem, 8vw, 3.5rem)', fontWeight: 900, marginBottom: '1.5rem', color: '#fff' }}>Blog Amazonia Travel</h1>
+          <p style={{ fontSize: '1.125rem', color: 'rgba(255,255,255,0.7)', maxWidth: '700px', margin: '0 auto' }}>
             Dicas, guias e histórias fascinantes sobre a vida no coração da floresta.
           </p>
         </div>
@@ -64,7 +64,7 @@ const Blog = () => {
                 boxShadow: '0 10px 30px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column' 
               }}>
                 <div style={{ position: 'relative' }}>
-                  <img src={post.image} alt={post.title} style={{ width: '100%', height: '240px', objectFit: 'cover' }} />
+                  <img src={post.image} alt={post.title} loading="lazy" style={{ width: '100%', height: '240px', objectFit: 'cover' }} />
                   <div style={{ 
                     position: 'absolute', top: '1rem', left: '1rem', 
                     backgroundColor: '#FFD700', color: '#000', padding: '0.5rem 1rem', 

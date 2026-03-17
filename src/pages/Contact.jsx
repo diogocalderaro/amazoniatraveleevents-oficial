@@ -3,12 +3,12 @@ import { Mail, Phone, MapPin, Send, Instagram, Facebook, Twitter, Clock } from '
 
 const Contact = () => {
   return (
-    <div className="contact-page" style={{ paddingTop: '5rem' }}>
+    <div className="contact-page">
       {/* Contact Header */}
       <section style={{ backgroundColor: '#000', padding: '6rem 0', color: '#fff', textAlign: 'center' }}>
         <div className="container">
-          <h1 style={{ fontSize: '3.5rem', fontWeight: 900, marginBottom: '1rem' }}>Fale Conosco</h1>
-          <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '1.25rem', maxWidth: '600px', margin: '0 auto' }}>
+          <h1 style={{ fontSize: 'clamp(2.5rem, 8vw, 3.5rem)', fontWeight: 900, marginBottom: '1rem', color: '#fff' }}>Fale Conosco</h1>
+          <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '1.125rem', maxWidth: '600px', margin: '0 auto' }}>
             Estamos aqui para ajudar você a planejar sua próxima grande aventura. Entre em contato!
           </p>
         </div>
@@ -17,7 +17,7 @@ const Contact = () => {
       {/* Contact Content */}
       <section style={{ padding: '8rem 0', backgroundColor: '#fff' }}>
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1.5fr)', gap: '5rem' }}>
+          <div className="grid-responsive" style={{ gap: '4rem' }}>
             
             {/* Contact Info */}
             <div>
@@ -71,7 +71,7 @@ const Contact = () => {
             <div style={{ backgroundColor: '#f8fafc', padding: '3.5rem', borderRadius: '25px' }}>
               <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '2.5rem' }}>Envie uma mensagem</h2>
               <form onSubmit={(e) => e.preventDefault()}>
-                <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: '1.5rem', marginBottom: '1.5rem' }}>
+                <div className="grid-responsive" style={{ gap: '1.5rem', marginBottom: '1.5rem' }} id="form-fields">
                   <div style={{ flex: 1 }}>
                     <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, marginBottom: '0.5rem' }}>Nome Completo</label>
                     <input type="text" style={{ width: '100%', padding: '1rem', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} placeholder="Seu nome" />

@@ -57,13 +57,27 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   font-weight: 700;
   line-height: 1.2;
+  color: inherit; /* Allow inheritance from parent */
+}
+
+/* Default heading color when not inherited */
+body h1, body h2, body h3, body h4, body h5, body h6 {
   color: var(--color-text-main);
+}
+
+/* When in dark background sections, force light text */
+section[style*="background-color: #000"] h1,
+section[style*="background-color: #000"] h2,
+section[style*="background-color: var(--color-secondary)"] h1,
+section[style*="background-color: var(--color-secondary)"] h2 {
+  color: #fff !important;
 }
 
 h1 { font-size: 4rem; }
@@ -99,6 +113,7 @@ ul, ol {
 .text-secondary { color: var(--color-secondary); }
 .text-accent { color: var(--color-accent); }
 .text-muted { color: var(--color-text-muted); }
+.text-white { color: #fff !important; }
 
 /* Common UI Patterns */
 .btn {
@@ -114,6 +129,7 @@ ul, ol {
   cursor: pointer;
   border: none;
   transition: all var(--transition-normal);
+  white-space: nowrap;
 }
 
 .btn-primary {
@@ -220,9 +236,34 @@ section {
   font-size: 1.125rem;
 }
 
+/* Responsive Grid Utilities */
+.grid-responsive {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+@media (max-width: 1024px) {
+  h1 { font-size: 3rem; }
+  .container { padding: 0 var(--spacing-md); }
+}
+
 @media (max-width: 768px) {
   h1 { font-size: 2.5rem; }
   h2 { font-size: 2rem; }
   section { padding: var(--spacing-lg) 0; }
   .section-title { margin-bottom: var(--spacing-lg); }
+  
+  .btn { padding: 0.6rem 1.2rem; font-size: 0.9rem; }
+  
+  /* Stack grids on mobile */
+  .grid-mobile-1 {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.5rem; }
+  .container { padding: 0 1rem; }
 }

@@ -9,13 +9,16 @@ import Packages from './pages/Packages';
 import About from './pages/About';
 import Blog from './pages/Blog';
 import Contact from './pages/Contact';
+import SearchResults from './pages/SearchResults';
 import { CartProvider } from './context/CartContext';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   return (
     <CartProvider>
       <Router>
-      <div className="page-wrapper">
+        <ScrollToTop />
+        <div className="page-wrapper">
         <Header />
         <main>
           <Routes>
@@ -26,6 +29,7 @@ function App() {
             <Route path="/about" element={<About />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/search" element={<SearchResults />} />
             <Route path="/book/:id" element={<BookingFlow />} />
             <Route path="/plans" element={<div className="container" style={{padding: '5rem 0'}}><h1>Plans (Coming Soon)</h1></div>} />
           </Routes>
