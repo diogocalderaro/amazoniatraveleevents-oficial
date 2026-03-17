@@ -12,6 +12,9 @@ import {
 
 import { packagesData } from '../data/toursData';
 
+// Import hero background image
+import imgSafari from '../assets/destinos/safari_amazonico.jpg';
+
 const Packages = () => {
   const [activeCategory, setActiveCategory] = useState('Todos');
   const [searchQuery, setSearchQuery] = useState('');

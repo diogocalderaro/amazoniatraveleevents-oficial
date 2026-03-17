@@ -381,54 +381,62 @@ const Home = () => {
                 gap: '2rem',
                 overflowX: 'auto',
                 scrollSnapType: 'x mandatory',
-                paddingBottom: '2rem',
+                padding: '1rem 0.5rem 2rem 0.5rem',
                 scrollbarWidth: 'none',
-                msOverflowStyle: 'none'
+                msOverflowStyle: 'none',
+                margin: '0 -0.5rem'
               }}
             >
               {packagesData.slice(0, 6).map((pkg) => (
-                <div key={pkg.id} className="package-card-new" style={{ flex: '0 0 auto', width: 'min(100%, 320px)', scrollSnapAlign: 'start', backgroundColor: '#fff', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ position: 'relative', height: '220px' }}>
+                <div key={pkg.id} className="package-card-new" style={{ 
+                  flex: '0 0 auto', 
+                  width: 'min(90vw, 320px)', 
+                  scrollSnapAlign: 'start', 
+                  backgroundColor: '#fff', 
+                  borderRadius: '16px', 
+                  overflow: 'hidden', 
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.08)', 
+                  display: 'flex', 
+                  flexDirection: 'column',
+                  margin: '0.5rem 0'
+                }}>
+                  <div style={{ position: 'relative', height: '220px', overflow: 'hidden' }}>
                     <Link to={`/tour/${pkg.id}`}>
-                      <img src={pkg.image} alt={pkg.title} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <img src={pkg.image} alt={pkg.title} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s ease' }} className="pkg-img-hover" />
                     </Link>
                   </div>
                   
                   <div style={{ padding: '1.25rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
                     <Link to={`/tour/${pkg.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                      <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '0.75rem', lineHeight: 1.3, height: '2.8rem', overflow: 'hidden' }}>
+                      <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '0.75rem', lineHeight: 1.3, height: '2.8rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                         {pkg.title}
                       </h3>
                     </Link>
                     
-                    <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.75rem', color: '#64748b', fontSize: '0.8rem' }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '0.75rem', color: '#64748b', fontSize: '0.8rem' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        <Calendar size={12} color="#7EB53F" /> {pkg.duration}
+                        <Calendar size={14} color="#7EB53F" /> {pkg.duration}
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        <MapPin size={12} color="#7EB53F" /> {pkg.location.split(',')[0]}
+                        <MapPin size={14} color="#7EB53F" /> {pkg.location.split(',')[0]}
                       </div>
                     </div>
                     
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '1.25rem' }}>
                       <span style={{ fontWeight: 800, fontSize: '0.85rem' }}>{pkg.rating}</span>
                       <div style={{ display: 'flex', gap: '1px' }}>
-                        {[1, 2, 3, 4, 5].map(s => <Star key={s} size={10} fill="#FFD700" color="#FFD700" />)}
+                        {[1, 2, 3, 4, 5].map(s => <Star key={s} size={12} fill="#FFD700" color="#FFD700" />)}
                       </div>
                       <span style={{ color: '#94a3b8', fontSize: '0.75rem' }}>({pkg.reviews} avaliações)</span>
                     </div>
                     
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.75rem', borderTop: '1px solid #f1f5f9', marginTop: 'auto' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '1rem', borderTop: '1px solid #f1f5f9', marginTop: 'auto' }}>
                       <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        {pkg.oldPrice && <span style={{ fontSize: '0.75rem', color: '#94a3b8', textDecoration: 'line-through', marginRight: '6px' }}>R$ {pkg.oldPrice}</span>}
-                        <span style={{ fontSize: '1.1rem', fontWeight: 800, color: '#000' }}>{pkg.priceDisplay || `R$ ${pkg.price.toLocaleString('pt-BR')}`}</span>
+                        {pkg.oldPrice && <span style={{ fontSize: '0.75rem', color: '#94a3b8', textDecoration: 'line-through' }}>R$ {pkg.oldPrice}</span>}
+                        <span style={{ fontSize: '1.2rem', fontWeight: 800, color: '#000' }}>{pkg.priceDisplay || `R$ ${pkg.price.toLocaleString('pt-BR')}`}</span>
                       </div>
-                      <Link to={`/tour/${pkg.id}`} style={{ 
-                        width: '36px', height: '36px', borderRadius: '50%', 
-                        backgroundColor: '#FFD700', color: '#000', 
-                        display: 'flex', alignItems: 'center', justifyContent: 'center'
-                      }}>
-                        <ArrowRight size={18} />
+                      <Link to={`/tour/${pkg.id}`} className="nav-arrow-btn">
+                        <ArrowRight size={20} />
                       </Link>
                     </div>
                   </div>
@@ -439,47 +447,15 @@ const Home = () => {
             {/* Carousel Navigation Buttons */}
             <button 
               onClick={() => scrollCarousel('left')}
-              style={{
-                position: 'absolute',
-                left: '-20px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                width: '40px',
-                height: '40px',
-                borderRadius: '50%',
-                backgroundColor: '#fff',
-                boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
-                border: '1px solid #e2e8f0',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                zIndex: 10
-              }}
-              className="carousel-btn hide-mobile"
+              className="carousel-control-btn left hide-mobile"
+              aria-label="Anterior"
             >
               <ChevronLeft size={24} />
             </button>
             <button 
               onClick={() => scrollCarousel('right')}
-              style={{
-                position: 'absolute',
-                right: '-20px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                width: '40px',
-                height: '40px',
-                borderRadius: '50%',
-                backgroundColor: '#fff',
-                boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
-                border: '1px solid #e2e8f0',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                zIndex: 10
-              }}
-              className="carousel-btn hide-mobile"
+              className="carousel-control-btn right hide-mobile"
+              aria-label="Próximo"
             >
               <ChevronRight size={24} />
             </button>
@@ -659,10 +635,62 @@ const Home = () => {
       </section>
 
       <style>{`
-        .package-card:hover {
-          transform: translateY(-10px);
-          box-shadow: 0 20px 40px rgba(0,0,0,0.1) !important;
+        .package-card-new {
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
+        .package-card-new:hover {
+          transform: translateY(-8px);
+          box-shadow: 0 12px 30px rgba(0,0,0,0.12) !important;
+        }
+        .package-card-new:hover .pkg-img-hover {
+          transform: scale(1.1);
+        }
+        .nav-arrow-btn {
+          width: 42px;
+          height: 42px;
+          border-radius: 50%;
+          background-color: #FFD700;
+          color: #000;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.2s ease;
+        }
+        .nav-arrow-btn:hover {
+          background-color: #000;
+          color: #FFD700;
+          transform: scale(1.1);
+        }
+        .carousel-control-btn {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          background-color: #fff;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+          border: 1px solid #e2e8f0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          zIndex: 10;
+          transition: all 0.3s ease;
+        }
+        .carousel-control-btn:hover {
+          background-color: #FFD700;
+          color: #000;
+          border-color: #FFD700;
+          box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
+        }
+        .carousel-control-btn.left { left: -24px; }
+        .carousel-control-btn.right { right: -24px; }
+
+        .home-packages-carousel::-webkit-scrollbar {
+          display: none;
+        }
+        
         .gallery-item:hover .gallery-overlay {
           opacity: 1 !important;
         }
