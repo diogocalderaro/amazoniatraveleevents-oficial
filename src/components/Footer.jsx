@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Phone, Mail, Globe, Instagram, Facebook, Twitter, Youtube, ExternalLink } from 'lucide-react';
+import logoWhite from '../assets/logo-branco.png';
 
 const Footer = () => {
   return (
@@ -20,15 +21,8 @@ const Footer = () => {
         
         {/* Column 1: Brand & Social */}
         <div>
-          <div style={{
-            fontWeight: 800,
-            fontSize: '1.8rem',
-            color: '#fff',
-            marginBottom: '1.5rem',
-            lineHeight: 1
-          }}>
-            AMAZONIA<br/>
-            <span style={{ fontSize: '0.9rem', color: '#FFD700', letterSpacing: '2px' }}>TRAVEL</span>
+          <div style={{ marginBottom: '1.5rem' }}>
+            <img src={logoWhite} alt="Amazonia Travel" style={{ height: '70px', width: 'auto' }} />
           </div>
           <p style={{ color: 'rgba(255,255,255,0.7)', marginBottom: '2rem', fontSize: '0.95rem', lineHeight: 1.6, maxWidth: '280px' }}>
             Empresa especializada em Turismo regionais, nacionais e internacionais.<br/><br/>Serviços: Passeios, Excursões, Traslados, Passagens e Eventos  etc.
@@ -44,19 +38,27 @@ const Footer = () => {
 
         {/* Column 2: Contact Info */}
         <div>
-          <h4 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '2rem' }}>Informações de Contato</h4>
+          <h4 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '2rem', color: '#FFD700' }}>Informações de Contato</h4>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             <div style={{ display: 'flex', gap: '12px', color: 'rgba(255,255,255,0.7)', fontSize: '0.95rem' }}>
               <MapPin size={20} style={{ color: '#FFD700', flexShrink: 0 }} />
               <span>Av. Eduardo Ribeiro, 123, Centro, Manaus, AM.</span>
             </div>
-            <div style={{ display: 'flex', gap: '12px', color: 'rgba(255,255,255,0.7)', fontSize: '0.95rem' }}>
-              <Phone size={20} style={{ color: '#FFD700', flexShrink: 0 }} />
-              <div>
-                <span style={{ display: 'block', marginBottom: '4px' }}>(92) 99350-2913</span>
-                <span>(92) 98147-4760</span>
+            
+            <a href="https://wa.me/5592993502913" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', gap: '12px', color: 'rgba(255,255,255,0.7)', fontSize: '0.95rem', textDecoration: 'none' }}>
+              <div style={{ backgroundColor: '#25D366', width: '20px', height: '20px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', flexShrink: 0 }}>
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M12.031 6.172c-2.32 0-4.519.903-6.16 2.544-1.64 1.64-2.543 3.838-2.544 6.159 0 1.302.28 2.569.824 3.733l-1.076 3.929 4.02-1.055c1.121.611 2.379.932 3.655.933h.001c2.321 0 4.519-.903 6.16-2.544 1.64-1.64 2.543-3.839 2.544-6.16 0-1.303-.28-2.57-.824-3.733l-1.077-3.929-3.925 1.056c-1.12-.612-2.378-.933-3.655-.934zm.001 1.056c1.096 0 2.172.274 3.136.8L15.65 8.27l2.454-.658-.658 2.454.242.483c.525.964.8 2.04.8 3.137 0 1.966-.765 3.812-2.155 5.202-1.39 1.39-3.236 2.156-5.202 2.156h-.001c-1.096 0-2.172-.274-3.137-.8l-.482-.242-2.455.658.658-2.454-.242-.483c-.525-.964-.8-2.041-.8-3.138 0-1.966.765-3.811 2.155-5.202 1.39-1.39 3.236-2.156 5.202-2.156z"/></svg>
               </div>
-            </div>
+              <span>(92) 99350-2913</span>
+            </a>
+
+            <a href="https://wa.me/5592981474760" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', gap: '12px', color: 'rgba(255,255,255,0.7)', fontSize: '0.95rem', textDecoration: 'none' }}>
+              <div style={{ backgroundColor: '#25D366', width: '20px', height: '20px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', flexShrink: 0 }}>
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M12.031 6.172c-2.32 0-4.519.903-6.16 2.544-1.64 1.64-2.543 3.838-2.544 6.159 0 1.302.28 2.569.824 3.733l-1.076 3.929 4.02-1.055c1.121.611 2.379.932 3.655.933h.001c2.321 0 4.519-.903 6.16-2.544 1.64-1.64 2.543-3.839 2.544-6.16 0-1.303-.28-2.57-.824-3.733l-1.077-3.929-3.925 1.056c-1.12-.612-2.378-.933-3.655-.934zm.001 1.056c1.096 0 2.172.274 3.136.8L15.65 8.27l2.454-.658-.658 2.454.242.483c.525.964.8 2.04.8 3.137 0 1.966-.765 3.812-2.155 5.202-1.39 1.39-3.236 2.156-5.202 2.156h-.001c-1.096 0-2.172-.274-3.137-.8l-.482-.242-2.455.658.658-2.454-.242-.483c-.525-.964-.8-2.041-.8-3.138 0-1.966.765-3.811 2.155-5.202 1.39-1.39 3.236-2.156 5.202-2.156z"/></svg>
+              </div>
+              <span>(92) 98147-4760</span>
+            </a>
+
             <div style={{ display: 'flex', gap: '12px', color: 'rgba(255,255,255,0.7)', fontSize: '0.95rem' }}>
               <Mail size={20} style={{ color: '#FFD700', flexShrink: 0 }} />
               <span>contato@amazoniatraveleevents.com</span>
@@ -70,7 +72,7 @@ const Footer = () => {
 
         {/* Column 3: Links */}
         <div>
-          <h4 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '2rem' }}>Viagem Amazonia</h4>
+          <h4 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '2rem', color: '#FFD700' }}>Viagem Amazonia</h4>
           <ul style={{ display: 'flex', flexDirection: 'column', gap: '1rem', listStyle: 'none', padding: 0 }}>
             {[
               { name: 'Home', path: '/' },
@@ -97,7 +99,7 @@ const Footer = () => {
           </p>
           
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '2.5rem' }}>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" style={{ height: '30px', backgroundColor: '#fff', padding: '5px', borderRadius: '4px' }} />
+            <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" alt="Visa" style={{ height: '30px', backgroundColor: '#fff', padding: '5px 10px', borderRadius: '4px' }} />
             <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" style={{ height: '30px', backgroundColor: '#fff', padding: '5px', borderRadius: '4px' }} />
             <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png" alt="Mastercard" style={{ height: '30px', backgroundColor: '#fff', padding: '5px', borderRadius: '4px' }} />
             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/American_Express_logo.svg/1200px-American_Express_logo.svg.png" alt="Amex" style={{ height: '30px', backgroundColor: '#fff', padding: '5px', borderRadius: '4px' }} />

@@ -26,6 +26,7 @@ const TourDetails = () => {
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
   const [activeTab, setActiveTab] = useState('sobre');
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const tourData = packagesData.find(pkg => pkg.id === id) || packagesData[0];
 
@@ -149,7 +150,7 @@ const TourDetails = () => {
             {/* Left Column Content */}
             <div>
                {/* Sobre Section */}
-               <section id="sobre" style={{ marginBottom: '4rem' }}>
+               <section id="sobre" style={{ marginBottom: '2rem' }}>
                 <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
                    <Info size={32} className="text-primary" /> Sobre o Pacote
                 </h2>
@@ -167,21 +168,43 @@ const TourDetails = () => {
               </section>
 
                {/* Gallery Section */}
-               <section id="fotos" style={{ marginBottom: '4rem' }}>
+               <section id="fotos" style={{ marginBottom: '2rem' }}>
                 <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
                    <ImageIcon size={32} className="text-primary" /> Galeria de Fotos
                 </h2>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
                   {tourData.gallery.map((img, i) => (
-                    <div key={i} style={{ borderRadius: '12px', overflow: 'hidden', height: '200px' }}>
+                    <div 
+                      key={i} 
+                      onClick={() => setSelectedImage(img)}
+                      style={{ 
+                        borderRadius: '12px', 
+                        overflow: 'hidden', 
+                        height: '180px', 
+                        cursor: 'zoom-in',
+                        transition: 'transform 0.3s ease'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
+                      onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                    >
                       <img src={img} alt={`Gallery ${i}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                  ))}
+                  {/* Extra placeholder images to fulfill "more photos" request if listing is small */}
+                  {[gal010, gal011, gal012, gal001, gal002].map((img, i) => (
+                    <div 
+                      key={`extra-${i}`} 
+                      onClick={() => setSelectedImage(img)}
+                      style={{ borderRadius: '12px', overflow: 'hidden', height: '180px', cursor: 'zoom-in' }}
+                    >
+                      <img src={img} alt={`Extra Gallery ${i}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     </div>
                   ))}
                 </div>
               </section>
 
                {/* Itinerary Section */}
-               <section id="itinerario" style={{ marginBottom: '4rem' }}>
+               <section id="itinerario" style={{ marginBottom: '2rem' }}>
                 <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
                    <ListChecks size={32} className="text-primary" /> Roteiro da Viagem
                 </h2>
@@ -201,7 +224,7 @@ const TourDetails = () => {
               </section>
 
                {/* Policy Section */}
-               <section id="politicas" style={{ marginBottom: '4rem' }}>
+               <section id="politicas" style={{ marginBottom: '2rem' }}>
                 <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
                    <FileText size={32} className="text-primary" /> Políticas do Tour
                 </h2>
@@ -379,9 +402,63 @@ const TourDetails = () => {
           >
             RESERVAR AGORA
           </button>
-        </div>
-      </section>
-      <style>{`
+         </div>
+       </section>
+ 
+       {/* Lightbox Modal */}
+       {selectedImage && (
+         <div 
+           onClick={() => setSelectedImage(null)}
+           style={{
+             position: 'fixed',
+             top: 0,
+             left: 0,
+             right: 0,
+             bottom: 0,
+             backgroundColor: 'rgba(0,0,0,0.9)',
+             zIndex: 2000,
+             display: 'flex',
+             alignItems: 'center',
+             justifyContent: 'center',
+             padding: '2rem',
+             cursor: 'zoom-out'
+           }}
+         >
+           <div style={{ position: 'relative', maxWidth: '90%', maxHeight: '90%' }}>
+             <img 
+               src={selectedImage} 
+               alt="Zoomed" 
+               style={{ 
+                 maxWidth: '100%',
+                 maxHeight: '85vh',
+                 borderRadius: '8px',
+                 boxShadow: '0 0 50px rgba(0,0,0,0.5)',
+                 animation: 'zoom 0.3s ease'
+               }} 
+             />
+             <button 
+               onClick={(e) => { e.stopPropagation(); setSelectedImage(null); }} // Prevent closing when clicking button
+               style={{
+                 position: 'absolute',
+                 top: '-40px',
+                 right: '0',
+                 background: 'none',
+                 border: 'none',
+                 color: '#fff',
+                 cursor: 'pointer'
+               }}
+             >
+               <X size={32} />
+             </button>
+           </div>
+         </div>
+       )}
+ 
+       <style>{`
+         @keyframes zoom {
+           from { transform: scale(0.9); opacity: 0; }
+           to { transform: scale(1); opacity: 1; }
+         }
         .tour-details-grid {
           display: grid;
         }

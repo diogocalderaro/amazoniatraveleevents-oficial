@@ -16,7 +16,6 @@ const Header = () => {
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'Destinos', path: '/destinations' },
-    { name: 'Viagens', path: '/trip' },
     { name: 'Como comprar', path: '/how-to-buy' },
     { name: 'Sobre', path: '/about' },
     { name: 'Blog', path: '/blog' },
@@ -88,7 +87,7 @@ const Header = () => {
         {/* Action Buttons */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
           {/* Language Switcher */}
-          <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', paddingRight: '0.75rem', borderRight: '1px solid rgba(0,0,0,0.1)' }}>
+          <div className="language-switcher" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', paddingRight: '0.75rem', borderRight: '1px solid rgba(0,0,0,0.1)' }}>
             <button title="Português" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}>
               <img src="https://flagcdn.com/w40/br.png" alt="Brasil" style={{ width: '24px', height: 'auto', borderRadius: '2px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }} />
             </button>
@@ -194,6 +193,9 @@ const Header = () => {
         @media (min-width: 768px) {
           .desktop-nav { display: block !important; }
           .mobile-menu-btn { display: none !important; }
+        }
+        @media (max-width: 767px) {
+          .language-switcher { display: none !important; }
         }
       `}</style>
     </header>

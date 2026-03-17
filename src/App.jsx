@@ -11,6 +11,7 @@ import Blog from './pages/Blog';
 import Contact from './pages/Contact';
 import HowToBuy from './pages/HowToBuy';
 import SearchResults from './pages/SearchResults';
+import NotFound from './pages/NotFound';
 import { CartProvider } from './context/CartContext';
 import ScrollToTop from './components/ScrollToTop';
 
@@ -33,6 +34,7 @@ function App() {
             <Route path="/search" element={<SearchResults />} />
             <Route path="/book/:id" element={<BookingFlow />} />
             <Route path="/how-to-buy" element={<HowToBuy />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
         <Footer />

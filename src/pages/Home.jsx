@@ -40,6 +40,21 @@ const Home = () => {
     }
   };
 
+  // 5 second auto-play for carousel
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      if (carouselRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
+        if (scrollLeft + clientWidth >= scrollWidth - 10) {
+          carouselRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          carouselRef.current.scrollBy({ left: 350, behavior: 'smooth' });
+        }
+      }
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
   const toggleFaq = (index) => {
     setActiveFaq(activeFaq === index ? null : index);
   };
@@ -245,11 +260,11 @@ const Home = () => {
                 </button>
                 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFD700' }}>
+                   <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFD700' }}>
                      <Phone size={24} fill="#FFD700" />
                   </div>
                   <div>
-                    <p style={{ fontWeight: 800, fontSize: '1.25rem', color: '#fff' }}>410-123-4597</p>
+                    <p style={{ fontWeight: 800, fontSize: '1.25rem', color: '#fff' }}>92 99350-2913</p>
                     <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', fontWeight: 700, textTransform: 'uppercase' }}>Ligue Agora</p>
                   </div>
                 </div>
@@ -378,19 +393,19 @@ const Home = () => {
               className="home-packages-carousel" 
               style={{
                 display: 'flex',
-                gap: '2rem',
+                gap: '1.5rem',
                 overflowX: 'auto',
                 scrollSnapType: 'x mandatory',
                 padding: '1rem 0.5rem 2rem 0.5rem',
                 scrollbarWidth: 'none',
                 msOverflowStyle: 'none',
-                margin: '0 -0.5rem'
               }}
             >
               {packagesData.slice(0, 6).map((pkg) => (
                 <div key={pkg.id} className="package-card-new" style={{ 
                   flex: '0 0 auto', 
-                  width: 'min(90vw, 320px)', 
+                  width: 'calc(25% - 1.125rem)', 
+                  minWidth: '280px',
                   scrollSnapAlign: 'start', 
                   backgroundColor: '#fff', 
                   borderRadius: '16px', 
@@ -449,6 +464,7 @@ const Home = () => {
               onClick={() => scrollCarousel('left')}
               className="carousel-control-btn left hide-mobile"
               aria-label="Anterior"
+              style={{ left: '-60px' }}
             >
               <ChevronLeft size={24} />
             </button>
@@ -456,6 +472,7 @@ const Home = () => {
               onClick={() => scrollCarousel('right')}
               className="carousel-control-btn right hide-mobile"
               aria-label="Próximo"
+              style={{ right: '-60px' }}
             >
               <ChevronRight size={24} />
             </button>
@@ -482,12 +499,12 @@ const Home = () => {
 
           <div style={{ maxWidth: '900px', margin: '0 auto' }}>
             {faqs.map((faq, index) => (
-              <div key={index} style={{ marginBottom: '1.5rem', borderRadius: '12px', border: activeFaq === index ? '2px solid #3b82f6' : '1px solid #e2e8f0', backgroundColor: activeFaq === index ? '#fff' : '#f8fafc', overflow: 'hidden', transition: 'all 0.3s ease' }}>
+              <div key={index} style={{ marginBottom: '1.5rem', borderRadius: '12px', border: activeFaq === index ? '2px solid #FFD700' : '1px solid #e2e8f0', backgroundColor: activeFaq === index ? '#fff' : '#f8fafc', overflow: 'hidden', transition: 'all 0.3s ease' }}>
                 <button 
                   onClick={() => toggleFaq(index)}
                   style={{
                     width: '100%',
-                    padding: '2rem',
+                    padding: '1.5rem 2rem',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
@@ -498,13 +515,18 @@ const Home = () => {
                   }}
                 >
                   <span style={{ fontSize: '1.2rem', fontWeight: 700, color: '#000' }}>{faq.question}</span>
-                  {activeFaq === index ? <ChevronUp size={24} color="#3b82f6" /> : <ChevronDown size={24} color="#64748b" />}
+                  {activeFaq === index ? <ChevronUp size={24} color="#FFD700" /> : <ChevronDown size={24} color="#64748b" />}
                 </button>
-                {activeFaq === index && (
+                <div style={{ 
+                  maxHeight: activeFaq === index ? '500px' : '0',
+                  opacity: activeFaq === index ? 1 : 0,
+                  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                  overflow: 'hidden'
+                }}>
                   <div style={{ padding: '0 2rem 2rem 2rem', color: '#64748b', fontSize: '1.1rem', lineHeight: 1.8 }}>
                     {faq.answer}
                   </div>
-                )}
+                </div>
               </div>
             ))}
           </div>
