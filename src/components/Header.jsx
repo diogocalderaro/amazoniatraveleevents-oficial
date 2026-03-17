@@ -17,7 +17,7 @@ const Header = () => {
     { name: 'Home', path: '/' },
     { name: 'Destinos', path: '/destinations' },
     { name: 'Viagens', path: '/trip' },
-    { name: 'Planos', path: '/plans' },
+    { name: 'Como comprar', path: '/how-to-buy' },
     { name: 'Sobre', path: '/about' },
     { name: 'Blog', path: '/blog' },
     { name: 'Contato', path: '/contact' },

@@ -16,6 +16,8 @@ import gal013 from '../assets/galeria/013.jpg';
 import gal001 from '../assets/galeria/001.jpg';
 import gal002 from '../assets/galeria/002.jpg';
 
+import { packagesData } from '../data/toursData';
+
 const TourDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -25,65 +27,18 @@ const TourDetails = () => {
   const [children, setChildren] = useState(0);
   const [activeTab, setActiveTab] = useState('sobre');
 
-  const tourData = {
-    title: "Exploração Encontro das Águas",
-    location: "Manaus, Amazonas",
-    price: "1.250,00",
-    rating: 4.9,
-    reviews: 128,
-    duration: "7 Dias / 6 Noites",
-    destinations: "3 Destinos",
-    groupSize: "Máx 12 Pessoas",
-    languages: "Português, Inglês",
-    tourType: "Aventura e Natureza",
-    description: "Embarque em uma jornada inesquecível pelo majestoso Rio Negro e Solimões. Esta expedição de 7 dias é projetada para mergulhar você na beleza natural de tirar o fôlego, na cultura ancestral e nas paisagens emocionantes da Amazônia. Seja você um explorador ávido ou um entusiasta da natureza, este tour oferece o equilíbrio perfeito entre desafio e recompensa.",
-    highlights: [
-      "Guias locais bilíngues especializados.",
-      "Acomodações em eco-lodges confortáveis.",
-      "Vista icônica do Encontro das Águas ao amanhecer.",
-      "Visita a comunidades indígenas locais.",
-      "Todo o transporte fluvial e terrestre incluso.",
-      "Refeições regionais autênticas inclusas."
-    ],
-    gallery: [
-      gal010,
-      gal011,
-      gal012,
-      gal013,
-      gal001,
-      gal002
-    ],
-    itinerary: [
-      { day: "Dia 1", title: "Chegada em Manaus", desc: "Boas-vindas à Amazônia! Traslado do aeroporto para o hotel. À noite, briefing com a equipe sobre a expedição." },
-      { day: "Dia 2", title: "Navegação para o Janauari", desc: "Início da jornada fluvial. Visita ao Parque Ecológico Janauari para ver as vitórias-régias e os igapós." },
-      { day: "Dia 3", title: "O Grande Encontro", desc: "Observação do fenômeno natural do Encontro das Águas sob a luz do nascer do sol. Pesca esportiva e focagem noturna." },
-      { day: "Dia 4-7", title: "Selva Adentro e Retorno", desc: "Trilhas interpretativas, visitas a comunidades e retorno para Manaus no final do sétimo dia." }
-    ],
-    included: [
-      "Traslados Aeroporto/Hotel/Porto",
-      "Guia bilíngue certificado",
-      "Todas as refeições (Pensão Completa)",
-      "Equipamentos de segurança",
-      "Seguro viagem básico"
-    ],
-    excluded: [
-      "Passagens aéreas",
-      "Bebidas alcoólicas",
-      "Gorjetas",
-      "Compras pessoais"
-    ]
-  };
+  const tourData = packagesData.find(pkg => pkg.id === id) || packagesData[0];
 
   const handleAddToCart = () => {
     const cartData = {
-      id: id || 'amazon-adventure',
+      id: id || tourData.id,
       title: tourData.title,
       duration: tourData.duration,
-      destinations: tourData.destinations,
+      destinations: tourData.destinations || "1 Destino",
       date: selectedDate || "A combinar",
       guests: `${adults} adultos - ${children} crianças`,
-      price: "1250.00",
-      image: tourData.gallery[1]
+      price: tourData.price,
+      image: tourData.gallery[0]
     };
     addToCart(cartData);
     navigate('/checkout');
@@ -287,7 +242,7 @@ const TourDetails = () => {
                 <div style={{ marginBottom: '2rem' }}>
                   <p style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px' }}>Preço Total</p>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
-                    <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#000' }}>R$ {tourData.price}</span>
+                    <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#000' }}>{tourData.priceDisplay || `R$ ${typeof tourData.price === 'number' ? tourData.price.toLocaleString('pt-BR') : tourData.price}`}</span>
                     <span style={{ color: '#94a3b8', fontWeight: 600 }}>/pessoa</span>
                   </div>
                 </div>

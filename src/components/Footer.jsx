@@ -31,7 +31,7 @@ const Footer = () => {
             <span style={{ fontSize: '0.9rem', color: '#FFD700', letterSpacing: '2px' }}>TRAVEL</span>
           </div>
           <p style={{ color: 'rgba(255,255,255,0.7)', marginBottom: '2rem', fontSize: '0.95rem', lineHeight: 1.6, maxWidth: '280px' }}>
-            A Amazonia Travel Agency oferece passeios únicos e memoráveis, proporcionando experiências enriquecedoras no coração da selva.
+            Empresa especializada em Turismo regionais, nacionais e internacionais.<br/><br/>Serviços: Passeios, Excursões, Traslados, Passagens e Eventos  etc.
           </p>
           <div style={{ display: 'flex', gap: '1rem' }}>
             {[Facebook, Twitter, Youtube, Instagram].map((Icon, i) => (
@@ -52,15 +52,18 @@ const Footer = () => {
             </div>
             <div style={{ display: 'flex', gap: '12px', color: 'rgba(255,255,255,0.7)', fontSize: '0.95rem' }}>
               <Phone size={20} style={{ color: '#FFD700', flexShrink: 0 }} />
-              <span>+55 92 99123-4567</span>
+              <div>
+                <span style={{ display: 'block', marginBottom: '4px' }}>(92) 99350-2913</span>
+                <span>(92) 98147-4760</span>
+              </div>
             </div>
             <div style={{ display: 'flex', gap: '12px', color: 'rgba(255,255,255,0.7)', fontSize: '0.95rem' }}>
               <Mail size={20} style={{ color: '#FFD700', flexShrink: 0 }} />
-              <span>booking@amazonia.com</span>
+              <span>contato@amazoniatraveleevents.com</span>
             </div>
             <div style={{ display: 'flex', gap: '12px', color: 'rgba(255,255,255,0.7)', fontSize: '0.95rem' }}>
               <ExternalLink size={20} style={{ color: '#FFD700', flexShrink: 0 }} />
-              <span>www.amazonia-travel.com</span>
+              <span>www.amazoniatraveleevents.com</span>
             </div>
           </div>
         </div>
@@ -69,10 +72,17 @@ const Footer = () => {
         <div>
           <h4 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '2rem' }}>Viagem Amazonia</h4>
           <ul style={{ display: 'flex', flexDirection: 'column', gap: '1rem', listStyle: 'none', padding: 0 }}>
-            {['Sobre nós', 'Destinos', 'Amazonia Tours', 'Visão sobre viagens', 'Entre em contato conosco'].map((link, i) => (
+            {[
+              { name: 'Home', path: '/' },
+              { name: 'Destinos', path: '/destinations' },
+              { name: 'Como comprar', path: '/how-to-buy' },
+              { name: 'Sobre nós', path: '/about' },
+              { name: 'Blog', path: '/blog' },
+              { name: 'Contato', path: '/contact' }
+            ].map((link, i) => (
               <li key={i}>
-                <Link to="#" style={{ color: 'rgba(255,255,255,0.7)', textDecoration: 'none', transition: 'padding-left 0.3s' }} onMouseEnter={(e) => e.target.style.paddingLeft = '5px'} onMouseLeave={(e) => e.target.style.paddingLeft = '0'}>
-                  {link}
+                <Link to={link.path} style={{ color: 'rgba(255,255,255,0.7)', textDecoration: 'none', transition: 'padding-left 0.3s' }} onMouseEnter={(e) => e.target.style.paddingLeft = '5px'} onMouseLeave={(e) => e.target.style.paddingLeft = '0'}>
+                  {link.name}
                 </Link>
               </li>
             ))}
@@ -93,20 +103,36 @@ const Footer = () => {
             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/American_Express_logo.svg/1200px-American_Express_logo.svg.png" alt="Amex" style={{ height: '30px', backgroundColor: '#fff', padding: '5px', borderRadius: '4px' }} />
           </div>
           
-          <a href="https://wa.me/5592991867133" target="_blank" rel="noopener noreferrer" style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '12px', 
-            color: '#fff', 
-            fontSize: '1.4rem', 
-            fontWeight: 800, 
-            textDecoration: 'none' 
-          }}>
-            <div style={{ backgroundColor: '#25D366', width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12.031 6.172c-2.32 0-4.519.903-6.16 2.544-1.64 1.64-2.543 3.838-2.544 6.159 0 1.302.28 2.569.824 3.733l-1.076 3.929 4.02-1.055c1.121.611 2.379.932 3.655.933h.001c2.321 0 4.519-.903 6.16-2.544 1.64-1.64 2.543-3.839 2.544-6.16 0-1.303-.28-2.57-.824-3.733l-1.077-3.929-3.925 1.056c-1.12-.612-2.378-.933-3.655-.934zm.001 1.056c1.096 0 2.172.274 3.136.8L15.65 8.27l2.454-.658-.658 2.454.242.483c.525.964.8 2.04.8 3.137 0 1.966-.765 3.812-2.155 5.202-1.39 1.39-3.236 2.156-5.202 2.156h-.001c-1.096 0-2.172-.274-3.137-.8l-.482-.242-2.455.658.658-2.454-.242-.483c-.525-.964-.8-2.041-.8-3.138 0-1.966.765-3.811 2.155-5.202 1.39-1.39 3.236-2.156 5.202-2.156z"/></svg>
-            </div>
-            +55 92 99186-7133
-          </a>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <a href="https://wa.me/5592993502913" target="_blank" rel="noopener noreferrer" style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '12px', 
+              color: '#fff', 
+              fontSize: '1.2rem', 
+              fontWeight: 800, 
+              textDecoration: 'none' 
+            }}>
+              <div style={{ backgroundColor: '#25D366', width: '36px', height: '36px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12.031 6.172c-2.32 0-4.519.903-6.16 2.544-1.64 1.64-2.543 3.838-2.544 6.159 0 1.302.28 2.569.824 3.733l-1.076 3.929 4.02-1.055c1.121.611 2.379.932 3.655.933h.001c2.321 0 4.519-.903 6.16-2.544 1.64-1.64 2.543-3.839 2.544-6.16 0-1.303-.28-2.57-.824-3.733l-1.077-3.929-3.925 1.056c-1.12-.612-2.378-.933-3.655-.934zm.001 1.056c1.096 0 2.172.274 3.136.8L15.65 8.27l2.454-.658-.658 2.454.242.483c.525.964.8 2.04.8 3.137 0 1.966-.765 3.812-2.155 5.202-1.39 1.39-3.236 2.156-5.202 2.156h-.001c-1.096 0-2.172-.274-3.137-.8l-.482-.242-2.455.658.658-2.454-.242-.483c-.525-.964-.8-2.041-.8-3.138 0-1.966.765-3.811 2.155-5.202 1.39-1.39 3.236-2.156 5.202-2.156z"/></svg>
+              </div>
+              (92) 99350-2913
+            </a>
+            <a href="https://wa.me/5592981474760" target="_blank" rel="noopener noreferrer" style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '12px', 
+              color: '#fff', 
+              fontSize: '1.2rem', 
+              fontWeight: 800, 
+              textDecoration: 'none' 
+            }}>
+              <div style={{ backgroundColor: '#25D366', width: '36px', height: '36px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12.031 6.172c-2.32 0-4.519.903-6.16 2.544-1.64 1.64-2.543 3.838-2.544 6.159 0 1.302.28 2.569.824 3.733l-1.076 3.929 4.02-1.055c1.121.611 2.379.932 3.655.933h.001c2.321 0 4.519-.903 6.16-2.544 1.64-1.64 2.543-3.839 2.544-6.16 0-1.303-.28-2.57-.824-3.733l-1.077-3.929-3.925 1.056c-1.12-.612-2.378-.933-3.655-.934zm.001 1.056c1.096 0 2.172.274 3.136.8L15.65 8.27l2.454-.658-.658 2.454.242.483c.525.964.8 2.04.8 3.137 0 1.966-.765 3.812-2.155 5.202-1.39 1.39-3.236 2.156-5.202 2.156h-.001c-1.096 0-2.172-.274-3.137-.8l-.482-.242-2.455.658.658-2.454-.242-.483c-.525-.964-.8-2.041-.8-3.138 0-1.966.765-3.811 2.155-5.202 1.39-1.39 3.236-2.156 5.202-2.156z"/></svg>
+              </div>
+              (92) 98147-4760
+            </a>
+          </div>
         </div>
       </div>
 

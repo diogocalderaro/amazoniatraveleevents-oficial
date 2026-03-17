@@ -1,102 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Search, 
   MapPin, 
   Star, 
   Clock, 
-  Calendar, 
   Filter, 
   ChevronDown, 
-  PlaneTakeoff,
-  ArrowRight,
-  Wifi,
-  Coffee,
-  Shield
+  ArrowRight
 } from 'lucide-react';
 
-// Import gallery images
-import gal001 from '../assets/galeria/001.jpg';
-import gal002 from '../assets/galeria/002.jpg';
-import gal003 from '../assets/galeria/003.jpg';
-import gal004 from '../assets/galeria/004.jpg';
-import gal005 from '../assets/galeria/005.jpg';
-import gal006 from '../assets/galeria/006.jpg';
+import { packagesData } from '../data/toursData';
 
 const Packages = () => {
   const [activeCategory, setActiveCategory] = useState('Todos');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const packages = [
-    {
-      id: 'amazon-trail',
-      title: 'Trilha de Aventura na Selva',
-      location: 'Manaus, Amazonas',
-      price: 899,
-      duration: '5 Dias',
-      rating: 4.9,
-      category: 'Aventura',
-      image: gal001,
-      features: ['Guia Local', 'Equipamento', 'Alimentação']
-    },
-    {
-      id: 'meeting-waters',
-      title: 'Expedição Encontro das Águas',
-      location: 'Rio Negro e Solimões',
-      price: 1250,
-      duration: '7 Dias',
-      rating: 4.8,
-      category: 'Rios',
-      image: gal002,
-      features: ['Passeio de Barco', 'Observação de Botos', 'Almoço Regional']
-    },
-    {
-      id: 'anavilhanas',
-      title: 'Sossego no Arquipélago Anavilhanas',
-      location: 'Novo Airão, AM',
-      price: 2200,
-      duration: '10 Dias',
-      rating: 5.0,
-      category: 'Natureza',
-      image: gal003,
-      features: ['Hotel de Selva', 'Transfer Incluso', 'Pensão Completa']
-    },
-    {
-      id: 'culture-manaus',
-      title: 'Imersão Cultural em Manaus',
-      location: 'Centro Histórico, AM',
-      price: 450,
-      duration: '3 Dias',
-      rating: 4.7,
-      category: 'Cultura',
-      image: gal004,
-      features: ['Teatro Amazonas', 'Mercado Municipal', 'Museus']
-    },
-    {
-      id: 'survival-skills',
-      title: 'Curso de Sobrevivência na Selva',
-      location: 'Reserva Particular, AM',
-      price: 1800,
-      duration: '4 Dias',
-      rating: 4.9,
-      category: 'Aventura',
-      image: gal005,
-      features: ['Técnicas Reais', 'Abrigo de Selva', 'Certificado']
-    },
-    {
-      id: 'birdwatching',
-      title: 'Expedição de Observação de Aves',
-      location: 'Rio Urubu, AM',
-      price: 1550,
-      duration: '6 Dias',
-      rating: 4.8,
-      category: 'Natureza',
-      image: gal006,
-      features: ['Binóculos Inclusos', 'Guia Ornitólogo', 'Fotos']
-    }
-  ];
+  // Scroll to top on load
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
-  const categories = ['Todos', 'Aventura', 'Rios', 'Natureza', 'Cultura'];
+  const packages = packagesData;
+
+  const categories = ['Todos', 'Natureza', 'Lazer', 'Internacional', 'Aventura', 'Compras', 'Cultura'];
 
   const filteredPackages = packages.filter(pkg => {
     const matchesCategory = activeCategory === 'Todos' || pkg.category === activeCategory;
@@ -111,7 +38,7 @@ const Packages = () => {
       <section style={{
         padding: '6rem 0 4rem 0',
         backgroundColor: '#000',
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8)), url(${gal001})`,
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8)), url(${imgSafari})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         textAlign: 'center',
@@ -120,7 +47,7 @@ const Packages = () => {
         <div className="container">
           <h1 style={{ fontSize: 'clamp(2.5rem, 8vw, 3.5rem)', marginBottom: '1rem', fontWeight: 800, color: '#fff' }}>Nossos Destinos</h1>
           <p style={{ fontSize: '1.125rem', color: 'rgba(255,255,255,0.8)', maxWidth: '600px', margin: '0 auto' }}>
-            Explore os melhores pacotes selecionados para você viver a Amazônia de forma autêntica e segura.
+            Explore os melhores pacotes selecionados para você viver experiências inesquecíveis.
           </p>
         </div>
       </section>
@@ -186,12 +113,12 @@ const Packages = () => {
                 </div>
               </div>
 
-              <div className="card" style={{ padding: '1.5rem', backgroundColor: '#003D5C', color: '#fff', borderRadius: '20px' }}>
+              <div className="card" style={{ padding: '1.5rem', backgroundColor: '#000', color: '#fff', borderRadius: '20px', border: '1px solid #FFD700' }}>
                 <h4 style={{ color: '#FFD700', marginBottom: '1rem' }}>Precisa de Ajuda?</h4>
                 <p style={{ fontSize: '0.875rem', marginBottom: '1.5rem', opacity: 0.9 }}>
                   Nossos especialistas podem criar um roteiro 100% personalizado para você.
                 </p>
-                <Link to="/contact" className="btn btn-primary" style={{ width: '100%', display: 'flex', justifyContent: 'center', backgroundColor: '#FFD700', color: '#000' }}>
+                <Link to="/contact" className="btn btn-primary" style={{ width: '100%', display: 'flex', justifyContent: 'center', backgroundColor: '#FFD700', color: '#000', fontWeight: 800 }}>
                   Falar com Consultor
                 </Link>
               </div>
@@ -205,7 +132,7 @@ const Packages = () => {
                 Mostrando <strong>{filteredPackages.length}</strong> pacotes em <strong>{activeCategory}</strong>
               </p>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--color-text-muted)', fontSize: '0.875rem', cursor: 'pointer' }}>
-                Ordenar por: <span style={{ color: '#003D5C', fontWeight: 600 }}>Mais Recentes</span> <ChevronDown size={16} />
+                Ordenar por: <span style={{ color: '#000', fontWeight: 600 }}>Mais Recentes</span> <ChevronDown size={16} />
               </div>
             </div>
 
@@ -222,7 +149,7 @@ const Packages = () => {
                           style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
                         />
                       </Link>
-                      <div style={{ position: 'absolute', bottom: '1rem', left: '1rem', backgroundColor: '#003D5C', color: '#fff', padding: '0.25rem 0.75rem', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 600 }}>
+                      <div style={{ position: 'absolute', bottom: '1rem', left: '1rem', backgroundColor: '#000', color: '#FFD700', padding: '0.25rem 0.75rem', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 800 }}>
                         {pkg.category}
                       </div>
                     </div>
@@ -230,10 +157,10 @@ const Packages = () => {
                     <div style={{ padding: '1.5rem' }}>
                       <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.75rem' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>
-                          <Clock size={14} color="#7EB53F" /> {pkg.duration}
+                          <Clock size={14} color="#FFD700" /> {pkg.duration}
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>
-                          <MapPin size={14} color="#7EB53F" /> {pkg.location.split(',')[0]}
+                          <MapPin size={14} color="#FFD700" /> {pkg.location.split(',')[0]}
                         </div>
                       </div>
 
@@ -250,7 +177,7 @@ const Packages = () => {
 
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid #f1f5f9' }}>
                         <div>
-                          <span style={{ fontSize: '1.35rem', fontWeight: 800, color: '#000' }}>R$ {pkg.price}</span>
+                          <span style={{ fontSize: '1.35rem', fontWeight: 800, color: '#000' }}>{pkg.priceDisplay || `R$ ${pkg.price.toLocaleString('pt-BR')}`}</span>
                           <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}> /pessoa</span>
                         </div>
                         <Link to={`/tour/${pkg.id}`} style={{ 
