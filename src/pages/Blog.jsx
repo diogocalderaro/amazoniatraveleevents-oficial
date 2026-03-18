@@ -39,6 +39,24 @@ const Blog = () => {
       date: "22 Jul, 2024",
       author: "Julia Santos",
       category: "Culinária"
+    },
+    {
+      id: 5,
+      title: "Curiosidades sobre o Boto-Cor-de-Rosa",
+      excerpt: "Um dos animais mais inteligentes e místicos da floresta. Surpreenda-se com os fatos sobre essa criatura fascinante.",
+      image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=800",
+      date: "15 Jul, 2024",
+      author: "Carlos Silva",
+      category: "Fauna"
+    },
+    {
+      id: 6,
+      title: "Festas Folclóricas: Parintins e muito mais",
+      excerpt: "A cultura do Amazonas brilha intensamente em seus festivais. Saiba como participar e o que esperar das celebrações.",
+      image: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?q=80&w=800",
+      date: "10 Jul, 2024",
+      author: "Ana Amazonas",
+      category: "Cultura"
     }
   ];
 

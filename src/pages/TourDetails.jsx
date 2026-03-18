@@ -4,7 +4,7 @@ import {
   MapPin, Star, Clock, Calendar, Check, Users, Navigation, 
   ChevronRight, Share2, Heart, ShieldCheck, Info, FileText, 
   Image as ImageIcon, ListChecks, Map, MessageSquare, Plus, ShoppingCart,
-  CheckCircle2, X
+  CheckCircle2, X, ArrowRight
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
@@ -23,26 +23,48 @@ const TourDetails = () => {
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const [selectedDate, setSelectedDate] = useState('');
-  const [adults, setAdults] = useState(2);
+  const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
   const [activeTab, setActiveTab] = useState('sobre');
   const [selectedImage, setSelectedImage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   const tourData = packagesData.find(pkg => pkg.id === id) || packagesData[0];
 
   const handleAddToCart = () => {
-    const cartData = {
-      id: id || tourData.id,
-      title: tourData.title,
-      duration: tourData.duration,
-      destinations: tourData.destinations || "1 Destino",
-      date: selectedDate || "A combinar",
-      guests: `${adults} adultos - ${children} crianças`,
-      price: tourData.price,
-      image: tourData.gallery[0]
-    };
-    addToCart(cartData);
-    navigate('/checkout');
+    if (!selectedDate) return;
+    
+    setIsLoading(true);
+    
+    // Simulate loading
+    setTimeout(() => {
+      const cartData = {
+        id: id || tourData.id,
+        title: tourData.title,
+        duration: tourData.duration,
+        destinations: tourData.destinations || "1 Destino",
+        date: selectedDate,
+        guests: `${adults} adultos - ${children} crianças`,
+        price: tourData.price,
+        image: tourData.gallery[0]
+      };
+      addToCart(cartData);
+      setIsLoading(false);
+      setShowToast(true);
+      
+      // Navigate to checkout after a delay or just stay and show toast?
+      // The user wants a bar at the bottom, so I'll stay for a few seconds.
+      setTimeout(() => {
+        setShowToast(false);
+      }, 5000);
+    }, 800);
+  };
+
+  const openWhatsApp = () => {
+    const phoneNumber = "9293502913";
+    const message = `Olá! Gostaria de mais informações sobre o pacote: ${tourData.title}`;
+    window.open(`https://wa.me/55${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   // Scroll to top on load
@@ -271,14 +293,30 @@ const TourDetails = () => {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', marginBottom: '2rem' }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.5rem', color: '#334155' }}>SELECIONE A DATA</label>
-                    <input 
-                      type="date" 
-                      value={selectedDate}
-                      onChange={(e) => setSelectedDate(e.target.value)}
-                      style={{ width: '100%', padding: '1rem', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', fontWeight: 600 }} 
-                    />
+                  <div 
+                    onClick={() => document.getElementById('tour-date-input').showPicker()} 
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.5rem', color: '#334155', cursor: 'pointer' }}>SELECIONE A DATA</label>
+                    <div style={{ position: 'relative' }}>
+                      <input 
+                        id="tour-date-input"
+                        type="date" 
+                        value={selectedDate}
+                        onChange={(e) => setSelectedDate(e.target.value)}
+                        required
+                        style={{ 
+                          width: '100%', 
+                          padding: '1rem', 
+                          borderRadius: '12px', 
+                          border: `1.5px solid ${selectedDate ? '#7EB53F' : '#e2e8f0'}`, 
+                          outline: 'none', 
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                          backgroundColor: '#fff'
+                        }} 
+                      />
+                    </div>
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                     <div>
@@ -306,12 +344,13 @@ const TourDetails = () => {
 
                 <button 
                   onClick={handleAddToCart}
+                  disabled={!selectedDate || isLoading}
                   style={{
                   width: '100%',
                   padding: '1.25rem',
                   borderRadius: '15px',
-                  backgroundColor: '#000',
-                  color: '#FFD700',
+                  backgroundColor: !selectedDate ? '#cbd5e1' : '#7EB53F',
+                  color: '#fff',
                   border: 'none',
                   fontSize: '1.1rem',
                   fontWeight: 800,
@@ -319,14 +358,21 @@ const TourDetails = () => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '1rem',
-                  cursor: 'pointer',
+                  cursor: !selectedDate ? 'not-allowed' : 'pointer',
                   transition: 'all 0.3s ease',
-                  boxShadow: '0 10px 20px rgba(0,0,0,0.1)'
+                  boxShadow: !selectedDate ? 'none' : '0 10px 20px rgba(126, 181, 63, 0.2)',
+                  opacity: isLoading ? 0.8 : 1
                 }}
-                onMouseEnter={(e) => e.target.style.transform = 'translateY(-3px)'}
-                onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
+                onMouseEnter={(e) => { if(selectedDate) e.target.style.transform = 'translateY(-3px)'; }}
+                onMouseLeave={(e) => { if(selectedDate) e.target.style.transform = 'translateY(0)'; }}
                 >
-                  <ShoppingCart size={22} /> ADICIONAR AO CARRINHO
+                  {isLoading ? (
+                    <div className="spinner"></div>
+                  ) : (
+                    <>
+                      <ShoppingCart size={22} /> ADICIONAR AO CARRINHO
+                    </>
+                  )}
                 </button>
 
                 <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.85rem', color: '#94a3b8', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
@@ -385,7 +431,7 @@ const TourDetails = () => {
             <p style={{ fontSize: '1.1rem', color: 'rgba(255,255,255,0.7)', maxWidth: '600px' }}>Não deixe para depois. As vagas para nossas expedições são limitadas para garantir exclusividade e preservação.</p>
           </div>
           <button 
-            onClick={handleAddToCart}
+            onClick={openWhatsApp}
             style={{
             padding: '1.5rem 3.5rem',
             backgroundColor: '#FFD700',
@@ -404,6 +450,34 @@ const TourDetails = () => {
           </button>
          </div>
        </section>
+ 
+       {/* Toast Notification */}
+       <div style={{
+         position: 'fixed',
+         bottom: showToast ? '2rem' : '-100px',
+         left: '50%',
+         transform: 'translateX(-50%)',
+         backgroundColor: '#000',
+         color: '#fff',
+         padding: '1.25rem 2.5rem',
+         borderRadius: '50px',
+         display: 'flex',
+         alignItems: 'center',
+         gap: '1.5rem',
+         boxShadow: '0 10px 40px rgba(0,0,0,0.3)',
+         zIndex: 3000,
+         transition: 'all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+         width: 'max-content',
+         maxWidth: '90vw'
+       }}>
+         <span style={{ fontWeight: 700, fontSize: '1rem' }}>PACOTE inserido no carrinho.</span>
+         <Link to="/checkout" style={{ color: '#FFD700', fontWeight: 800, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '5px' }}>
+           Ver carrinho <ArrowRight size={18} />
+         </Link>
+         <button onClick={() => setShowToast(false)} style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', marginLeft: '10px' }}>
+           <X size={18} />
+         </button>
+       </div>
  
        {/* Lightbox Modal */}
        {selectedImage && (
@@ -455,6 +529,17 @@ const TourDetails = () => {
        )}
  
        <style>{`
+         .spinner {
+           width: 24px;
+           height: 24px;
+           border: 3px solid rgba(255,255,255,0.3);
+           border-top-color: #fff;
+           border-radius: 50%;
+           animation: spin 1s linear infinite;
+         }
+         @keyframes spin {
+           to { transform: rotate(360deg); }
+         }
          @keyframes zoom {
            from { transform: scale(0.9); opacity: 0; }
            to { transform: scale(1); opacity: 1; }

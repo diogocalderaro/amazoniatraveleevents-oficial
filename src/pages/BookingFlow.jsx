@@ -4,16 +4,18 @@ import {
   Calendar, MapPin, Trash2, Check, ArrowRight, 
   ChevronRight, CreditCard, Banknote, User, 
   Phone, Mail, Home as HomeIcon, Map as CityIcon, 
-  Globe, CheckCircle2, ChevronLeft, X, AlertTriangle, ShoppingCart
+  Globe, CheckCircle2, ChevronLeft, X, AlertTriangle, ShoppingCart,
+  QrCode, FileText, Landmark, ShieldCheck
 } from 'lucide-react';
 
 import { useCart } from '../context/CartContext';
 
 const BookingFlow = () => {
-  const { cartItems, removeFromCart, cartTotal } = useCart();
+  const { cartItems, removeFromCart, clearCart, cartTotal } = useCart();
   const [step, setStep] = useState(1);
-  const [paymentMethod, setPaymentMethod] = useState('paypal');
+  const [paymentMethod, setPaymentMethod] = useState('credit_card');
   const [itemToRemove, setItemToRemove] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,6 +31,16 @@ const BookingFlow = () => {
       removeFromCart(itemToRemove.id);
       setItemToRemove(null);
     }
+  };
+
+  const handleFinalizeBooking = () => {
+    setIsLoading(true);
+    // Simulate processing payment
+    setTimeout(() => {
+      setIsLoading(false);
+      clearCart(); // Clear cart after success
+      setStep(3);
+    }, 2500);
   };
 
   const renderStepHeader = (smallText, mainTitle) => (
@@ -73,6 +85,56 @@ const BookingFlow = () => {
       ))}
     </div>
   );
+
+  const renderPaymentSubScreen = () => {
+    switch(paymentMethod) {
+      case 'credit_card':
+      case 'debit_card':
+        return (
+          <div className="payment-form fade-in" style={{ backgroundColor: '#f8fafc', padding: '1.5rem', borderRadius: '12px', marginTop: '1rem', border: '1px solid #e2e8f0' }}>
+            <h4 style={{ fontSize: '0.9rem', fontWeight: 800, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <CreditCard size={18} /> Dados do Cartão de {paymentMethod === 'credit_card' ? 'Crédito' : 'Débito'}
+            </h4>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
+              <input type="text" placeholder="Nome impresso no cartão" style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #ddd' }} />
+              <input type="text" placeholder="Número do Cartão" style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #ddd' }} />
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <input type="text" placeholder="Validade (MM/AA)" style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #ddd' }} />
+                <input type="text" placeholder="CVV" style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #ddd' }} />
+              </div>
+            </div>
+          </div>
+        );
+      case 'pix':
+        return (
+          <div className="payment-form fade-in" style={{ backgroundColor: '#f8fafc', padding: '2rem', borderRadius: '12px', marginTop: '1rem', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+            <div style={{ marginBottom: '1rem', color: '#32bcad' }}><QrCode size={120} style={{ margin: '0 auto' }} /></div>
+            <h4 style={{ fontSize: '1rem', fontWeight: 800, marginBottom: '0.5rem' }}>Escaneie o QR Code</h4>
+            <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: '1rem' }}>Abra o app do seu banco e aponte a câmera para o código acima.</p>
+            <div style={{ backgroundColor: '#fff', padding: '0.75rem', borderRadius: '8px', border: '1px dashed #ccc', fontSize: '0.8rem', wordBreak: 'break-all' }}>
+              00020126360014br.gov.bcb.pix0114+5592993502913520400005303986540410.005802BR5915AmazoniaTravel6006Manaus62070503***6304E2B4
+            </div>
+            <button style={{ marginTop: '1rem', background: 'none', border: 'none', color: '#32bcad', fontWeight: 700, cursor: 'pointer', fontSize: '0.85rem' }}>Copiar código PIX</button>
+          </div>
+        );
+      case 'boleto':
+        return (
+          <div className="payment-form fade-in" style={{ backgroundColor: '#f8fafc', padding: '1.5rem', borderRadius: '12px', marginTop: '1rem', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+            <div style={{ marginBottom: '1rem', color: '#444' }}><FileText size={48} style={{ margin: '0 auto' }} /></div>
+            <h4 style={{ fontSize: '1rem', fontWeight: 800, marginBottom: '0.5rem' }}>Boleto Bancário</h4>
+            <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: '1.5rem' }}>O boleto será gerado após a finalização. Você terá 3 dias úteis para pagar.</p>
+            <div style={{ backgroundColor: '#fff', padding: '1rem', borderRadius: '8px', border: '1px solid #ddd', fontFamily: 'monospace', fontWeight: 700, fontSize: '0.85rem' }}>
+              23793.38128 60083.033128 56000.633306 1 95430000035000
+            </div>
+            <button style={{ marginTop: '1rem', display: 'flex', alignItems: 'center', gap: '8px', margin: '1rem auto 0 auto', padding: '0.5rem 1rem', borderRadius: '8px', border: '1px solid #ddd', background: '#fff', fontWeight: 700 }}>
+              <Landmark size={16} /> Ver PDF do Boleto
+            </button>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="booking-process" style={{ backgroundColor: '#f4f7f6', minHeight: '100vh', padding: '4rem 0' }}>
@@ -219,15 +281,15 @@ const BookingFlow = () => {
                     <div style={{ display: 'flex', gap: '10px' }}>
                       <div style={{ color: '#7EB53F', marginTop: '2px' }}><Check size={16} strokeWidth={3} /></div>
                       <div>
-                        <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>Não pague nada hoje</div>
-                        <div style={{ color: '#999', fontSize: '0.8rem' }}>Reserve agora e pague depois</div>
+                        <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>Reserva 100% Segura</div>
+                        <div style={{ color: '#999', fontSize: '0.8rem' }}>Seus dados estão protegidos</div>
                       </div>
                     </div>
                     <div style={{ display: 'flex', gap: '10px' }}>
                       <div style={{ color: '#7EB53F', marginTop: '2px' }}><Check size={16} strokeWidth={3} /></div>
                       <div>
-                        <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>Cancelamento gratuito</div>
-                        <div style={{ color: '#999', fontSize: '0.8rem' }}>Até 24h antes da turnê</div>
+                        <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>Cancelamento fácil</div>
+                        <div style={{ color: '#999', fontSize: '0.8rem' }}>Fale conosco via WhatsApp</div>
                       </div>
                     </div>
                   </div>
@@ -245,26 +307,23 @@ const BookingFlow = () => {
             <div className="booking-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 380px) 1fr', gap: '2rem', alignItems: 'start' }}>
               {/* Summary Column */}
               <div style={{ backgroundColor: '#fff', padding: '2rem', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '1.5rem', borderBottom: '1px solid #eee', paddingBottom: '1.5rem' }}>1. Turnês selecionados</h2>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '1.5rem', borderBottom: '1px solid #eee', paddingBottom: '1.5rem' }}>1. Resumo da Reserva</h2>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                   {cartItems.map((item) => (
                     <div key={item.id} style={{ borderBottom: '1px solid #f5f5f5', paddingBottom: '1.5rem' }}>
-                      <Link to={`/tour/${item.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <h4 style={{ fontWeight: 700, marginBottom: '0.5rem' }}>{item.title}</h4>
-                      </Link>
+                      <h4 style={{ fontWeight: 700, marginBottom: '0.5rem' }}>{item.title}</h4>
                       <div style={{ display: 'flex', gap: '1rem', color: '#999', fontSize: '0.8rem', marginBottom: '0.5rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Calendar size={12} /> {item.duration}</div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><MapPin size={12} /> {item.destinations}</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Calendar size={12} /> {item.date}</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><User size={12} /> {item.guests}</div>
                       </div>
-                      <p style={{ fontSize: '0.8rem', color: '#666', marginBottom: '0.25rem' }}>Data da turnê: {item.date}</p>
-                      <p style={{ fontSize: '0.8rem', color: '#666', marginBottom: '0.5rem' }}>Convidados: {item.guests}</p>
-                      <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                        <span style={{ fontSize: '0.85rem', color: '#666' }}>Valor:</span>
                         <span style={{ fontWeight: 800, fontSize: '1.1rem' }}>R$ {item.price}</span>
                       </div>
                     </div>
                   ))}
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginTop: '1rem' }}>
-                    <span style={{ fontWeight: 700 }}>Total ({cartItems.length}):</span>
+                    <span style={{ fontWeight: 700 }}>Total Geral:</span>
                     <span style={{ fontSize: '1.75rem', fontWeight: 800 }}>R$ {cartTotal}</span>
                   </div>
                 </div>
@@ -272,10 +331,10 @@ const BookingFlow = () => {
 
               {/* Form Column */}
               <div style={{ backgroundColor: '#fff', padding: '2.5rem', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '2.5rem', borderBottom: '1px solid #eee', paddingBottom: '1.5rem' }}>2. Reserva e Pagamento</h2>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '2.5rem', borderBottom: '1px solid #eee', paddingBottom: '1.5rem' }}>2. Informações e Pagamento</h2>
                 
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '1.5rem' }}>Suas informações</h3>
-                <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: '1.5rem', marginBottom: '3rem' }}>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '1.5rem' }}>Seus dados de contato</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '3rem' }}>
                   <div className="input-field">
                     <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#444', marginBottom: '0.5rem' }}>Primeiro nome<span style={{ color: '#ef4444' }}>*</span></label>
                     <input type="text" style={{ width: '100%', padding: '0.85rem', borderRadius: '8px', border: '1px solid #ddd', outline: 'none' }} placeholder="Ex: João" />
@@ -285,70 +344,51 @@ const BookingFlow = () => {
                     <input type="text" style={{ width: '100%', padding: '0.85rem', borderRadius: '8px', border: '1px solid #ddd', outline: 'none' }} placeholder="Ex: Silva" />
                   </div>
                   <div className="input-field">
-                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#444', marginBottom: '0.5rem' }}>Telefone<span style={{ color: '#ef4444' }}>*</span></label>
-                    <input type="tel" style={{ width: '100%', padding: '0.85rem', borderRadius: '8px', border: '1px solid #ddd', outline: 'none' }} placeholder="(92) 99XXX-XXXX" />
+                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#444', marginBottom: '0.5rem' }}>Telefone (WhatsApp)<span style={{ color: '#ef4444' }}>*</span></label>
+                    <input type="tel" style={{ width: '100%', padding: '0.85rem', borderRadius: '8px', border: '1px solid #ddd', outline: 'none' }} placeholder="(92) 9XXXX-XXXX" />
                   </div>
                   <div className="input-field">
                     <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#444', marginBottom: '0.5rem' }}>E-mail<span style={{ color: '#ef4444' }}>*</span></label>
                     <input type="email" style={{ width: '100%', padding: '0.85rem', borderRadius: '8px', border: '1px solid #ddd', outline: 'none' }} placeholder="email@exemplo.com" />
                   </div>
-                  <div className="input-field">
-                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#444', marginBottom: '0.5rem' }}>Endereço<span style={{ color: '#ef4444' }}>*</span></label>
-                    <input type="text" style={{ width: '100%', padding: '0.85rem', borderRadius: '8px', border: '1px solid #ddd', outline: 'none' }} placeholder="Rua, Número, Bairro" />
-                  </div>
-                  <div className="input-field">
-                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#444', marginBottom: '0.5rem' }}>Cidade<span style={{ color: '#ef4444' }}>*</span></label>
-                    <input type="text" style={{ width: '100%', padding: '0.85rem', borderRadius: '8px', border: '1px solid #ddd', outline: 'none' }} placeholder="Ex: Manaus" />
-                  </div>
                 </div>
 
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '1.5rem' }}>Método de pagamento</h3>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  Escolha o Método de Pagamento <ShieldCheck size={20} style={{ color: '#7EB53F' }} />
+                </h3>
                 <div style={{ marginBottom: '2.5rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '1.5rem' }}>
-                    <span style={{ fontWeight: 700, fontSize: '1.1rem' }}>Total:</span>
-                    <span style={{ fontSize: '1.5rem', fontWeight: 800 }}>R$ {cartTotal}</span>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+                    
+                    {/* Payment Options Cards */}
+                    {[
+                      { id: 'credit_card', label: 'Cartão de Crédito', icon: <CreditCard /> },
+                      { id: 'debit_card', label: 'Cartão de Débito', icon: <CreditCard /> },
+                      { id: 'pix', label: 'PIX QR Code', icon: <QrCode /> },
+                      { id: 'boleto', label: 'Boleto', icon: <FileText /> }
+                    ].map(method => (
+                      <div 
+                        key={method.id}
+                        onClick={() => setPaymentMethod(method.id)}
+                        style={{
+                          padding: '1.25rem',
+                          borderRadius: '12px',
+                          border: `2px solid ${paymentMethod === method.id ? '#7EB53F' : '#f1f5f9'}`,
+                          backgroundColor: paymentMethod === method.id ? 'rgba(126, 181, 63, 0.05)' : '#fff',
+                          textAlign: 'center',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        <div style={{ color: paymentMethod === method.id ? '#7EB53F' : '#94a3b8', marginBottom: '0.75rem', display: 'flex', justifyContent: 'center' }}>
+                          {React.cloneElement(method.icon, { size: 28 })}
+                        </div>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 800, color: paymentMethod === method.id ? '#7EB53F' : '#475569' }}>{method.label}</span>
+                      </div>
+                    ))}
                   </div>
-                  
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '0.5rem 0', cursor: 'pointer' }}>
-                      <input 
-                        type="radio" 
-                        name="payment" 
-                        checked={paymentMethod === 'cash'} 
-                        onChange={() => setPaymentMethod('cash')}
-                        style={{ width: '18px', height: '18px', accentColor: '#7EB53F' }} 
-                      />
-                      <span style={{ fontSize: '0.95rem', color: '#444' }}>Pague no local (Dinheiro/Cartão)</span>
-                    </label>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '0.5rem 0', cursor: 'pointer' }}>
-                      <input 
-                        type="radio" 
-                        name="payment" 
-                        checked={paymentMethod === 'paypal'} 
-                        onChange={() => setPaymentMethod('paypal')}
-                        style={{ width: '18px', height: '18px', accentColor: '#7EB53F' }} 
-                      />
-                      <span style={{ fontSize: '0.95rem', color: '#444', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                        Pague via PayPal / Cartão
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" style={{ height: '16px' }} />
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" style={{ height: '12px' }} />
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" style={{ height: '16px' }} />
-                      </span>
-                    </label>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '0.5rem 0', cursor: 'pointer' }}>
-                      <input 
-                        type="radio" 
-                        name="payment" 
-                        checked={paymentMethod === 'pix'} 
-                        onChange={() => setPaymentMethod('pix')}
-                        style={{ width: '18px', height: '18px', accentColor: '#7EB53F' }} 
-                      />
-                      <span style={{ fontSize: '0.95rem', color: '#444', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        Pagar com PIX
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/Logo_pix.png" alt="Pix" style={{ height: '16px' }} />
-                      </span>
-                    </label>
-                  </div>
+
+                  {/* Payment Details Sub-Screen */}
+                  {renderPaymentSubScreen()}
                 </div>
 
                 <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
@@ -368,24 +408,34 @@ const BookingFlow = () => {
                     Voltar
                   </button>
                   <button 
-                    onClick={() => setStep(3)}
+                    onClick={handleFinalizeBooking}
+                    disabled={isLoading}
                     style={{
                       flex: 1,
                       padding: '1rem 2.5rem',
-                      backgroundColor: '#7EB53F',
+                      backgroundColor: '#000',
                       color: '#fff',
                       border: 'none',
                       borderRadius: '8px',
                       fontSize: '1rem',
-                      fontWeight: 700,
+                      fontWeight: 800,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '8px',
-                      cursor: 'pointer'
+                      cursor: isLoading ? 'not-allowed' : 'pointer',
+                      transition: 'all 0.3s ease',
+                      position: 'relative',
+                      overflow: 'hidden'
                     }}
                   >
-                    <CheckCircle2 size={18} /> Finalizar Reserva e Pagamento
+                    {isLoading ? (
+                      <div className="btn-spinner"></div>
+                    ) : (
+                      <>
+                        FINALIZAR RESERVA <ArrowRight size={20} />
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
@@ -408,7 +458,7 @@ const BookingFlow = () => {
               
               <div style={{ fontSize: '1.25rem', color: '#666', lineHeight: 1.8, marginBottom: '3rem', maxWidth: '600px', margin: '0 auto 3rem auto' }}>
                 <p>Recebemos seu pedido. Um consultor da <strong>Amazonia Travel</strong> entrará em contato em breve para confirmar todos os detalhes da sua aventura.</p>
-                <p style={{ marginTop: '1rem' }}>Obrigado por nos escolher!</p>
+                <p style={{ marginTop: '1rem' }}>Verifique seu e-mail para mais detalhes e os vouchers da viagem.</p>
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem' }}>
@@ -449,6 +499,17 @@ const BookingFlow = () => {
         .input-field input:focus, .input-field select:focus {
            border-color: #7EB53F !important;
            box-shadow: 0 0 0 2px rgba(126, 181, 63, 0.1);
+        }
+        .btn-spinner {
+          width: 20px;
+          height: 20px;
+          border: 3px solid rgba(255,255,255,0.3);
+          border-top-color: #fff;
+          border-radius: 50%;
+          animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+          to { transform: rotate(360deg); }
         }
         @media (max-width: 991px) {
           .booking-grid {

@@ -351,18 +351,25 @@ const Home = () => {
             <div style={{ flex: 1, minWidth: '150px', display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 1rem', borderRight: '1px solid #E2E8F0' }}>
                <Calendar style={{ color: '#FFD700' }} />
                <div>
-                  <p style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase' }}>Quando?</p>
-                  <input type="date" style={{ border: 'none', background: 'transparent', outline: 'none', fontWeight: 600, fontFamily: 'inherit', fontSize: '14px' }} />
+                  <p style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase' }}>Data de Ida</p>
+                  <input type="date" style={{ border: 'none', background: 'transparent', outline: 'none', fontWeight: 600, fontFamily: 'inherit', fontSize: '16px', color: '#333' }} />
+               </div>
+            </div>
+            <div style={{ flex: 1, minWidth: '150px', display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 1rem', borderRight: '1px solid #E2E8F0' }}>
+               <Calendar style={{ color: '#FFD700' }} />
+               <div>
+                  <p style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase' }}>Data de Volta</p>
+                  <input type="date" style={{ border: 'none', background: 'transparent', outline: 'none', fontWeight: 600, fontFamily: 'inherit', fontSize: '16px', color: '#333' }} />
                </div>
             </div>
             <div style={{ flex: 1, minWidth: '150px', display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 1rem' }}>
               <User style={{ color: '#FFD700' }} />
               <div>
                   <p style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase' }}>Viajantes</p>
-                  <select style={{ border: 'none', background: 'transparent', width: '100%', outline: 'none', fontWeight: 600, fontSize: '16px' }}>
-                    <option>2 Pessoas</option>
-                    <option>1 Pessoa</option>
-                    <option>3+ Pessoas</option>
+                  <select defaultValue="1 Pessoa" style={{ border: 'none', background: 'transparent', width: '100%', outline: 'none', fontWeight: 600, fontSize: '16px' }}>
+                    <option value="1 Pessoa">1 Pessoa</option>
+                    <option value="2 Pessoas">2 Pessoas</option>
+                    <option value="3+ Pessoas">3+ Pessoas</option>
                   </select>
               </div>
             </div>

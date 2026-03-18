@@ -1,11 +1,12 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Home from './pages/Home';
 import TourDetails from './pages/TourDetails';
 import BookingFlow from './pages/BookingFlow';
 import Packages from './pages/Packages';
 import About from './pages/About';
 import Blog from './pages/Blog';
+import BlogPost from './pages/BlogPost';
 import Contact from './pages/Contact';
 import HowToBuy from './pages/HowToBuy';
 import SearchResults from './pages/SearchResults';
@@ -38,8 +39,11 @@ function App() {
             <Route path="/tour/:id" element={<TourDetails />} />
             <Route path="/checkout" element={<BookingFlow />} />
             <Route path="/destinations" element={<Packages />} />
+            <Route path="/pacotes" element={<Navigate to="/destinations" replace />} />
+            <Route path="/destinos" element={<Navigate to="/destinations" replace />} />
             <Route path="/about" element={<About />} />
             <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:id" element={<BlogPost />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/search" element={<SearchResults />} />
             <Route path="/book/:id" element={<BookingFlow />} />
