@@ -26,7 +26,7 @@ const Blog = () => {
       id: 3,
       title: "Preservação e Turismo: Como viajar de forma consciente",
       excerpt: "Descubra como seu turismo pode ajudar na conservação da maior floresta tropical do planeta.",
-      image: "https://images.unsplash.com/photo-1581333100576-b73bbe92c19a?q=80&w=800",
+      image: "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?q=80&w=800",
       date: "28 Jul, 2024",
       author: "Roberto Ferreira",
       category: "Sustentabilidade"
@@ -35,7 +35,7 @@ const Blog = () => {
       id: 4,
       title: "A Gastronomia Amazônica que você precisa provar",
       excerpt: "Do Tacacá ao Tambaqui assado: conheça as iguarias que fazem de Manaus uma referência culinária.",
-      image: "https://images.unsplash.com/photo-1579705745817-a166292199b9?q=80&w=800",
+      image: "https://images.unsplash.com/photo-1506459225024-1428097a7a18?q=80&w=800",
       date: "22 Jul, 2024",
       author: "Julia Santos",
       category: "Culinária"

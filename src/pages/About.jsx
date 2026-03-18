@@ -97,29 +97,36 @@ const About = () => {
         </div>
       </section>
 
-      {/* Team Section */}
-      <section style={{ padding: '8rem 0', backgroundColor: '#fff' }}>
+      {/* History Section */}
+      <section style={{ padding: '8rem 0', backgroundColor: '#fff', overflow: 'hidden' }}>
         <div className="container">
-           <h2 style={{ fontSize: '2.5rem', fontWeight: 800, textAlign: 'center', marginBottom: '4rem' }}>Nossa Liderança</h2>
-           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '3rem' }}>
-              {[
-                { name: "Carlos Silva", role: "Fundador & Guia Master", img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=400" },
-                { name: "Ana Amazonas", role: "Diretora de Operações", img: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=400" },
-                { name: "Roberto Ferreira", role: "Especialista em Logística", img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=400" },
-                { name: "Julia Santos", role: "Atendimento ao Cliente", img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=400" }
-              ].map((member, i) => (
-                <div key={i} style={{ textAlign: 'center' }}>
-                   <img 
-                     src={member.img} 
-                     alt={member.name} 
-                     loading="lazy"
-                     style={{ width: '180px', height: '180px', borderRadius: '50%', objectFit: 'cover', marginBottom: '1.5rem', border: '5px solid #f1f5f9' }} 
-                   />
-                   <h4 style={{ fontSize: '1.25rem', fontWeight: 800 }}>{member.name}</h4>
-                   <p style={{ color: '#64748b' }}>{member.role}</p>
-                </div>
-              ))}
-           </div>
+          <div style={{ maxWidth: '900px', margin: '0 auto', textAlign: 'center' }}>
+            <h2 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 900, color: '#003D5C', marginBottom: '2.5rem', position: 'relative', display: 'inline-block' }}>
+              Nossa Trajetória
+              <div style={{ position: 'absolute', bottom: '-10px', left: '50%', transform: 'translateX(-50%)', width: '80px', height: '4px', backgroundColor: '#FFD700', borderRadius: '2px' }}></div>
+            </h2>
+            
+            <div style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+              <p style={{ fontSize: '1.2rem', lineHeight: '1.9', color: '#334155' }}>
+                A <strong>Amazonia Travel e Events</strong> não nasceu apenas como uma agência de viagens, mas como um sonho de compartilhar a imensidão da nossa terra com o mundo. Fundada em Manaus, a empresa começou com pequenos roteiros personalizados para amigos e familiares que desejavam ver a floresta além dos cartões-postais.
+              </p>
+              
+              <div style={{ backgroundColor: '#f8fafc', padding: '3rem', borderRadius: '30px', borderLeft: '8px solid #FFD700', margin: '1rem 0' }}>
+                <p style={{ fontSize: '1.15rem', fontStyle: 'italic', color: '#475569', lineHeight: '1.8' }}>
+                  "Lembro-me da primeira expedição oficial; chovia torrencialmente, mas o brilho nos olhos dos viajantes ao verem o encontro das águas pela primeira vez me deu a certeza de que estávamos no caminho certo. A Amazônia não é um lugar para se visitar, é um lugar para se sentir."
+                </p>
+                <p style={{ marginTop: '1.5rem', fontWeight: 800, color: '#003D5C' }}>— Carlos Silva, Fundador</p>
+              </div>
+
+              <p style={{ fontSize: '1.2rem', lineHeight: '1.9', color: '#334155' }}>
+                Ao longo dos últimos 10 anos, evoluímos de uma operadora local para uma referência em turismo de experiência e eventos corporativos na região norte. Hoje, contamos com uma frota própria de embarcações e ônibus semi-leito, garantindo que o conforto caminhe lado a lado com a aventura.
+              </p>
+
+              <p style={{ fontSize: '1.2rem', lineHeight: '1.9', color: '#334155' }}>
+                Nossa história é escrita a cada novo sorriso, a cada interação segura com os animais e a cada parceria firmada com as comunidades ribeirinhas, que são os verdadeiros guardiões deste paraíso. Continuamos explorando, crescendo e, acima de tudo, preservando o coração verde do Brasil.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
       <style>{`

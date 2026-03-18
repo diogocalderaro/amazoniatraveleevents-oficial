@@ -18,6 +18,8 @@ import imgSafari from '../assets/destinos/safari_amazonico.jpg';
 const Packages = () => {
   const [activeCategory, setActiveCategory] = useState('Todos');
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState('recent');
+  const [isSortOpen, setIsSortOpen] = useState(false);
 
   // Scroll to top on load
   useEffect(() => {
@@ -26,14 +28,41 @@ const Packages = () => {
 
   const packages = packagesData;
 
-  const categories = ['Todos', 'Natureza', 'Lazer', 'Internacional', 'Aventura', 'Compras', 'Cultura'];
+  const categories = ['Todos', 'Compras', 'Passeios', 'Natureza'];
 
-  const filteredPackages = packages.filter(pkg => {
-    const matchesCategory = activeCategory === 'Todos' || pkg.category === activeCategory;
+  // Map original categories to the new reduced set for filtering
+  const categoryMap = {
+    'Natureza': 'Natureza',
+    'Compras': 'Compras',
+    'Lazer': 'Passeios',
+    'Aventura': 'Passeios',
+    'Internacional': 'Passeios',
+    'Cultura': 'Passeios'
+  };
+
+  let filteredPackages = packages.filter(pkg => {
+    const displayCategory = categoryMap[pkg.category] || 'Passeios';
+    const matchesCategory = activeCategory === 'Todos' || displayCategory === activeCategory;
     const matchesSearch = pkg.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                          pkg.location.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
+
+  // Apply Sorting
+  if (sortBy === 'price-low') {
+    filteredPackages.sort((a, b) => a.price - b.price);
+  } else if (sortBy === 'price-high') {
+    filteredPackages.sort((a, b) => b.price - a.price);
+  } else if (sortBy === 'rating') {
+    filteredPackages.sort((a, b) => b.rating - a.rating);
+  }
+
+  const sortOptions = [
+    { label: 'Mais Recentes', value: 'recent' },
+    { label: 'Menor Preço', value: 'price-low' },
+    { label: 'Maior Preço', value: 'price-high' },
+    { label: 'Melhor Avaliados', value: 'rating' }
+  ];
 
   return (
     <div className="packages-page">
@@ -134,8 +163,54 @@ const Packages = () => {
               <p style={{ color: 'var(--color-text-muted)' }}>
                 Mostrando <strong>{filteredPackages.length}</strong> pacotes em <strong>{activeCategory}</strong>
               </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--color-text-muted)', fontSize: '0.875rem', cursor: 'pointer' }}>
-                Ordenar por: <span style={{ color: '#000', fontWeight: 600 }}>Mais Recentes</span> <ChevronDown size={16} />
+              
+              <div style={{ position: 'relative' }}>
+                <div 
+                  onClick={() => setIsSortOpen(!isSortOpen)}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--color-text-muted)', fontSize: '0.875rem', cursor: 'pointer' }}
+                >
+                  Ordenar por: <span style={{ color: '#000', fontWeight: 600 }}>{sortOptions.find(o => o.value === sortBy)?.label}</span> <ChevronDown size={16} />
+                </div>
+                
+                {isSortOpen && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '100%',
+                    right: 0,
+                    marginTop: '0.5rem',
+                    backgroundColor: '#fff',
+                    borderRadius: '12px',
+                    boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+                    zIndex: 10,
+                    width: '180px',
+                    overflow: 'hidden',
+                    border: '1px solid #f1f5f9'
+                  }}>
+                    {sortOptions.map(option => (
+                      <button
+                        key={option.value}
+                        onClick={() => {
+                          setSortBy(option.value);
+                          setIsSortOpen(false);
+                        }}
+                        style={{
+                          width: '100%',
+                          padding: '0.75rem 1rem',
+                          textAlign: 'left',
+                          backgroundColor: sortBy === option.value ? '#f8fafc' : 'transparent',
+                          border: 'none',
+                          cursor: 'pointer',
+                          fontSize: '0.85rem',
+                          fontWeight: sortBy === option.value ? 700 : 500,
+                          color: sortBy === option.value ? '#000' : '#64748b',
+                          transition: 'all 0.2s'
+                        }}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
