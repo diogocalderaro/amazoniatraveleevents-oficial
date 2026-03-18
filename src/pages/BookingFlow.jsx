@@ -4,7 +4,7 @@ import {
   Calendar, MapPin, Trash2, Check, ArrowRight, 
   ChevronRight, CreditCard, Banknote, User, 
   Phone, Mail, Home as HomeIcon, Map as CityIcon, 
-  Globe, CheckCircle2, ChevronLeft, X, AlertTriangle
+  Globe, CheckCircle2, ChevronLeft, X, AlertTriangle, ShoppingCart
 } from 'lucide-react';
 
 import { useCart } from '../context/CartContext';

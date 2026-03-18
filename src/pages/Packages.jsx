@@ -62,9 +62,9 @@ const Packages = () => {
           {/* Sidebar Filters */}
           <aside>
             <div style={{ position: 'sticky', top: '160px' }}>
-              <div style={{ marginBottom: '2.5rem' }}>
-                <h3 style={{ fontSize: '1.25rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <Search size={20} /> Buscar Destino
+              <div style={{ marginBottom: '1.5rem' }}>
+                <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Search size={18} /> Buscar Destino
                 </h3>
                 <div style={{ position: 'relative' }}>
                   <input 
@@ -85,9 +85,9 @@ const Packages = () => {
                 </div>
               </div>
 
-              <div style={{ marginBottom: '2.5rem' }}>
-                <h3 style={{ fontSize: '1.25rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <Filter size={20} /> Categorias
+              <div style={{ marginBottom: '1.5rem' }}>
+                <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Filter size={18} /> Categorias
                 </h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                   {categories.map(cat => (
@@ -98,7 +98,7 @@ const Packages = () => {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        padding: '0.75rem 1rem',
+                        padding: '0.6rem 1rem',
                         borderRadius: 'var(--radius-sm)',
                         textAlign: 'left',
                         backgroundColor: activeCategory === cat ? '#FFD700' : 'transparent',
@@ -116,7 +116,7 @@ const Packages = () => {
                 </div>
               </div>
 
-              <div className="card" style={{ padding: '1.5rem', backgroundColor: '#000', color: '#fff', borderRadius: '20px', border: '1px solid #FFD700' }}>
+              <div className="card" style={{ padding: '1.25rem', backgroundColor: '#000', color: '#fff', borderRadius: '15px', border: '1px solid #FFD700' }}>
                 <h4 style={{ color: '#FFD700', marginBottom: '1rem' }}>Precisa de Ajuda?</h4>
                 <p style={{ fontSize: '0.875rem', marginBottom: '1.5rem', opacity: 0.9 }}>
                   Nossos especialistas podem criar um roteiro 100% personalizado para você.

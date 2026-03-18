@@ -1,5 +1,7 @@
 import React from 'react';
 import { CheckCircle2, Users, Target, ShieldCheck, Heart } from 'lucide-react';
+import gal011 from '../assets/galeria/011.jpg';
+import tourHero from '../assets/tour-hero.png';
 
 const About = () => {
   return (
@@ -7,8 +9,8 @@ const About = () => {
       {/* Page Header */}
       <section style={{ 
         backgroundColor: '#000', 
-        padding: '6rem 0', 
-        backgroundImage: 'linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url(https://images.unsplash.com/photo-1581333100576-b73bbe92c19a?q=80&w=2000)',
+        padding: '5rem 0', 
+        backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(${tourHero})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         textAlign: 'center',
@@ -21,19 +23,22 @@ const About = () => {
       </section>
 
       {/* Our Mission */}
-      <section style={{ padding: '8rem 0', backgroundColor: '#fff' }}>
+      <section style={{ padding: '6rem 0', backgroundColor: '#fff' }}>
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '4rem', alignItems: 'center' }}>
-            <div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.2fr) minmax(0, 1fr)', gap: '4rem', alignItems: 'center' }}>
+            <div style={{ position: 'relative' }}>
               <img 
-                src="https://images.unsplash.com/photo-1542385151-efd9000785a0?q=80&w=800" 
+                src={gal011} 
                 alt="Nossa Missão" 
                 loading="lazy"
-                style={{ width: '100%', borderRadius: '20px', boxShadow: '0 20px 40px rgba(0,0,0,0.1)' }} 
+                style={{ width: '100%', borderRadius: '24px', boxShadow: '0 20px 50px rgba(0,0,0,0.15)', objectFit: 'cover', maxHeight: '550px' }} 
               />
+              <div style={{ position: 'absolute', bottom: '-20px', right: '-20px', backgroundColor: '#FFD700', color: '#000', padding: '1.5rem', borderRadius: '16px', fontWeight: 800, fontSize: '1.2rem', boxShadow: '0 10px 30px rgba(255, 215, 0, 0.3)' }} className="hide-mobile">
+                +10 Anos de<br/>Experiência
+              </div>
             </div>
             <div>
-              <h2 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '2rem' }}>Especialistas em Experiências na Amazônia</h2>
+              <h2 style={{ fontSize: 'clamp(2rem, 5vw, 2.75rem)', fontWeight: 800, marginBottom: '2rem', lineHeight: 1.2 }}>Especialistas em Experiências na Amazônia</h2>
               <p style={{ fontSize: '1.1rem', color: '#64748b', lineHeight: 1.8, marginBottom: '2rem' }}>
                 A Amazonia Travel nasceu da paixão profunda pela maior floresta tropical do mundo. Com mais de 10 anos de experiência, nossa missão é conectar viajantes do mundo todo com a essência vibrante e os mistérios da Amazônia.
               </p>
@@ -117,6 +122,13 @@ const About = () => {
            </div>
         </div>
       </section>
+      <style>{`
+        @media (max-width: 900px) {
+          .about-page section { padding: 4rem 0 !important; }
+          .container > div { grid-template-columns: 1fr !important; gap: 2.5rem !important; }
+          .hide-mobile { display: none; }
+        }
+      `}</style>
     </div>
   );
 };
