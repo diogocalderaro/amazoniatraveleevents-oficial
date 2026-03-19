@@ -77,7 +77,7 @@ const Packages = () => {
         color: '#fff'
       }}>
         <div className="container">
-          <h1 style={{ fontSize: 'clamp(2.5rem, 8vw, 3.5rem)', marginBottom: '1rem', fontWeight: 800, color: '#fff' }}>Nossos Destinos</h1>
+          <h1 style={{ fontSize: 'clamp(1.8rem, 8vw, 3.5rem)', marginBottom: '1rem', fontWeight: 800, color: '#fff' }}>Nossos Destinos</h1>
           <p style={{ fontSize: '1.125rem', color: 'rgba(255,255,255,0.8)', maxWidth: '600px', margin: '0 auto' }}>
             Explore os melhores pacotes selecionados para você viver experiências inesquecíveis.
           </p>

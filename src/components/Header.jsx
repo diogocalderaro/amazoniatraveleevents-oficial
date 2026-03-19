@@ -44,7 +44,7 @@ const Header = () => {
       }}>
         {/* Logo */}
         <Link to="/" className="logo" style={{ display: 'flex', alignItems: 'center' }}>
-          <img src={logo} alt="Amazonia Travel" style={{ height: '50px', width: 'auto' }} />
+          <img src={logo} alt="Amazonia Travel" style={{ height: 'clamp(35px, 6vw, 50px)', width: 'auto' }} />
         </Link>
 
         {/* Desktop Navigation */}

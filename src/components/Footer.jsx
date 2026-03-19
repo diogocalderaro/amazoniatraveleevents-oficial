@@ -22,7 +22,7 @@ const Footer = () => {
         {/* Column 1: Brand & Social */}
         <div>
           <div style={{ marginBottom: '1.5rem' }}>
-            <img src={logoWhite} alt="Amazonia Travel" style={{ height: '70px', width: 'auto' }} />
+            <img src={logoWhite} alt="Amazonia Travel" style={{ height: 'clamp(40px, 8vw, 70px)', width: 'auto' }} />
           </div>
           <p style={{ color: 'rgba(255,255,255,0.7)', marginBottom: '2rem', fontSize: '0.95rem', lineHeight: 1.6, maxWidth: '280px' }}>
             Empresa especializada em Turismo regionais, nacionais e internacionais.<br/><br/>Serviços: Passeios, Excursões, Traslados, Passagens e Eventos  etc.
@@ -85,10 +85,22 @@ const Footer = () => {
           </p>
           
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '2.5rem' }}>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" alt="Visa" style={{ height: '30px', backgroundColor: '#fff', padding: '5px 10px', borderRadius: '4px' }} />
-            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" style={{ height: '30px', backgroundColor: '#fff', padding: '5px', borderRadius: '4px' }} />
-            <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png" alt="Mastercard" style={{ height: '30px', backgroundColor: '#fff', padding: '5px', borderRadius: '4px' }} />
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/American_Express_logo.svg/1200px-American_Express_logo.svg.png" alt="Amex" style={{ height: '30px', backgroundColor: '#fff', padding: '5px', borderRadius: '4px' }} />
+            {/* Visa */}
+            <div style={{ backgroundColor: '#fff', padding: '8px 14px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '40px', minWidth: '60px' }}>
+              <svg viewBox="0 0 780 500" height="24" xmlns="http://www.w3.org/2000/svg"><path d="M293.2 348.7l33.4-195.7h53.4l-33.4 195.7zM540.9 157.5c-10.6-4-27.2-8.3-47.9-8.3-52.8 0-90 26.6-90.3 64.7-.3 28.2 26.6 43.9 46.9 53.3 20.8 9.6 27.8 15.8 27.7 24.4-.1 13.2-16.6 19.2-32 19.2-21.4 0-32.7-3-50.3-10.3l-6.9-3.1-7.5 43.8c12.5 5.5 35.6 10.2 59.6 10.5 56.2 0 92.6-26.3 93-67.1.2-22.4-14.1-39.4-45.1-53.4-18.8-9.1-30.3-15.1-30.2-24.3 0-8.1 9.7-16.8 30.8-16.8 17.6-.3 30.3 3.6 40.2 7.6l4.8 2.3 7.2-42.5zM676.3 153h-41.3c-12.8 0-22.4 3.5-28 16.3L520.3 348.7h56.2s9.2-24.1 11.3-29.4c6.1 0 60.8.1 68.6.1 1.6 6.9 6.5 29.3 6.5 29.3h49.7l-36.3-195.7zm-65.9 126.2c4.4-11.3 21.4-54.7 21.4-54.7-.3.5 4.4-11.4 7.1-18.8l3.6 17s10.3 47 12.4 56.5h-44.5zM232.8 153L180.4 282l-5.6-27.1c-9.7-31.3-40-65.2-73.9-82.2l47.9 173.9h56.6l84.2-195.6h-56.8" fill="#1A1F71"/><path d="M131.9 153H48.8l-.6 3.6c67.2 16.2 111.7 55.4 130.1 102.5L160 172.1c-3.2-12.4-12.6-16-28.1-16" fill="#F9A533"/></svg>
+            </div>
+            {/* Mastercard */}
+            <div style={{ backgroundColor: '#fff', padding: '8px 14px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '40px', minWidth: '60px' }}>
+              <svg viewBox="0 0 780 500" height="24" xmlns="http://www.w3.org/2000/svg"><circle cx="299.6" cy="250" r="167.7" fill="#EB001B"/><circle cx="480.4" cy="250" r="167.7" fill="#F79E1B"/><path d="M390 116.1a167.5 167.5 0 00-63 133.9 167.5 167.5 0 0063 133.9 167.5 167.5 0 0063-133.9 167.5 167.5 0 00-63-133.9z" fill="#FF5F00"/></svg>
+            </div>
+            {/* Pix */}
+            <div style={{ backgroundColor: '#fff', padding: '8px 14px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '40px', minWidth: '60px' }}>
+              <svg viewBox="0 0 512 512" height="24" xmlns="http://www.w3.org/2000/svg"><path d="M389.2 197.3l-68.9 68.9c-6.2 6.2-16.4 6.2-22.6 0l-69-68.9c-3-3-7.1-4.7-11.3-4.7h-32.8l89.4 89.4c18.7 18.7 49.1 18.7 67.9 0l89.4-89.4h-30.8c-4.2 0-8.3 1.7-11.3 4.7z" fill="#32BCAD"/><path d="M389.2 314.7l-68.9-68.9c-6.2-6.2-16.4-6.2-22.6 0l-69 68.9c-3 3-7.1 4.7-11.3 4.7h-32.8l89.4-89.4c18.7-18.7 49.1-18.7 67.9 0l89.4 89.4h-30.8c-4.2 0-8.3-1.7-11.3-4.7z" fill="#32BCAD"/><path d="M97.7 256l61.3 61.3c3 3 7.1 4.7 11.3 4.7h48.1l-73.8-73.8c-3.1-3.1-3.1-8.2 0-11.3l73.8-73.8h-48.1c-4.2 0-8.3 1.7-11.3 4.7L97.7 229c-14.9 14.9-14.9 12.2 0 27z" fill="#32BCAD"/><path d="M414.3 256l-61.3-61.3c-3-3-7.1-4.7-11.3-4.7h-48.1l73.8 73.8c3.1 3.1 3.1 8.2 0 11.3l-73.8 73.8h48.1c4.2 0 8.3-1.7 11.3-4.7l61.3-61.3c14.9-14.8 14.9-12.1 0-26.9z" fill="#32BCAD"/></svg>
+            </div>
+            {/* Boleto */}
+            <div style={{ backgroundColor: '#fff', padding: '8px 14px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '40px', minWidth: '60px' }}>
+              <svg viewBox="0 0 24 24" height="24" fill="none" stroke="#333" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="6" y1="8" x2="6" y2="16"/><line x1="8" y1="8" x2="8" y2="16"/><line x1="11" y1="8" x2="11" y2="16"/><line x1="13" y1="8" x2="13" y2="16"/><line x1="15" y1="8" x2="15" y2="16"/><line x1="18" y1="8" x2="18" y2="16"/><line x1="10" y1="8" x2="10" y2="12"/><line x1="16" y1="12" x2="16" y2="16"/></svg>
+            </div>
           </div>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>

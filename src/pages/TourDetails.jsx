@@ -127,7 +127,7 @@ const TourDetails = () => {
 
       {/* Internal Navigation Tabs */}
       <div style={{ backgroundColor: '#fff', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: '70px', zIndex: 100 }}>
-        <div className="container" style={{ display: 'flex', gap: '2rem', overflowX: 'auto' }}>
+        <div className="container" style={{ display: 'flex', gap: '1rem', overflowX: 'auto' }}>
           {[
             { id: 'sobre', label: 'Sobre', icon: <Info size={18} /> },
             { id: 'fotos', label: 'Fotos', icon: <ImageIcon size={18} /> },
@@ -148,7 +148,7 @@ const TourDetails = () => {
                 }
               }}
               style={{ 
-                padding: '1.5rem 0', 
+                padding: '1.5rem 0.5rem', 
                 color: activeTab === tab.id ? '#000' : '#64748b', 
                 textDecoration: 'none', 
                 fontWeight: 700, 

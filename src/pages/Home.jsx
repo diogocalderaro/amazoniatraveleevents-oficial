@@ -30,8 +30,10 @@ const Home = () => {
   const navigate = useNavigate();
   const [selectedImage, setSelectedImage] = useState(null);
   const [activeFaq, setActiveFaq] = useState(null);
+  const [activeSlide, setActiveSlide] = useState(0);
 
   const carouselRef = React.useRef(null);
+  const isHoveredRef = React.useRef(false);
 
   const scrollCarousel = (direction) => {
     if (carouselRef.current) {
@@ -40,10 +42,17 @@ const Home = () => {
     }
   };
 
-  // 5 second auto-play for carousel
+  const handleCarouselScroll = (e) => {
+    const scrollLeft = e.target.scrollLeft;
+    const width = e.target.clientWidth;
+    const currentSlide = Math.round(scrollLeft / width);
+    setActiveSlide(currentSlide);
+  };
+
+  // 5 second auto-play for carousel (pauses on hover)
   React.useEffect(() => {
     const interval = setInterval(() => {
-      if (carouselRef.current) {
+      if (carouselRef.current && !isHoveredRef.current) {
         const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
         if (scrollLeft + clientWidth >= scrollWidth - 10) {
           carouselRef.current.scrollTo({ left: 0, behavior: 'smooth' });
@@ -197,7 +206,7 @@ const Home = () => {
               </p>
               <h1 style={{ 
                 color: '#fff',
-                fontSize: 'clamp(3rem, 10vw, 6rem)',
+                fontSize: 'clamp(2.3rem, 10vw, 6rem)',
                 marginBottom: '1rem',
                 lineHeight: 0.9,
                 fontWeight: 900,
@@ -315,86 +324,89 @@ const Home = () => {
             </div>
           </div>
         </div>
-
-        {/* Floating Search Bar */}
-        <div className="container search-container" style={{
-          position: 'absolute',
-          bottom: '-60px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          zIndex: 30,
-          width: '95%',
-          maxWidth: '1200px'
-        }}>
-          <div className="search-bar glass" style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            backgroundColor: '#fff',
-            padding: '1.5rem',
-            borderRadius: '20px',
-            boxShadow: '0 20px 50px rgba(0,0,0,0.1)',
-            border: '1px solid #f1f5f9'
-          }}>
-            <div style={{ flex: 1, minWidth: '250px', display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 1rem', borderRight: '1px solid #E2E8F0' }} className="search-field">
-              <MapPin style={{ color: '#FFD700' }} />
-              <div style={{ width: '100%' }}>
-                <p style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase' }}>Para onde?</p>
-                <select style={{ border: 'none', background: 'transparent', width: '100%', outline: 'none', fontWeight: 600, fontSize: '16px' }}>
-                  <option>Selecione o local</option>
-                  <option>Manaus - AM</option>
-                  <option>Presidente Figueiredo - AM</option>
-                  <option>Anavilhanas - AM</option>
-                </select>
-              </div>
-            </div>
-            <div style={{ flex: 1, minWidth: '150px', display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 1rem', borderRight: '1px solid #E2E8F0' }}>
-               <Calendar style={{ color: '#FFD700' }} />
-               <div>
-                  <p style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase' }}>Data de Ida</p>
-                  <input type="date" style={{ border: 'none', background: 'transparent', outline: 'none', fontWeight: 600, fontFamily: 'inherit', fontSize: '16px', color: '#333' }} />
-               </div>
-            </div>
-            <div style={{ flex: 1, minWidth: '150px', display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 1rem', borderRight: '1px solid #E2E8F0' }}>
-               <Calendar style={{ color: '#FFD700' }} />
-               <div>
-                  <p style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase' }}>Data de Volta</p>
-                  <input type="date" style={{ border: 'none', background: 'transparent', outline: 'none', fontWeight: 600, fontFamily: 'inherit', fontSize: '16px', color: '#333' }} />
-               </div>
-            </div>
-            <div style={{ flex: 1, minWidth: '150px', display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 1rem' }}>
-              <User style={{ color: '#FFD700' }} />
-              <div>
-                  <p style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase' }}>Viajantes</p>
-                  <select defaultValue="1 Pessoa" style={{ border: 'none', background: 'transparent', width: '100%', outline: 'none', fontWeight: 600, fontSize: '16px' }}>
-                    <option value="1 Pessoa">1 Pessoa</option>
-                    <option value="2 Pessoas">2 Pessoas</option>
-                    <option value="3+ Pessoas">3+ Pessoas</option>
-                  </select>
-              </div>
-            </div>
-            <button 
-              onClick={() => navigate('/search')}
-              className="btn btn-primary" style={{
-              minWidth: '140px', height: '60px', borderRadius: '12px',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              gap: '0.5rem', backgroundColor: '#000', color: '#fff', border: 'none'
-            }}>
-              <Search size={22} /> <span style={{ fontWeight: 700 }}>BUSCAR</span>
-            </button>
-          </div>
-        </div>
       </section>
 
+      {/* Floating Search Bar - outside hero so it doesn't overlap on mobile */}
+      <div className="container search-container" style={{
+        position: 'relative',
+        marginTop: '-60px',
+        zIndex: 30,
+        width: '95%',
+        maxWidth: '1200px',
+        marginLeft: 'auto',
+        marginRight: 'auto'
+      }}>
+        <div className="search-bar glass" style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+          backgroundColor: '#fff',
+          padding: '1.5rem',
+          borderRadius: '20px',
+          boxShadow: '0 20px 50px rgba(0,0,0,0.1)',
+          border: '1px solid #f1f5f9'
+        }}>
+          <div style={{ flex: 1, minWidth: '250px', display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 1rem', borderRight: '1px solid #E2E8F0' }} className="search-field">
+            <MapPin style={{ color: '#FFD700' }} />
+            <div style={{ width: '100%' }}>
+              <p style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase' }}>Para onde?</p>
+              <select style={{ border: 'none', background: 'transparent', width: '100%', outline: 'none', fontWeight: 600, fontSize: '16px' }}>
+                <option>Selecione o local</option>
+                <option>Manaus - AM</option>
+                <option>Presidente Figueiredo - AM</option>
+                <option>Anavilhanas - AM</option>
+              </select>
+            </div>
+          </div>
+          <label className="search-field" style={{ flex: 1, minWidth: '150px', display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 1rem', borderRight: '1px solid #E2E8F0', cursor: 'pointer' }}>
+             <Calendar style={{ color: '#FFD700', flexShrink: 0 }} />
+             <div style={{ width: '100%' }}>
+                <p style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase', marginBottom: '2px' }}>Data de Ida</p>
+                <input type="date" style={{ border: 'none', background: 'transparent', outline: 'none', fontWeight: 600, fontFamily: 'inherit', fontSize: '16px', color: '#333', width: '100%', cursor: 'pointer' }} />
+             </div>
+          </label>
+          <label className="search-field" style={{ flex: 1, minWidth: '150px', display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 1rem', borderRight: '1px solid #E2E8F0', cursor: 'pointer' }}>
+             <Calendar style={{ color: '#FFD700', flexShrink: 0 }} />
+             <div style={{ width: '100%' }}>
+                <p style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase', marginBottom: '2px' }}>Data de Volta</p>
+                <input type="date" style={{ border: 'none', background: 'transparent', outline: 'none', fontWeight: 600, fontFamily: 'inherit', fontSize: '16px', color: '#333', width: '100%', cursor: 'pointer' }} />
+             </div>
+          </label>
+          <div className="search-field" style={{ flex: 1, minWidth: '150px', display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 1rem' }}>
+            <User style={{ color: '#FFD700' }} />
+            <div>
+                <p style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase' }}>Viajantes</p>
+                <select defaultValue="1 Pessoa" style={{ border: 'none', background: 'transparent', width: '100%', outline: 'none', fontWeight: 600, fontSize: '16px' }}>
+                  <option value="1 Pessoa">1 Pessoa</option>
+                  <option value="2 Pessoas">2 Pessoas</option>
+                  <option value="3+ Pessoas">3+ Pessoas</option>
+                </select>
+            </div>
+          </div>
+          <button 
+            onClick={() => navigate('/search')}
+            className="btn btn-primary" style={{
+            minWidth: '140px', height: '60px', borderRadius: '12px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            gap: '0.5rem', backgroundColor: '#000', color: '#fff', border: 'none'
+          }}>
+            <Search size={22} /> <span style={{ fontWeight: 700 }}>BUSCAR</span>
+          </button>
+        </div>
+      </div>
+
       {/* Popular Packages Section */}
-      <section style={{ paddingTop: '10rem', backgroundColor: '#f8fafc' }}>
+      <section style={{ paddingTop: '5rem', backgroundColor: '#f8fafc' }}>
         <div className="container">
           <div className="section-title">
             <h2 style={{ fontSize: '2.5rem', fontWeight: 800, textAlign: 'center', marginBottom: '1rem' }}>Pacotes de Viagem Populares</h2>
             <p style={{ textAlign: 'center', color: '#64748b', marginBottom: '4rem' }}>Escolha seu destino e conecte-se com a natureza exuberante.</p>
           </div>
 
-          <div style={{ position: 'relative' }}>
+          <div style={{ position: 'relative' }}
+            onMouseEnter={() => isHoveredRef.current = true}
+            onMouseLeave={() => isHoveredRef.current = false}
+          >
             <div 
               ref={carouselRef}
               className="home-packages-carousel" 
@@ -407,9 +419,10 @@ const Home = () => {
                 scrollbarWidth: 'none',
                 msOverflowStyle: 'none',
               }}
+              onScroll={handleCarouselScroll}
             >
               {packagesData.slice(0, 6).map((pkg) => (
-                <div key={pkg.id} className="package-card-new" style={{ 
+                <div key={pkg.id} className="package-card-new package-item" style={{ 
                   flex: '0 0 auto', 
                   width: 'calc(25% - 1.125rem)', 
                   minWidth: '280px',
@@ -483,6 +496,28 @@ const Home = () => {
             >
               <ChevronRight size={24} />
             </button>
+            <div className="carousel-dots hide-desktop" style={{ display: 'none', justifyContent: 'center', gap: '8px', marginTop: '1.5rem' }}>
+              {packagesData.slice(0, 6).map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => {
+                    if (carouselRef.current) {
+                      carouselRef.current.scrollTo({ left: idx * carouselRef.current.clientWidth, behavior: 'smooth' });
+                    }
+                  }}
+                  style={{
+                    width: activeSlide === idx ? '24px' : '8px',
+                    height: '8px',
+                    borderRadius: '4px',
+                    backgroundColor: activeSlide === idx ? '#FFD700' : '#e2e8f0',
+                    border: 'none',
+                    transition: 'all 0.3s ease',
+                    padding: 0
+                  }}
+                  aria-label={`Slide ${idx + 1}`}
+                />
+              ))}
+            </div>
             <style>{`
               .home-packages-carousel::-webkit-scrollbar {
                 display: none;
@@ -500,7 +535,7 @@ const Home = () => {
       <section style={{ backgroundColor: '#fff', padding: '10rem 0', position: 'relative', overflow: 'hidden' }}>
         <div className="container">
           <div className="section-title">
-            <h2 style={{ fontSize: '3.5rem', fontWeight: 900, textAlign: 'center', marginBottom: '1rem', color: '#000' }}>Perguntas e Respostas</h2>
+            <h2 style={{ fontSize: 'clamp(1.8rem, 5vw, 3.5rem)', fontWeight: 900, textAlign: 'center', marginBottom: '1rem', color: '#000' }}>Perguntas e Respostas</h2>
             <p style={{ textAlign: 'center', color: '#64748b', marginBottom: '5rem', fontSize: '1.25rem' }}>Estamos comprometidos em oferecer mais do que apenas produtos — proporcionamos experiências excepcionais.</p>
           </div>
 
@@ -547,7 +582,7 @@ const Home = () => {
             <h2 style={{ fontSize: '2.5rem', fontWeight: 800, textAlign: 'center', marginBottom: '1rem' }}>Galeria da Amazônia</h2>
             <p style={{ textAlign: 'center', color: '#64748b', marginBottom: '4rem' }}>Um vislumbre das maravilhas que esperam por você.</p>
           </div>
-          <div style={{
+          <div className="gallery-grid" style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
             gridAutoRows: '280px',
@@ -731,9 +766,13 @@ const Home = () => {
           .hide-mobile { display: none !important; }
           .search-bar { flex-direction: column; align-items: stretch !important; gap: 1rem; }
           .search-field { border-right: none !important; border-bottom: 1px solid #E2E8F0; padding-bottom: 1rem !important; }
-          .search-container { position: relative !important; bottom: 0 !important; left: 0 !important; transform: none !important; margin-top: -8rem; width: 100% !important; }
-          .hero { padding-bottom: 10rem !important; }
-          .discount-badge { width: 100px !important; height: 100px !important; top: -20px !important; right: 0 !important; transform: rotate(10deg) scale(0.8) !important; }
+          .search-container { margin-top: 0 !important; width: 100% !important; }
+          .hero { padding-bottom: 4rem !important; }
+          .discount-badge { width: 110px !important; height: 110px !important; position: relative !important; margin: -1rem 0 2rem auto !important; top: auto !important; right: auto !important; transform: rotate(5deg) !important; box-shadow: none !important; }
+          .home-packages-carousel { scroll-snap-type: x mandatory !important; }
+          .package-item { width: 100% !important; min-width: 100% !important; scroll-snap-align: center !important; flex: 0 0 100% !important; }
+          .carousel-dots { display: flex !important; }
+          .gallery-grid { grid-template-columns: repeat(2, 1fr) !important; grid-auto-rows: 150px !important; gap: 0.5rem !important; }
         }
       `}</style>
 

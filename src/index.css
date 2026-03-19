@@ -265,5 +265,9 @@ section {
 @media (max-width: 480px) {
   h1 { font-size: 2rem; }
   h2 { font-size: 1.5rem; }
-  .container { padding: 0 1rem; }
+  .container { padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
+}
+
+@media (max-width: 768px) {
+  .container { padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
 }
