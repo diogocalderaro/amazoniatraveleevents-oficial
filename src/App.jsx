@@ -30,7 +30,7 @@ import AdminComentarios from './pages/admin/AdminComentarios';
 function App() {
   return (
     <CartProvider>
-      <Router basename="/clientes/amazoniatraveleevents">
+      <Router basename="/">
         <ScrollToTop />
         <Routes>
           {/* Public Routes */}

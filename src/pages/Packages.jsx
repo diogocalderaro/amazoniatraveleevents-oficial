@@ -255,7 +255,7 @@ const Packages = () => {
 
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid #f1f5f9' }}>
                         <div>
-                          <span style={{ fontSize: '1.35rem', fontWeight: 800, color: '#000' }}>{pkg.priceDisplay || `R$ ${pkg.price.toLocaleString('pt-BR')}`}</span>
+                          <span style={{ fontSize: '1.35rem', fontWeight: 800, color: '#000' }}>{pkg.priceDisplay || new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(pkg.price)}</span>
                           <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}> /pessoa</span>
                         </div>
                         <Link to={`/tour/${pkg.id}`} style={{ 

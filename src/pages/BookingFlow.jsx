@@ -17,6 +17,13 @@ const BookingFlow = () => {
   const [itemToRemove, setItemToRemove] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+ 
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(price);
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -194,50 +201,74 @@ const BookingFlow = () => {
                     backgroundColor: '#fff', 
                     borderRadius: '12px', 
                     padding: '1.25rem', 
-                    display: 'flex', 
-                    gap: '1.5rem',
                     boxShadow: '0 2px 10px rgba(0,0,0,0.03)',
-                    flexWrap: 'wrap'
+                    overflow: 'hidden'
                   }}>
-                    <Link to={`/tour/${item.id}`} style={{ minWidth: '150px' }}>
-                      <img src={item.image} alt={item.title} loading="lazy" style={{ width: '100%', maxWidth: '180px', height: '120px', borderRadius: '8px', objectFit: 'cover' }} />
-                    </Link>
-                    <div style={{ flex: 1, minWidth: '250px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    {/* Desktop layout */}
+                    <div className="cart-item-desktop" style={{ display: 'flex', gap: '1.25rem', alignItems: 'flex-start' }}>
+                      <Link to={`/tour/${item.id}`} style={{ flexShrink: 0 }}>
+                        <img src={item.image} alt={item.title} loading="lazy" style={{ width: '160px', height: '110px', borderRadius: '8px', objectFit: 'cover', display: 'block' }} />
+                      </Link>
+                      <div style={{ flex: 1, minWidth: 0 }}>
                         <Link to={`/tour/${item.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                          <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem' }}>{item.title}</h3>
+                          <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 0.5rem 0', lineHeight: 1.3 }}>{item.title}</h3>
                         </Link>
-                        <div style={{ textAlign: 'right' }}>
-                          <span style={{ fontSize: '1.25rem', fontWeight: 800 }}>R$ {item.price}</span>
+                        <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.4rem', color: '#666', fontSize: '0.85rem', flexWrap: 'wrap' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Calendar size={14} className="text-primary" /> {item.duration}</div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><MapPin size={14} className="text-primary" /> {item.destinations}</div>
                         </div>
+                        <p style={{ fontSize: '0.85rem', color: '#444', marginBottom: '0.2rem' }}>
+                          <strong>Data da turnê:</strong> {item.date}
+                        </p>
+                        <p style={{ fontSize: '0.85rem', color: '#444', margin: 0 }}>
+                          <strong>Convidados:</strong> {item.guests}
+                        </p>
                       </div>
-                      <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '0.5rem', color: '#666', fontSize: '0.9rem', flexWrap: 'wrap' }}>
+                      <div style={{ textAlign: 'right', flexShrink: 0, minWidth: '130px', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.5rem' }}>
+                        <span style={{ fontSize: '1.3rem', fontWeight: 800, color: '#2d6a4f', whiteSpace: 'nowrap' }}>{formatPrice(item.price)}</span>
+                        <button 
+                          onClick={() => handleDeleteClick(item)}
+                          style={{ 
+                            background: 'none', border: 'none', color: '#ef4444', 
+                            display: 'flex', alignItems: 'center', gap: '4px', 
+                            fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer',
+                            marginTop: 'auto'
+                          }}>
+                          <X size={14} /> Remover
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Mobile layout */}
+                    <div className="cart-item-mobile" style={{ display: 'none' }}>
+                      <Link to={`/tour/${item.id}`} style={{ display: 'block', margin: '-1.25rem -1.25rem 1rem -1.25rem' }}>
+                        <img src={item.image} alt={item.title} loading="lazy" style={{ width: '100%', height: '180px', objectFit: 'cover', display: 'block', borderRadius: '12px 12px 0 0' }} />
+                      </Link>
+                      <Link to={`/tour/${item.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 0.75rem 0', lineHeight: 1.3 }}>{item.title}</h3>
+                      </Link>
+                      <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.5rem', color: '#666', fontSize: '0.85rem', flexWrap: 'wrap' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Calendar size={14} className="text-primary" /> {item.duration}</div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><MapPin size={14} className="text-primary" /> {item.destinations}</div>
                       </div>
-                      <p style={{ fontSize: '0.9rem', color: '#444', marginBottom: '0.25rem' }}>
+                      <p style={{ fontSize: '0.85rem', color: '#444', marginBottom: '0.25rem' }}>
                         <strong>Data da turnê:</strong> {item.date}
                       </p>
-                      <p style={{ fontSize: '0.9rem', color: '#444' }}>
+                      <p style={{ fontSize: '0.85rem', color: '#444', marginBottom: '1rem' }}>
                         <strong>Convidados:</strong> {item.guests}
                       </p>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'flex-end', marginLeft: 'auto' }}>
-                       <button 
-                         onClick={() => handleDeleteClick(item)}
-                         style={{ 
-                         background: 'none', 
-                         border: 'none', 
-                         color: '#ef4444', 
-                         display: 'flex', 
-                         alignItems: 'center', 
-                         gap: '4px', 
-                         fontSize: '0.85rem', 
-                         fontWeight: 600,
-                         cursor: 'pointer'
-                       }}>
-                         <Trash2 size={16} /> Remover
-                       </button>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontSize: '1.25rem', fontWeight: 800, color: '#2d6a4f' }}>{formatPrice(item.price)}</span>
+                        <button 
+                          onClick={() => handleDeleteClick(item)}
+                          style={{ 
+                            background: 'none', border: 'none', color: '#ef4444', 
+                            display: 'flex', alignItems: 'center', gap: '4px', 
+                            fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer'
+                          }}>
+                          <X size={14} /> Remover
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -247,7 +278,7 @@ const BookingFlow = () => {
                 <div style={{ backgroundColor: '#fff', padding: '2rem', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '1.5rem' }}>
                     <span style={{ fontWeight: 700 }}>Total ({cartItems.length}):</span>
-                    <span style={{ fontSize: '1.75rem', fontWeight: 800 }}>R$ {cartTotal}</span>
+                    <span style={{ fontSize: '1.75rem', fontWeight: 800 }}>{formatPrice(cartTotal)}</span>
                   </div>
                   <p style={{ fontSize: '0.8rem', color: '#999', fontStyle: 'italic', textAlign: 'right', marginBottom: '2rem' }}>
                     * Todos os impostos e taxas incluídos
@@ -274,7 +305,7 @@ const BookingFlow = () => {
                       marginBottom: '2rem'
                     }}
                   >
-                    <CheckCircle2 size={18} /> Confira
+                    <CheckCircle2 size={18} /> Checkout
                   </button>
                   
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -318,13 +349,13 @@ const BookingFlow = () => {
                       </div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
                         <span style={{ fontSize: '0.85rem', color: '#666' }}>Valor:</span>
-                        <span style={{ fontWeight: 800, fontSize: '1.1rem' }}>R$ {item.price}</span>
+                        <span style={{ fontWeight: 800, fontSize: '1.1rem' }}>{formatPrice(item.price)}</span>
                       </div>
                     </div>
                   ))}
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginTop: '1rem' }}>
                     <span style={{ fontWeight: 700 }}>Total Geral:</span>
-                    <span style={{ fontSize: '1.75rem', fontWeight: 800 }}>R$ {cartTotal}</span>
+                    <span style={{ fontSize: '1.75rem', fontWeight: 800 }}>{formatPrice(cartTotal)}</span>
                   </div>
                 </div>
               </div>
@@ -517,12 +548,13 @@ const BookingFlow = () => {
           }
           .hide-mobile { display: none !important; }
         }
-        @media (max-width: 480px) {
-          .cart-item {
-            flex-direction: column;
-            align-items: stretch !important;
+        @media (max-width: 768px) {
+          .cart-item-desktop {
+            display: none !important;
           }
-          .cart-item img { width: 100% !important; max-width: none !important; }
+          .cart-item-mobile {
+            display: block !important;
+          }
         }
       `}</style>
     </div>

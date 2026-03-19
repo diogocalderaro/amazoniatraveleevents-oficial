@@ -358,18 +358,38 @@ const Home = () => {
               </select>
             </div>
           </div>
-          <label className="search-field" style={{ flex: 1, minWidth: '150px', display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 1rem', borderRight: '1px solid #E2E8F0', cursor: 'pointer' }}>
+          <label 
+            htmlFor="date-ida"
+            className="search-field" 
+            style={{ flex: 1, minWidth: '150px', display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 1rem', borderRight: '1px solid #E2E8F0', cursor: 'pointer' }}
+            onClick={(e) => {
+              const input = document.getElementById('date-ida');
+              if (input && typeof input.showPicker === 'function') {
+                input.showPicker();
+              }
+            }}
+          >
              <Calendar style={{ color: '#FFD700', flexShrink: 0 }} />
              <div style={{ width: '100%' }}>
                 <p style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase', marginBottom: '2px' }}>Data de Ida</p>
-                <input type="date" style={{ border: 'none', background: 'transparent', outline: 'none', fontWeight: 600, fontFamily: 'inherit', fontSize: '16px', color: '#333', width: '100%', cursor: 'pointer' }} />
+                <input id="date-ida" type="date" style={{ border: 'none', background: 'transparent', outline: 'none', fontWeight: 600, fontFamily: 'inherit', fontSize: '16px', color: '#333', width: '100%', cursor: 'pointer' }} />
              </div>
           </label>
-          <label className="search-field" style={{ flex: 1, minWidth: '150px', display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 1rem', borderRight: '1px solid #E2E8F0', cursor: 'pointer' }}>
+          <label 
+            htmlFor="date-volta"
+            className="search-field" 
+            style={{ flex: 1, minWidth: '150px', display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 1rem', borderRight: '1px solid #E2E8F0', cursor: 'pointer' }}
+            onClick={(e) => {
+              const input = document.getElementById('date-volta');
+              if (input && typeof input.showPicker === 'function') {
+                input.showPicker();
+              }
+            }}
+          >
              <Calendar style={{ color: '#FFD700', flexShrink: 0 }} />
              <div style={{ width: '100%' }}>
                 <p style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase', marginBottom: '2px' }}>Data de Volta</p>
-                <input type="date" style={{ border: 'none', background: 'transparent', outline: 'none', fontWeight: 600, fontFamily: 'inherit', fontSize: '16px', color: '#333', width: '100%', cursor: 'pointer' }} />
+                <input id="date-volta" type="date" style={{ border: 'none', background: 'transparent', outline: 'none', fontWeight: 600, fontFamily: 'inherit', fontSize: '16px', color: '#333', width: '100%', cursor: 'pointer' }} />
              </div>
           </label>
           <div className="search-field" style={{ flex: 1, minWidth: '150px', display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 1rem' }}>
@@ -468,7 +488,7 @@ const Home = () => {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '1rem', borderTop: '1px solid #f1f5f9', marginTop: 'auto' }}>
                       <div style={{ display: 'flex', flexDirection: 'column' }}>
                         {pkg.oldPrice && <span style={{ fontSize: '0.75rem', color: '#94a3b8', textDecoration: 'line-through' }}>R$ {pkg.oldPrice}</span>}
-                        <span style={{ fontSize: '1.2rem', fontWeight: 800, color: '#000' }}>{pkg.priceDisplay || `R$ ${pkg.price.toLocaleString('pt-BR')}`}</span>
+                        <span style={{ fontSize: '1.2rem', fontWeight: 800, color: '#000' }}>{pkg.priceDisplay || new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(pkg.price)}</span>
                       </div>
                       <Link to={`/tour/${pkg.id}`} className="nav-arrow-btn">
                         <ArrowRight size={20} />

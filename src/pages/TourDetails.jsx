@@ -470,7 +470,7 @@ const TourDetails = () => {
          width: 'max-content',
          maxWidth: '90vw'
        }}>
-         <span style={{ fontWeight: 700, fontSize: '1rem' }}>PACOTE inserido no carrinho.</span>
+         <span style={{ fontWeight: 700, fontSize: '1rem' }}>Inserido no carrinho.</span>
          <Link to="/checkout" style={{ color: '#FFD700', fontWeight: 800, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '5px' }}>
            Ver carrinho <ArrowRight size={18} />
          </Link>

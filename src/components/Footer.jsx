@@ -84,22 +84,38 @@ const Footer = () => {
             Adquira seus Tours com Segurança. Pague com:
           </p>
           
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '2.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '2.5rem' }}>
             {/* Visa */}
-            <div style={{ backgroundColor: '#fff', padding: '8px 14px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '40px', minWidth: '60px' }}>
-              <svg viewBox="0 0 780 500" height="24" xmlns="http://www.w3.org/2000/svg"><path d="M293.2 348.7l33.4-195.7h53.4l-33.4 195.7zM540.9 157.5c-10.6-4-27.2-8.3-47.9-8.3-52.8 0-90 26.6-90.3 64.7-.3 28.2 26.6 43.9 46.9 53.3 20.8 9.6 27.8 15.8 27.7 24.4-.1 13.2-16.6 19.2-32 19.2-21.4 0-32.7-3-50.3-10.3l-6.9-3.1-7.5 43.8c12.5 5.5 35.6 10.2 59.6 10.5 56.2 0 92.6-26.3 93-67.1.2-22.4-14.1-39.4-45.1-53.4-18.8-9.1-30.3-15.1-30.2-24.3 0-8.1 9.7-16.8 30.8-16.8 17.6-.3 30.3 3.6 40.2 7.6l4.8 2.3 7.2-42.5zM676.3 153h-41.3c-12.8 0-22.4 3.5-28 16.3L520.3 348.7h56.2s9.2-24.1 11.3-29.4c6.1 0 60.8.1 68.6.1 1.6 6.9 6.5 29.3 6.5 29.3h49.7l-36.3-195.7zm-65.9 126.2c4.4-11.3 21.4-54.7 21.4-54.7-.3.5 4.4-11.4 7.1-18.8l3.6 17s10.3 47 12.4 56.5h-44.5zM232.8 153L180.4 282l-5.6-27.1c-9.7-31.3-40-65.2-73.9-82.2l47.9 173.9h56.6l84.2-195.6h-56.8" fill="#1A1F71"/><path d="M131.9 153H48.8l-.6 3.6c67.2 16.2 111.7 55.4 130.1 102.5L160 172.1c-3.2-12.4-12.6-16-28.1-16" fill="#F9A533"/></svg>
+            <div style={{ backgroundColor: '#fff', padding: '8px 16px', borderRadius: '6px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg viewBox="0 0 780 500" height="18" xmlns="http://www.w3.org/2000/svg"><path d="M293.2 348.7l33.4-195.7h53.4l-33.4 195.7zM540.9 157.5c-10.6-4-27.2-8.3-47.9-8.3-52.8 0-90 26.6-90.3 64.7-.3 28.2 26.6 43.9 46.9 53.3 20.8 9.6 27.8 15.8 27.7 24.4-.1 13.2-16.6 19.2-32 19.2-21.4 0-32.7-3-50.3-10.3l-6.9-3.1-7.5 43.8c12.5 5.5 35.6 10.2 59.6 10.5 56.2 0 92.6-26.3 93-67.1.2-22.4-14.1-39.4-45.1-53.4-18.8-9.1-30.3-15.1-30.2-24.3 0-8.1 9.7-16.8 30.8-16.8 17.6-.3 30.3 3.6 40.2 7.6l4.8 2.3 7.2-42.5zM676.3 153h-41.3c-12.8 0-22.4 3.5-28 16.3L520.3 348.7h56.2s9.2-24.1 11.3-29.4c6.1 0 60.8.1 68.6.1 1.6 6.9 6.5 29.3 6.5 29.3h49.7l-36.3-195.7zm-65.9 126.2c4.4-11.3 21.4-54.7 21.4-54.7-.3.5 4.4-11.4 7.1-18.8l3.6 17s10.3 47 12.4 56.5h-44.5zM232.8 153L180.4 282l-5.6-27.1c-9.7-31.3-40-65.2-73.9-82.2l47.9 173.9h56.6l84.2-195.6h-56.8" fill="#1A1F71"/><path d="M131.9 153H48.8l-.6 3.6c67.2 16.2 111.7 55.4 130.1 102.5L160 172.1c-3.2-12.4-12.6-16-28.1-16" fill="#F9A533"/></svg>
             </div>
             {/* Mastercard */}
-            <div style={{ backgroundColor: '#fff', padding: '8px 14px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '40px', minWidth: '60px' }}>
-              <svg viewBox="0 0 780 500" height="24" xmlns="http://www.w3.org/2000/svg"><circle cx="299.6" cy="250" r="167.7" fill="#EB001B"/><circle cx="480.4" cy="250" r="167.7" fill="#F79E1B"/><path d="M390 116.1a167.5 167.5 0 00-63 133.9 167.5 167.5 0 0063 133.9 167.5 167.5 0 0063-133.9 167.5 167.5 0 00-63-133.9z" fill="#FF5F00"/></svg>
+            <div style={{ backgroundColor: '#fff', padding: '8px 16px', borderRadius: '6px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg viewBox="0 0 780 500" height="22" xmlns="http://www.w3.org/2000/svg"><circle cx="299.6" cy="250" r="167.7" fill="#EB001B"/><circle cx="480.4" cy="250" r="167.7" fill="#F79E1B"/><path d="M390 116.1a167.5 167.5 0 00-63 133.9 167.5 167.5 0 0063 133.9 167.5 167.5 0 0063-133.9 167.5 167.5 0 00-63-133.9z" fill="#FF5F00"/></svg>
             </div>
             {/* Pix */}
-            <div style={{ backgroundColor: '#fff', padding: '8px 14px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '40px', minWidth: '60px' }}>
-              <svg viewBox="0 0 512 512" height="24" xmlns="http://www.w3.org/2000/svg"><path d="M389.2 197.3l-68.9 68.9c-6.2 6.2-16.4 6.2-22.6 0l-69-68.9c-3-3-7.1-4.7-11.3-4.7h-32.8l89.4 89.4c18.7 18.7 49.1 18.7 67.9 0l89.4-89.4h-30.8c-4.2 0-8.3 1.7-11.3 4.7z" fill="#32BCAD"/><path d="M389.2 314.7l-68.9-68.9c-6.2-6.2-16.4-6.2-22.6 0l-69 68.9c-3 3-7.1 4.7-11.3 4.7h-32.8l89.4-89.4c18.7-18.7 49.1-18.7 67.9 0l89.4 89.4h-30.8c-4.2 0-8.3-1.7-11.3-4.7z" fill="#32BCAD"/><path d="M97.7 256l61.3 61.3c3 3 7.1 4.7 11.3 4.7h48.1l-73.8-73.8c-3.1-3.1-3.1-8.2 0-11.3l73.8-73.8h-48.1c-4.2 0-8.3 1.7-11.3 4.7L97.7 229c-14.9 14.9-14.9 12.2 0 27z" fill="#32BCAD"/><path d="M414.3 256l-61.3-61.3c-3-3-7.1-4.7-11.3-4.7h-48.1l73.8 73.8c3.1 3.1 3.1 8.2 0 11.3l-73.8 73.8h48.1c4.2 0 8.3-1.7 11.3-4.7l61.3-61.3c14.9-14.8 14.9-12.1 0-26.9z" fill="#32BCAD"/></svg>
+            <div style={{ backgroundColor: '#fff', padding: '8px 16px', borderRadius: '6px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+              <svg width="20" height="20" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+                <path d="M179.2 179.2c-10.5 10.5-24.4 16.2-39.2 16.2s-28.7-5.8-39.2-16.2l-37-37c-2-2-5.2-2-7.2 0l-37 37c-3 3-5.5 6.3-7.6 9.8H27.4l47.5 47.5c21.6 21.6 56.8 21.6 78.4 0l47.5-47.5h-2.3c-5.1-7.4-11.9-13.5-19.3-9.8z" fill="#32BCAD"/>
+                <path d="M56.8 93.6l37 37c2 2 5.2 2 7.2 0l37-37c10.5-10.5 24.4-16.2 39.2-16.2s28.7 5.8 39.2 16.2l2.3-9.8h2.3L173.3 36.3c-21.6-21.6-56.8-21.6-78.4 0L47.4 83.8H59c-2.1 3.5-4.6 6.8-7.6 9.8h5.4z" fill="#32BCAD"/>
+                <path d="M236.3 94.9L200.5 59.1l-21.3 21.3c-10.5 10.5-24.4 16.2-39.2 16.2s-28.7-5.8-39.2-16.2l-37-37c-2-2-5.2-2-7.2 0l-37 37L0 59.1v0L19.7 94.9 0 130.7v0l19.6-21.3 37 37c2 2 5.2 2 7.2 0l37-37c10.5-10.5 24.4-16.2 39.2-16.2s28.7 5.8 39.2 16.2l21.3 21.3 36.1-36.1L256 130.7v0l-19.7-35.8z" fill="#32BCAD"/>
+              </svg>
+              <span style={{ color: '#32BCAD', fontWeight: 900, fontSize: '1rem', letterSpacing: '0.5px' }}>PIX</span>
             </div>
             {/* Boleto */}
-            <div style={{ backgroundColor: '#fff', padding: '8px 14px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '40px', minWidth: '60px' }}>
-              <svg viewBox="0 0 24 24" height="24" fill="none" stroke="#333" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="6" y1="8" x2="6" y2="16"/><line x1="8" y1="8" x2="8" y2="16"/><line x1="11" y1="8" x2="11" y2="16"/><line x1="13" y1="8" x2="13" y2="16"/><line x1="15" y1="8" x2="15" y2="16"/><line x1="18" y1="8" x2="18" y2="16"/><line x1="10" y1="8" x2="10" y2="12"/><line x1="16" y1="12" x2="16" y2="16"/></svg>
+            <div style={{ backgroundColor: '#fff', padding: '8px 16px', borderRadius: '6px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="1" y="4" width="22" height="16" rx="2" stroke="#333" strokeWidth="1.5"/>
+                <line x1="4" y1="8" x2="4" y2="16" stroke="#333" strokeWidth="2"/>
+                <line x1="7" y1="8" x2="7" y2="16" stroke="#333" strokeWidth="1"/>
+                <line x1="9" y1="8" x2="9" y2="16" stroke="#333" strokeWidth="2"/>
+                <line x1="12" y1="8" x2="12" y2="16" stroke="#333" strokeWidth="1"/>
+                <line x1="14" y1="8" x2="14" y2="16" stroke="#333" strokeWidth="1.5"/>
+                <line x1="16.5" y1="8" x2="16.5" y2="16" stroke="#333" strokeWidth="2"/>
+                <line x1="19" y1="8" x2="19" y2="16" stroke="#333" strokeWidth="1"/>
+                <line x1="20.5" y1="8" x2="20.5" y2="16" stroke="#333" strokeWidth="1.5"/>
+              </svg>
+              <span style={{ color: '#333', fontWeight: 900, fontSize: '0.85rem', letterSpacing: '0.5px' }}>BOLETO</span>
             </div>
           </div>
           
@@ -140,7 +156,7 @@ const Footer = () => {
       <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '2rem' }}>
         <div className="container" style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
           <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.9rem' }}>
-            © Agência de Viagens Amazonia 2024. Todos os direitos reservados.
+            © Amazônia Travel e Events 2026. Todos os direitos reservados.
           </p>
           <div style={{ display: 'flex', gap: '2rem' }}>
             <Link to="#" style={{ color: 'rgba(255,255,255,0.5)', textDecoration: 'none', fontSize: '0.9rem' }}>Política de Privacidade</Link>
