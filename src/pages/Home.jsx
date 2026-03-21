@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { 
   Play, MapPin, Star, Calendar, Clock, 
@@ -10,6 +10,7 @@ import {
 import pkgHimalaya from '../assets/pkg-himalaya.png';
 import pkgEurope from '../assets/pkg-europe.png';
 import pkgBeach from '../assets/pkg-beach.png';
+import heroBg from '../assets/galeria/013.jpg';
 
 import { packagesData } from '../data/toursData';
 
@@ -25,12 +26,25 @@ import gal009 from '../assets/galeria/009.jpg';
 import gal010 from '../assets/galeria/010.jpg';
 import gal011 from '../assets/galeria/011.jpg';
 import gal012 from '../assets/galeria/012.jpg';
+import gal013 from '../assets/galeria/013.jpg';
 
 const Home = () => {
   const navigate = useNavigate();
   const [selectedImage, setSelectedImage] = useState(null);
   const [activeFaq, setActiveFaq] = useState(null);
   const [activeSlide, setActiveSlide] = useState(0);
+  const [heroIdx1, setHeroIdx1] = useState(0);
+  const [heroIdx2, setHeroIdx2] = useState(1);
+  const [heroIdx3, setHeroIdx3] = useState(2);
+
+  const heroImageList = [gal010, gal011, gal012, gal001, gal002, gal003, gal004, gal005, gal006, gal008, gal009, gal013];
+
+  useEffect(() => {
+    const timer1 = setInterval(() => setHeroIdx1(prev => (prev + 1) % heroImageList.length), 5000);
+    const timer2 = setInterval(() => setHeroIdx2(prev => (prev + 1) % heroImageList.length), 6500);
+    const timer3 = setInterval(() => setHeroIdx3(prev => (prev + 1) % heroImageList.length), 8000);
+    return () => { clearInterval(timer1); clearInterval(timer2); clearInterval(timer3); };
+  }, []);
 
   const carouselRef = React.useRef(null);
   const isHoveredRef = React.useRef(false);
@@ -180,7 +194,7 @@ const Home = () => {
         position: 'relative',
         padding: '6rem 0 12rem 0',
         backgroundColor: '#000',
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?q=80&w=2072&auto=format&fit=crop)`,
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url(${heroBg})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         overflow: 'visible'
@@ -195,24 +209,15 @@ const Home = () => {
             zIndex: 10 
           }}>
             <div style={{ maxWidth: '650px' }}>
-              <p style={{ 
-                color: '#FFD700', 
-                fontWeight: 800, 
-                fontSize: '1.25rem',
-                textTransform: 'uppercase',
-                marginBottom: '0.5rem'
-              }}>
-                TEMPO PARA VIAJAR
-              </p>
               <h1 style={{ 
                 color: '#fff',
                 fontSize: 'clamp(2.3rem, 10vw, 6rem)',
                 marginBottom: '1rem',
-                lineHeight: 0.9,
+                lineHeight: 1,
                 fontWeight: 900,
                 letterSpacing: '-2px'
               }}>
-                EXPLORE<br className="hide-mobile"/>CONOSCO
+                <span style={{ color: '#FFD700' }}>PASSEIO TURÍSTICO</span><br className="hide-mobile"/>REGIONAL
               </h1>
 
               {/* Discount Badge */}
@@ -225,7 +230,6 @@ const Home = () => {
                 backgroundColor: '#FFD700',
                 borderRadius: '50%',
                 display: 'flex',
-                flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
                 textAlign: 'center',
@@ -235,9 +239,7 @@ const Home = () => {
                 boxShadow: '0 10px 30px rgba(255, 215, 0, 0.3)',
                 zIndex: 5
               }}>
-                <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', color: '#000' }}>Levante-se até</span>
-                <span style={{ fontSize: '2.5rem', lineHeight: 1, color: '#000' }}>50% DE</span>
-                <span style={{ fontSize: '1.2rem', color: '#000' }}>DESCONTO</span>
+                <span style={{ fontSize: '1.2rem', color: '#000', fontWeight: 900 }}>Saída todos os dias</span>
               </div>
 
               <div style={{ marginBottom: '2.5rem' }}>
@@ -284,7 +286,8 @@ const Home = () => {
             <div className="hero-images hide-mobile" style={{ position: 'relative', height: '500px' }}>
               {/* Image 1 (Top Left) */}
               <img 
-                src={gal010} 
+                key={`img1-${heroIdx1}`}
+                src={heroImageList[heroIdx1]} 
                 alt="Exploração 1" 
                 loading="lazy"
                 style={{ 
@@ -292,12 +295,14 @@ const Home = () => {
                   width: '320px', height: '220px', objectFit: 'cover',
                   borderRadius: '20px', border: '8px solid #fff',
                   boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
-                  transform: 'rotate(-10deg)', zIndex: 3
+                  transform: 'rotate(-10deg)', zIndex: 3,
+                  animation: 'heroFade 2s ease-in-out'
                 }} 
               />
               {/* Image 2 (Middle) */}
               <img 
-                src={gal011} 
+                key={`img2-${heroIdx2}`}
+                src={heroImageList[heroIdx2]} 
                 alt="Exploração 2" 
                 loading="lazy"
                 style={{ 
@@ -305,12 +310,14 @@ const Home = () => {
                   width: '380px', height: '260px', objectFit: 'cover',
                   borderRadius: '20px', border: '8px solid #fff',
                   boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
-                  transform: 'rotate(5deg)', zIndex: 4
+                  transform: 'rotate(5deg)', zIndex: 4,
+                  animation: 'heroFade 2s ease-in-out'
                 }} 
               />
               {/* Image 3 (Bottom) */}
               <img 
-                src={gal012} 
+                key={`img3-${heroIdx3}`}
+                src={heroImageList[heroIdx3]} 
                 alt="Exploração 3" 
                 loading="lazy"
                 style={{ 
@@ -318,7 +325,8 @@ const Home = () => {
                   width: '350px', height: '240px', objectFit: 'cover',
                   borderRadius: '20px', border: '8px solid #fff',
                   boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
-                  transform: 'rotate(-5deg)', zIndex: 5
+                  transform: 'rotate(-5deg)', zIndex: 5,
+                  animation: 'heroFade 2s ease-in-out'
                 }} 
               />
             </div>
@@ -486,9 +494,23 @@ const Home = () => {
                     </div>
                     
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '1rem', borderTop: '1px solid #f1f5f9', marginTop: 'auto' }}>
-                      <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        {pkg.oldPrice && <span style={{ fontSize: '0.75rem', color: '#94a3b8', textDecoration: 'line-through' }}>R$ {pkg.oldPrice}</span>}
-                        <span style={{ fontSize: '1.2rem', fontWeight: 800, color: '#000' }}>{pkg.priceDisplay || new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(pkg.price)}</span>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                        {pkg.oldPrice && <span style={{ fontSize: '0.75rem', color: '#94a3b8', textDecoration: 'line-through' }}>R$ {Number(pkg.oldPrice).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>}
+                        {pkg.installments && pkg.installmentPrice ? (
+                          <>
+                            <span style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 600 }}>
+                              {pkg.installments}x no cartão de{' '}
+                              <strong style={{ color: '#000' }}>
+                                R$ {Number(pkg.installmentPrice).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                              </strong>
+                            </span>
+                            <span style={{ fontSize: '1.15rem', fontWeight: 800, color: '#000' }}>
+                              à vista R$ {Number(pkg.price).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </span>
+                          </>
+                        ) : (
+                          <span style={{ fontSize: '1.2rem', fontWeight: 800, color: '#000' }}>{pkg.priceDisplay || new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(pkg.price)}</span>
+                        )}
                       </div>
                       <Link to={`/tour/${pkg.id}`} className="nav-arrow-btn">
                         <ArrowRight size={20} />
@@ -792,7 +814,9 @@ const Home = () => {
           .home-packages-carousel { scroll-snap-type: x mandatory !important; }
           .package-item { width: 100% !important; min-width: 100% !important; scroll-snap-align: center !important; flex: 0 0 100% !important; }
           .carousel-dots { display: flex !important; }
-          .gallery-grid { grid-template-columns: repeat(2, 1fr) !important; grid-auto-rows: 150px !important; gap: 0.5rem !important; }
+        @keyframes heroFade {
+          from { opacity: 0.1; transform: scale(0.96); }
+          to { opacity: 1; transform: scale(1); }
         }
       `}</style>
 

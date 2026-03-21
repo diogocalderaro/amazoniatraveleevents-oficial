@@ -254,9 +254,23 @@ const Packages = () => {
                       </div>
 
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid #f1f5f9' }}>
-                        <div>
-                          <span style={{ fontSize: '1.35rem', fontWeight: 800, color: '#000' }}>{pkg.priceDisplay || new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(pkg.price)}</span>
-                          <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}> /pessoa</span>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                          {pkg.oldPrice && <span style={{ fontSize: '0.75rem', color: '#94a3b8', textDecoration: 'line-through' }}>R$ {Number(pkg.oldPrice).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>}
+                          {pkg.installments && pkg.installmentPrice ? (
+                            <>
+                              <span style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 600 }}>
+                                {pkg.installments}x no cartão de{' '}
+                                <strong style={{ color: '#000' }}>
+                                  R$ {Number(pkg.installmentPrice).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                </strong>
+                              </span>
+                              <span style={{ fontSize: '1.25rem', fontWeight: 800, color: '#000' }}>
+                                à vista R$ {Number(pkg.price).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                              </span>
+                            </>
+                          ) : (
+                            <span style={{ fontSize: '1.35rem', fontWeight: 800, color: '#000' }}>{pkg.priceDisplay || new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(pkg.price)}</span>
+                          )}
                         </div>
                         <Link to={`/tour/${pkg.id}`} style={{ 
                           width: '40px', height: '40px', borderRadius: '50%', 

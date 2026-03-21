@@ -2,13 +2,21 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, User, ArrowRight, Tag } from 'lucide-react';
 
+/* Gallery imports */
+import gal001 from '../assets/galeria/001.jpg';
+import gal002 from '../assets/galeria/002.jpg';
+import gal003 from '../assets/galeria/003.jpg';
+import gal004 from '../assets/galeria/004.jpg';
+import gal005 from '../assets/galeria/005.jpg';
+import gal006 from '../assets/galeria/006.jpg';
+
 const Blog = () => {
   const posts = [
     {
       id: 1,
       title: "As maravilhas do Encontro das Águas",
       excerpt: "Entenda por que o Rio Negro e o Solimões não se misturam e como visitar esse espetáculo da natureza.",
-      image: "https://images.unsplash.com/photo-1542385151-efd9000785a0?q=80&w=800",
+      image: gal001,
       date: "10 Ago, 2024",
       author: "Carlos Silva",
       category: "Natureza"
@@ -17,7 +25,7 @@ const Blog = () => {
       id: 2,
       title: "Guia de Sobrevivência: O que levar para a Selva?",
       excerpt: "Preparamos um checklist completo para você não passar sufoco durante sua expedição na Floresta Amazônica.",
-      image: "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?q=80&w=800",
+      image: gal002,
       date: "05 Ago, 2024",
       author: "Ana Amazonas",
       category: "Dicas de Viagem"
@@ -26,7 +34,7 @@ const Blog = () => {
       id: 3,
       title: "Preservação e Turismo: Como viajar de forma consciente",
       excerpt: "Descubra como seu turismo pode ajudar na conservação da maior floresta tropical do planeta.",
-      image: "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?q=80&w=800",
+      image: gal003,
       date: "28 Jul, 2024",
       author: "Roberto Ferreira",
       category: "Sustentabilidade"
@@ -35,7 +43,7 @@ const Blog = () => {
       id: 4,
       title: "A Gastronomia Amazônica que você precisa provar",
       excerpt: "Do Tacacá ao Tambaqui assado: conheça as iguarias que fazem de Manaus uma referência culinária.",
-      image: "https://images.unsplash.com/photo-1506459225024-1428097a7a18?q=80&w=800",
+      image: gal004,
       date: "22 Jul, 2024",
       author: "Julia Santos",
       category: "Culinária"
@@ -44,7 +52,7 @@ const Blog = () => {
       id: 5,
       title: "Curiosidades sobre o Boto-Cor-de-Rosa",
       excerpt: "Um dos animais mais inteligentes e místicos da floresta. Surpreenda-se com os fatos sobre essa criatura fascinante.",
-      image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=800",
+      image: gal005,
       date: "15 Jul, 2024",
       author: "Carlos Silva",
       category: "Fauna"
@@ -53,7 +61,7 @@ const Blog = () => {
       id: 6,
       title: "Festas Folclóricas: Parintins e muito mais",
       excerpt: "A cultura do Amazonas brilha intensamente em seus festivais. Saiba como participar e o que esperar das celebrações.",
-      image: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?q=80&w=800",
+      image: gal006,
       date: "10 Jul, 2024",
       author: "Ana Amazonas",
       category: "Cultura"
@@ -81,7 +89,7 @@ const Blog = () => {
                 backgroundColor: '#fff', borderRadius: '20px', overflow: 'hidden', 
                 boxShadow: '0 10px 30px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column' 
               }}>
-                <div style={{ position: 'relative' }}>
+                <Link to={`/blog/${post.id}`} style={{ position: 'relative', display: 'block' }}>
                   <img src={post.image} alt={post.title} loading="lazy" style={{ width: '100%', height: '240px', objectFit: 'cover' }} />
                   <div style={{ 
                     position: 'absolute', top: '1rem', left: '1rem', 
@@ -90,7 +98,7 @@ const Blog = () => {
                   }}>
                     {post.category}
                   </div>
-                </div>
+                </Link>
                 <div style={{ padding: '2rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
                   <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '1rem', color: '#94a3b8', fontSize: '0.85rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Calendar size={14} /> {post.date}</div>

@@ -29,8 +29,16 @@ const TourDetails = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [licenseType, setLicenseType] = useState('personal');
+  const [extras, setExtras] = useState([]);
 
   const tourData = packagesData.find(pkg => pkg.id === id) || packagesData[0];
+
+  const getExtrasPrice = () => {
+    return extras.reduce((sum, extra) => sum + extra.price, 0);
+  };
+
+  const currentPrice = (licenseType === 'personal' ? tourData.price : tourData.price * 1.45) + getExtrasPrice();
 
   const handleAddToCart = () => {
     if (!selectedDate) return;
@@ -46,7 +54,9 @@ const TourDetails = () => {
         destinations: tourData.destinations || "1 Destino",
         date: selectedDate,
         guests: `${adults} adultos - ${children} crianças`,
-        price: tourData.price,
+        price: currentPrice,
+        license: licenseType === 'personal' ? 'Simples' : 'Premium',
+        extras: extras.map(e => e.label).join(', '),
         image: tourData.gallery[0]
       };
       addToCart(cartData);
@@ -168,7 +178,7 @@ const TourDetails = () => {
       </div>
 
       <div className="container" style={{ padding: '4rem 0' }}>
-         <div className="tour-details-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 380px', gap: '4rem', alignItems: 'start' }}>
+         <div className="tour-details-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 420px', gap: '4rem', alignItems: 'start' }}>
             {/* Left Column Content */}
             <div>
                {/* Sobre Section */}
@@ -287,7 +297,7 @@ const TourDetails = () => {
                 <div style={{ marginBottom: '2rem' }}>
                   <p style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px' }}>Preço Total</p>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
-                    <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#000' }}>{tourData.priceDisplay || `R$ ${typeof tourData.price === 'number' ? tourData.price.toLocaleString('pt-BR') : tourData.price}`}</span>
+                    <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#000' }}>R$ {currentPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     <span style={{ color: '#94a3b8', fontWeight: 600 }}>/pessoa</span>
                   </div>
                 </div>
@@ -318,6 +328,82 @@ const TourDetails = () => {
                       />
                     </div>
                   </div>
+
+                  {/* Pricing Options (License/License Style) */}
+                  <div style={{ backgroundColor: '#f8fafc', padding: '1.1rem', borderRadius: '15px', border: '1.5px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    <div 
+                      onClick={() => setLicenseType('personal')}
+                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', padding: '0.2rem 0' }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
+                        <div style={{ 
+                          width: '18px', height: '18px', borderRadius: '50%', flexShrink: 0,
+                          border: `2px solid ${licenseType === 'personal' ? '#7EB53F' : '#cbd5e1'}`,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center'
+                        }}>
+                          {licenseType === 'personal' && <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#7EB53F' }} />}
+                        </div>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#334155', whiteSpace: 'nowrap' }}>Plano Regional</span>
+                      </div>
+                      <span style={{ fontWeight: 800, fontSize: '0.9rem', marginLeft: '10px', whiteSpace: 'nowrap' }}>R$ {tourData.price.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    </div>
+
+                    <div 
+                      onClick={() => setLicenseType('commercial')}
+                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', padding: '0.2rem 0' }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
+                        <div style={{ 
+                          width: '18px', height: '18px', borderRadius: '50%', flexShrink: 0,
+                          border: `2px solid ${licenseType === 'commercial' ? '#7EB53F' : '#cbd5e1'}`,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center'
+                        }}>
+                          {licenseType === 'commercial' && <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#7EB53F' }} />}
+                        </div>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#000', whiteSpace: 'nowrap' }}>Plano VIP / Executivo</span>
+                      </div>
+                      <span style={{ fontWeight: 800, fontSize: '0.9rem', marginLeft: '10px', whiteSpace: 'nowrap' }}>R$ {(tourData.price * 1.45).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    </div>
+
+                    <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '1rem', marginTop: '0.25rem' }}>
+                      <p style={{ fontSize: '0.7rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '1rem', letterSpacing: '0.5px' }}>Serviços Populares Adicionais</p>
+                      
+                      {[
+                        { id: 'support', label: 'Seguro Viagem estendido', price: 45.00 },
+                        { id: 'pack', label: 'Pacote Lanche Regional', price: 85.00 },
+                        { id: 'transfer', label: 'Transfer Porta a Porta VIP', price: 120.00 }
+                      ].map(extra => (
+                        <div 
+                          key={extra.id} 
+                          onClick={() => {
+                            if (extras.find(e => e.id === extra.id)) {
+                              setExtras(extras.filter(e => e.id !== extra.id));
+                            } else {
+                              setExtras([...extras, extra]);
+                            }
+                          }}
+                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem', cursor: 'pointer' }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1 }}>
+                            <div style={{ 
+                              width: '18px', height: '18px', borderRadius: '4px', flexShrink: 0,
+                              backgroundColor: extras.find(e => e.id === extra.id) ? '#7EB53F' : '#fff',
+                              border: `1.5px solid ${extras.find(e => e.id === extra.id) ? '#7EB53F' : '#cbd5e1'}`,
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              color: '#fff'
+                            }}>
+                              {extras.find(e => e.id === extra.id) && <Check size={12} strokeWidth={4} />}
+                            </div>
+                            <span style={{ fontSize: '0.78rem', fontWeight: 600, color: extras.find(e => e.id === extra.id) ? '#16a34a' : '#64748b' }}>{extra.label}</span>
+                          </div>
+                          <span style={{ fontWeight: 700, fontSize: '0.8rem', color: extras.find(e => e.id === extra.id) ? '#ef4444' : 'inherit', marginLeft: '10px', whiteSpace: 'nowrap' }}>
+                            R$ {extra.price.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                     <div>
                       <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.5rem', color: '#334155' }}>ADULTOS</label>
@@ -377,23 +463,6 @@ const TourDetails = () => {
 
                 <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.85rem', color: '#94a3b8', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
                    <ShieldCheck size={16} /> Pagamento 100% Seguro
-                </div>
-              </div>
-
-              <div style={{
-                marginTop: '1.5rem',
-                backgroundColor: '#fff',
-                padding: '1.5rem',
-                borderRadius: '20px',
-                border: '1px solid #f1f5f9',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '1rem'
-              }}>
-                <div style={{ backgroundColor: '#f0fdf4', color: '#16a34a', padding: '0.75rem', borderRadius: '12px' }}><Plus size={24} /></div>
-                <div>
-                  <p style={{ fontWeight: 700 }}>Precisa de Ajuda?</p>
-                  <p style={{ fontSize: '0.85rem', color: '#64748b' }}>Fale com um especialista agora.</p>
                 </div>
               </div>
             </div>

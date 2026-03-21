@@ -2,6 +2,9 @@ import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Calendar, User, ArrowLeft, Tag, Share2, MessageSquare } from 'lucide-react';
 
+/* Gallery imports */
+import gal008 from '../assets/galeria/008.jpg';
+
 const BlogPost = () => {
   const { id } = useParams();
 
@@ -76,7 +79,7 @@ const BlogPost = () => {
         height: '50vh', 
         minHeight: '400px',
         position: 'relative',
-        backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url(${post.image})`,
+        backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5)), url(${gal008})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         display: 'flex',
@@ -104,7 +107,7 @@ const BlogPost = () => {
           <div style={{ backgroundColor: '#FFD700', color: '#000', padding: '0.4rem 1rem', borderRadius: '50px', width: 'fit-content', fontSize: '0.75rem', fontWeight: 800, marginBottom: '1.5rem' }}>
             {post.category}
           </div>
-          <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', fontWeight: 900, maxWidth: '800px', lineHeight: 1.2 }}>
+          <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', fontWeight: 900, maxWidth: '800px', lineHeight: 1.2, color: '#FFFFFF' }}>
             {post.title}
           </h1>
         </div>
@@ -149,16 +152,7 @@ const BlogPost = () => {
             </main>
 
             <aside>
-               <div style={{ backgroundColor: '#fff', padding: '2rem', borderRadius: '20px', border: '1px solid #f1f5f9', marginBottom: '2rem' }}>
-                  <h4 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '1.5rem' }}>Sobre o Autor</h4>
-                  <div style={{ textAlign: 'center' }}>
-                     <div style={{ width: '100px', height: '100px', borderRadius: '50%', backgroundColor: '#f1f5f9', margin: '0 auto 1.5rem auto', overflow: 'hidden' }}>
-                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200" alt="Author" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                     </div>
-                     <h5 style={{ fontWeight: 800, marginBottom: '0.5rem' }}>{post.author}</h5>
-                     <p style={{ fontSize: '0.85rem', color: '#64748b' }}>Especialista em expedições amazônicas com anos de vivência na floresta.</p>
-                  </div>
-               </div>
+
 
                <div style={{ backgroundColor: '#000', padding: '2rem', borderRadius: '20px', color: '#fff' }}>
                   <h4 style={{ color: '#FFD700', fontWeight: 800, marginBottom: '1rem' }}>Viaje Conosco!</h4>
