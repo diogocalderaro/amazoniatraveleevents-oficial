@@ -30,7 +30,7 @@ const Footer = () => {
             <img src={tripadvisorLogo} alt="Tripadvisor" style={{ height: '50px', width: 'auto' }} />
             <span style={{ fontSize: '1.8rem', fontWeight: 700, letterSpacing: '-1px' }}></span>
           </div>
-          <img src={asaasLogo} alt="Asaas" style={{ height: '55px', width: 'auto' }} />
+          <img src={asaasLogo} alt="Asaas" style={{ height: '66px', width: 'auto' }} />
         </div>
       </div>
 

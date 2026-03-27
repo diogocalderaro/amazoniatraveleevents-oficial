@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Pacote - Amazonia Travel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root { --gold: #FFD700; }
+        body { font-family: 'Inter', sans-serif; }
+        .btn-gold { background: var(--gold); color: #000; font-weight: 600; }
+        .btn-gold:hover { background: #e6c200; color: #000; }
+        .main-image { height: 400px; object-fit: cover; }
+        .thumbnail { height: 80px; object-fit: cover; cursor: pointer; opacity: 0.7; }
+        .thumbnail:hover, .thumbnail.active { opacity: 1; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <img src="../src/assets/logo-branco.png" alt="Amazonia Travel" height="40" class="me-2">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="pacotes.html">Pacotes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="sobre.html">Sobre</a></li>
+                    <li class="nav-item"><a class="nav-link" href="blog.html">Blog</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contato.html">Contato</a></li>
+                </ul>
+                <a href="https://wa.me/5592985499999" class="btn btn-gold ms-lg-3" target="_blank">
+                    <i class="bi bi-whatsapp"></i> WhatsApp
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item"><a href="pacotes.html">Pacotes</a></li>
+                <li class="breadcrumb-item active" id="breadcrumbTitle">Detalhes</li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div id="packageGallery">
+                    <img src="../src/assets/galeria/001.jpg" class="img-fluid rounded main-image w-100" id="mainImage" alt="Imagem Principal">
+                </div>
+                <div class="row mt-3 g-2" id="thumbnailsRow"></div>
+                
+                <div class="mt-4">
+                    <h2 id="packageTitle" class="mb-3">Passeio Turístico Regional</h2>
+                    <p class="text-muted">
+                        <i class="bi bi-geo-alt"></i> <span id="packageLocation">Manaus, AM</span> | 
+                        <i class="bi bi-clock"></i> <span id="packageDuration">1 Dia</span> | 
+                        <i class="bi bi-star-fill text-warning"></i> <span id="packageRating">4.9</span> (<span id="packageReviews">154</span> avaliações)
+                    </p>
+                    
+                    <div class="mb-4" id="categoryBadge"></div>
+                    
+                    <h4 class="mt-4">Descrição</h4>
+                    <p id="packageDescription">Um passeio completo para você conhecer as belezas naturais e culturais de Manaus.</p>
+                    
+                    <h4 class="mt-4">Destaques</h4>
+                    <ul id="packageHighlights" class="list-group list-group-flush"></ul>
+                    
+                    <h4 class="mt-4">Itinerário</h4>
+                    <div id="packageItinerary"></div>
+                    
+                    <h4 class="mt-4">O que está incluído</h4>
+                    <ul id="packageIncluded" class="list-unstyled"></ul>
+                    
+                    <h4 class="mt-4">O que não está incluído</h4>
+                    <ul id="packageExcluded" class="list-unstyled text-muted"></ul>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card shadow-lg sticky-top" style="top: 100px;">
+                    <div class="card-body">
+                        <h5 class="card-title">Reserve agora</h5>
+                        <div class="mb-3">
+                            <span class="fs-3 fw-bold text-warning" id="priceDisplay">Sob Consulta</span>
+                        </div>
+                        <div id="oldPriceContainer"></div>
+                        <div id="installmentInfo" class="mb-3"></div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Selecione a data:</label>
+                            <input type="date" class="form-control" id="travelDate">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Número de viajantes:</label>
+                            <input type="number" class="form-control" value="1" min="1" id="travelers">
+                        </div>
+                        
+                        <button class="btn btn-gold w-100 btn-lg mb-2" onclick="bookViaWhatsApp()">
+                            <i class="bi bi-whatsapp"></i> Reservar via WhatsApp
+                        </button>
+                        <a href="pacotes.html" class="btn btn-outline-dark w-100">Ver outros pacotes</a>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h6>Características</h6>
+                        <div id="featuresList" class="d-flex flex-wrap gap-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2026 Amazonia Travel e Events. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <a href="https://wa.me/5592985499999" class="position-fixed bottom-0 end-0 m-4 btn btn-success rounded-circle shadow-lg" style="width: 60px; height: 60px; z-index: 1000;" target="_blank">
+        <i class="bi bi-whatsapp fs-3"></i>
+    </a>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const packagesData = {
+            'passeio-turistico-regional': {
+                title: 'Passeio Turístico Regional',
+                location: 'Manaus, AM',
+                duration: '1 Dia',
+                price: 350,
+                priceDisplay: 'Sob Consulta',
+                rating: 4.9,
+                reviews: 154,
+                category: 'Natureza',
+                image: '../src/assets/galeria/001.jpg',
+                gallery: ['../src/assets/galeria/001.jpg', '../src/assets/galeria/002.jpg', '../src/assets/galeria/003.jpg', '../src/assets/galeria/004.jpg'],
+                features: ['Encontro das Águas', 'Turismo Indígena', 'Botos'],
+                description: 'Um passeio completo para você conhecer as belezas naturais e culturais de Manaus. Saída todos os dias.',
+                highlights: ['Encontro das Águas e Pesca do Pirarucu.', 'Visita à Vila de casas Flutuantes e Igarapés.', 'Caminhada na Selva e Visita à Árvore Sumaúma.', 'Parque Ecológico do Janauari e Vitória Régia.', 'Feirinha de Artesanatos e Tribo indígena.', 'Interação com os Botos.'],
+                included: ['Transporte Fluvial', 'Guia Local', 'Taxas de visitação e atividades'],
+                excluded: ['Alimentação não especificada', 'Gorjetas']
+            },
+            'compras-lethem-marco': {
+                title: 'Excursão de Compras em Lethem (Março)',
+                location: 'Lethem, Guiana',
+                duration: 'Bate Volta',
+                price: 350,
+                priceDisplay: 'R$ 350,00',
+                oldPrice: 390,
+                installments: 6,
+                installmentPrice: 65.00,
+                rating: 4.8,
+                reviews: 82,
+                category: 'Compras',
+                image: '../src/assets/destinos/compras_lethem.jpg',
+                gallery: ['../src/assets/destinos/compras_lethem.jpg', '../src/assets/galeria/005.jpg'],
+                features: ['Transporte Semi-leito', 'Lojas Isentas', 'Guia'],
+                description: 'Aproveite a Black Friday Fora de Época na fronteira com a Guiana Mencionando: Victoria\'s Secret, Kipling, Michael Kors, Louis Vuitton, Gucci, Tommy Hilfiger, JBL. Bate e volta entre 27 a 29 de Março 2026.',
+                highlights: ['Transporte Rodoviário Semi-leito de alta qualidade.', 'Acompanhamento de Operador/Guia durante a viagem.', 'Água mineral inclusa.', 'Lojas isentas de impostos.', 'Pagamento facilitado: 6x R$ 65,00 ou à vista R$ 350,00.'],
+                included: ['Translado Ida e Volta (Semi-Leito)', 'Água Mineral', 'Operador/Guia'],
+                excluded: ['Hospedagem', 'Alimentação', 'Compras pessoais']
+            },
+            'pascoa-lago-robertinho': {
+                title: 'Excursão de Páscoa - Lago Robertinho + Aqua Mak',
+                location: 'Boa Vista, RR',
+                duration: '4 Dias',
+                price: 780,
+                priceDisplay: 'R$ 780,00',
+                oldPrice: 900,
+                installments: 10,
+                installmentPrice: 90.00,
+                rating: 4.9,
+                reviews: 121,
+                category: 'Lazer',
+                image: '../src/assets/destinos/lago_do_robertinho.jpg',
+                gallery: ['../src/assets/destinos/lago_do_robertinho.jpg', '../src/assets/destinos/aqua_mak.jpg', '../src/assets/destinos/mao_boavista_mao.jpg'],
+                features: ['Hospedagem', 'Entrada Atrações', 'Transporte'],
+                description: 'Aproveite o feriado de Páscoa (02 a 05 de Abril 2026) para relaxar no paraíso caribenho de Roraima: o Lago do Robertinho e o parque aquático Aqua Mak.',
+                highlights: ['Entradas nos atrativos (Lago do Robertinho e Aqua Mak) inclusas.', 'Hospedagem com café da manhã confortável.', 'Translado de ônibus rodoviário seguro.', 'Diversão garantida para a família.', 'Facilidade: 10x R$ 90,00 ou à vista R$ 780,00.'],
+                included: ['Translado de Ônibus', 'Entrada nos Atrativos', 'Hospedagem com Café da Manhã', 'Acompanhamento de Guia', 'Seguro Viagem', 'Água Mineral'],
+                excluded: ['Almoço e Jantar', 'Bebidas e Despesas Extras']
+            },
+            'compras-lethem-abril': {
+                title: 'Excursão de Compras em Lethem (Abril)',
+                location: 'Lethem, Guiana',
+                duration: 'Bate Volta',
+                price: 400,
+                priceDisplay: 'R$ 400,00',
+                oldPrice: 450,
+                installments: 6,
+                installmentPrice: 75.00,
+                rating: 4.7,
+                reviews: 65,
+                category: 'Compras',
+                image: '../src/assets/destinos/compras_lethem.jpg',
+                gallery: ['../src/assets/destinos/compras_lethem.jpg', '../src/assets/galeria/006.jpg'],
+                features: ['Transporte Semi-leito', 'Lojas Isentas', 'Guia'],
+                description: 'Renove seu guarda-roupa e compre eletrônicos na Guiana! Victoria\'s Secret - Kipling - Michael Kors - Louis Vuitton - Gucci - JBL. Bate e volta entre 10 a 12 de Abril 2026.',
+                highlights: ['Transporte Rodoviário Semi-leito de qualidade.', 'Operador acompanhando o grupo.', 'Acesso a lojas internacionais isentas.', 'Pagamento facilitado: 6x R$ 75,00 ou à vista R$ 400,00.'],
+                included: ['Translado Ida e Volta (Semi-Leito)', 'Água Mineral', 'Operador/Guia'],
+                excluded: ['Hospedagem', 'Refeições', 'Despesas pessoais']
+            },
+            'feriado-trabalhador-roraima': {
+                title: 'Feriado do Trabalhador em Roraima (Robertinho + Mak)',
+                location: 'Boa Vista, RR',
+                duration: '4 Dias',
+                price: 780,
+                priceDisplay: 'R$ 780,00',
+                oldPrice: 900,
+                installments: 10,
+                installmentPrice: 90.00,
+                rating: 4.9,
+                reviews: 80,
+                category: 'Lazer',
+                image: '../src/assets/destinos/mao_boavista_mao.jpg',
+                gallery: ['../src/assets/destinos/mao_boavista_mao.jpg', '../src/assets/destinos/lago_do_robertinho.jpg', '../src/assets/destinos/aqua_mak.jpg'],
+                features: ['Hospedagem', 'Seguro Viagem', 'Diversão'],
+                description: 'Aproveite o feriadão do trabalhador (30 de Abril a 03 de Maio 2026) em Boa Vista. Conheça as belezas do Lago do Robertinho e passe um dia inesquecível no Aqua Mak com conforto e segurança.',
+                highlights: ['Viagem segura em ônibus rodoviário.', 'Ingressos para o Lago do Robertinho e Aqua Mak incluídos.', 'Hospedagem com 1 café da manhã.', 'Acompanhamento completo e seguro viagem.', 'Pacotes INDIVIDUAL - 10x R$ 90,00 ou à vista R$ 780,00.'],
+                included: ['Translado de Ônibus', 'Entrada nos atrativos', 'Hospedagem (1 Café da Manhã)', 'Água Mineral durante viagem', 'Seguro Viagem', 'Guia'],
+                excluded: ['Demais refeições', 'Passeios extras opcionais não descritos']
+            },
+            'compras-lethem-maio': {
+                title: 'Excursão de Compras em Lethem (Maio)',
+                location: 'Lethem, Guiana',
+                duration: 'Bate Volta',
+                price: 400,
+                priceDisplay: 'R$ 400,00',
+                oldPrice: 450,
+                installments: 6,
+                installmentPrice: 75.00,
+                rating: 4.8,
+                reviews: 73,
+                category: 'Compras',
+                image: '../src/assets/destinos/compras_lethem.jpg',
+                gallery: ['../src/assets/destinos/compras_lethem.jpg', '../src/assets/galeria/004.jpg'],
+                features: ['Transporte Semi-leito', 'Compras', 'Guia'],
+                description: 'Nossa clássica viagem de compras Bate e Volta para Lethem. Aproveite para passear e comprar marcas como Victoria\'s Secret, Kipling, Michael Kors, Louis Vultton, Gucci, Tommy Hilfiger, JBL. Entre 01 a 03 de Maio 2026.',
+                highlights: ['Transporte confortável em ônibus semi-leito.', 'Guia para acompanhar na travessia e lojas.', 'Marcas importadas com desconto.', 'Pagamento facilitado: 6x R$ 75,00 ou à vista R$ 400,00.'],
+                included: ['Translado (Semi-Leito)', 'Água Mineral', 'Operador Responsável'],
+                excluded: ['Alimentação não programada', 'Hospedagem', 'Excesso de bagagem']
+            },
+            'aqua-mak': {
+                title: 'Aqua MAK - Parque Aquático',
+                location: 'Boa Vista, RR',
+                duration: '1 Dia',
+                price: 150,
+                priceDisplay: 'R$ 150,00',
+                rating: 4.8,
+                reviews: 42,
+                category: 'Lazer',
+                image: '../src/assets/destinos/aqua_mak.jpg',
+                gallery: ['../src/assets/destinos/aqua_mak.jpg', '../src/assets/galeria/001.jpg'],
+                features: ['Piscinas', 'Toboáguas', 'Área de Lazer'],
+                description: 'Oportunidade ideal para relaxar! O Aqua MAK em Boa Vista oferece a melhor infraestrutura.',
+                highlights: ['Lazer aquático', 'Estrutura completa', 'Ideal para famílias'],
+                included: ['Ingresso'],
+                excluded: ['Transporte']
+            },
+            'cirandeira-bela': {
+                title: 'Cirandeira Bela Eco Resort',
+                location: 'Presidente Figueiredo, AM',
+                duration: '1 Dia',
+                price: 250,
+                priceDisplay: 'R$ 250,00',
+                rating: 4.9,
+                reviews: 55,
+                category: 'Natureza',
+                image: '../src/assets/destinos/cira.jpg',
+                gallery: ['../src/assets/destinos/cira.jpg', '../src/assets/galeria/002.jpg'],
+                features: ['Cachoeiras', 'Trilhas', 'Day Use'],
+                description: 'Day Use completo em Presidente Figueiredo, terra das cachoeiras.',
+                highlights: ['Cachoeiras relaxantes', 'Day Use', 'Comida regional'],
+                included: ['Entrada resort'],
+                excluded: ['Alimentação']
+            },
+            'eco-park': {
+                title: 'Amazon Ecopark Lodge',
+                location: 'Manaus, AM',
+                duration: '1 Dia',
+                price: 450,
+                priceDisplay: 'R$ 450,00',
+                rating: 4.7,
+                reviews: 21,
+                category: 'Natureza',
+                image: '../src/assets/destinos/eco_park.jpg',
+                gallery: ['../src/assets/destinos/eco_park.jpg', '../src/assets/galeria/003.jpg'],
+                features: ['Macacos', 'Trilhas', 'Almoço Regional'],
+                description: 'Passar o dia em um dos lodges ecológicos mais tradicionais de Manaus.',
+                highlights: ['Visita floresta dos macacos', 'Almoço ribeirinho', 'Trilhas guiadas'],
+                included: ['Alimentação (Almoço)'],
+                excluded: ['Bebidas']
+            },
+            'israel-tour': {
+                title: 'Caravana Terra Santa - Israel',
+                location: 'Israel, Oriente Médio',
+                duration: '12 Dias',
+                price: 15800,
+                priceDisplay: 'R$ 15.800,00',
+                rating: 5.0,
+                reviews: 12,
+                category: 'Internacional',
+                image: '../src/assets/destinos/ISRAEL2020.jpg',
+                gallery: ['../src/assets/destinos/ISRAEL2020.jpg', '../src/assets/galeria/004.jpg'],
+                features: ['Guia em Português', 'Hotéis 5*', 'Passeios Bíblicos'],
+                description: 'Experimente andar por onde Jesus andou, vivendo a magia de Jerusalém e Israel.',
+                highlights: ['Mar da Galileia', 'Muro das Lamentações', 'Hotéis de Luxo'],
+                included: ['Voo', 'Hospedagem', 'Transfer', 'Passeios'],
+                excluded: ['Taxas Extras']
+            },
+            'lago-robertinho': {
+                title: 'Lago do Robertinho',
+                location: 'Boa Vista, RR',
+                duration: '1 Dia',
+                price: 180,
+                priceDisplay: 'R$ 180,00',
+                rating: 4.8,
+                reviews: 38,
+                category: 'Lazer',
+                image: '../src/assets/destinos/lago_do_robertinho.jpg',
+                gallery: ['../src/assets/destinos/lago_do_robertinho.jpg', '../src/assets/galeria/005.jpg'],
+                features: ['Lago Cristalino', 'Gastronomia', 'Descanso'],
+                description: 'Venha desfrutar das belas praias de águas doces em Roraima e se conectar com a natureza!',
+                highlights: ['Praia cristalina', 'Relaxamento ao sol'],
+                included: ['Acesso ao Lago'],
+                excluded: ['Consumo Gastronômico']
+            },
+            'margarita-island': {
+                title: 'Ilha de Margarita',
+                location: 'Venezuela',
+                duration: '5 Dias',
+                price: 2800,
+                priceDisplay: 'R$ 2.800,00',
+                rating: 4.5,
+                reviews: 200,
+                category: 'Internacional',
+                image: '../src/assets/destinos/ilha_margarita.jpg',
+                gallery: ['../src/assets/destinos/ilha_margarita.jpg', '../src/assets/galeria/002.jpg'],
+                features: ['Praias Paradisíacas', 'All Inclusive', 'Compras'],
+                description: 'Viva uma imersão caribenha na Ilha de Margarita. Os melhores resorts e praias azuis.',
+                highlights: ['All-inclusive', 'Praias espetaculares', 'Compras Duty Free'],
+                included: ['Hospedagem All-inclusive (resort definido)', 'Transporte ida e volta'],
+                excluded: ['Taxas extras']
+            },
+            'machupichu-exp': {
+                title: 'Expedição Machu Picchu',
+                location: 'Peru',
+                duration: '8 Dias',
+                price: 5500,
+                priceDisplay: 'R$ 5.500,00',
+                rating: 5.0,
+                reviews: 95,
+                category: 'Internacional',
+                image: '../src/assets/destinos/machupichu.jpg',
+                gallery: ['../src/assets/destinos/machupichu.jpg', '../src/assets/galeria/003.jpg'],
+                features: ['Cusco', 'Vale Sagrado', 'Trem de Luxo'],
+                description: 'Passeio inesquecível pelo berço do império Inca. Visitas inesquecíveis.',
+                highlights: ['Ingresso Machu Picchu', 'Trem panorâmico Vistadome', 'Cusco City Tour'],
+                included: ['Hotéis', 'Café da manhã', 'Translados locais', 'Ingressos Inca'],
+                excluded: ['Passagens aéreas internacionais até Lima']
+            },
+            'safari-amazonico': {
+                title: 'Safari Amazônico',
+                location: 'Rio Negro, AM',
+                duration: '1 Dia',
+                price: 380,
+                priceDisplay: 'R$ 380,00',
+                rating: 4.9,
+                reviews: 140,
+                category: 'Aventura',
+                image: '../src/assets/destinos/safari_amazonico.jpg',
+                gallery: ['../src/assets/destinos/safari_amazonico.jpg', '../src/assets/galeria/004.jpg'],
+                features: ['Botos Cor-de-rosa', 'Tribos Indígenas', 'Igapós'],
+                description: 'Navegação maravilhosa para viver a verdadeira alma amazônica. Interaja com botos e visite aldeias.',
+                highlights: ['Interação Botos', 'Aldeia Dessana', 'Navegação Rio Negro'],
+                included: ['Transporte de barco', 'Almoço em flutuante'],
+                excluded: ['Bebidas Extras']
+            }
+        };
+
+        function getUrlParameter(name) {
+            const params = new URLSearchParams(window.location.search);
+            return params.get(name);
+        }
+
+        function loadPackage() {
+            const packageId = getUrlParameter('id') || 'passeio-turistico-regional';
+            const pkg = packagesData[packageId];
+            
+            if (!pkg) {
+                window.location.href = 'pacotes.html';
+                return;
+            }
+
+            document.getElementById('breadcrumbTitle').textContent = pkg.title;
+            document.getElementById('packageTitle').textContent = pkg.title;
+            document.getElementById('packageLocation').textContent = pkg.location;
+            document.getElementById('packageDuration').textContent = pkg.duration;
+            document.getElementById('packageRating').textContent = pkg.rating;
+            document.getElementById('packageReviews').textContent = pkg.reviews;
+            document.getElementById('packageDescription').textContent = pkg.description;
+            document.getElementById('priceDisplay').textContent = pkg.priceDisplay;
+            document.getElementById('mainImage').src = pkg.image;
+            document.title = pkg.title + ' - Amazonia Travel';
+
+            const categoryColors = {
+                'Natureza': 'bg-success',
+                'Compras': 'bg-primary',
+                'Lazer': 'bg-info',
+                'Aventura': 'bg-success',
+                'Internacional': 'bg-warning text-dark',
+                'Cultura': 'bg-secondary'
+            };
+            document.getElementById('categoryBadge').innerHTML = `<span class="badge ${categoryColors[pkg.category] || 'bg-secondary'}">${pkg.category}</span>`;
+
+            if (pkg.oldPrice) {
+                document.getElementById('oldPriceContainer').innerHTML = `<span class="text-decoration-line-through text-muted">De R$ ${pkg.oldPrice},00</span>`;
+            }
+
+            if (pkg.installments) {
+                document.getElementById('installmentInfo').innerHTML = `<span class="text-success fw-bold">${pkg.installments}x de R$ ${pkg.installmentPrice.toFixed(2)} sem juros</span>`;
+            }
+
+            const highlightsList = document.getElementById('packageHighlights');
+            pkg.highlights.forEach(item => {
+                highlightsList.innerHTML += `<li class="list-group-item"><i class="bi bi-check-circle text-success me-2"></i>${item}</li>`;
+            });
+
+            const includedList = document.getElementById('packageIncluded');
+            pkg.included.forEach(item => {
+                includedList.innerHTML += `<li class="mb-2"><i class="bi bi-check2-all text-success me-2"></i>${item}</li>`;
+            });
+
+            const excludedList = document.getElementById('packageExcluded');
+            pkg.excluded.forEach(item => {
+                excludedList.innerHTML += `<li class="mb-1"><i class="bi bi-x-circle text-danger me-2"></i>${item}</li>`;
+            });
+
+            const featuresList = document.getElementById('featuresList');
+            pkg.features.forEach(feature => {
+                featuresList.innerHTML += `<span class="badge bg-light text-dark border">${feature}</span>`;
+            });
+
+            const thumbnailsRow = document.getElementById('thumbnailsRow');
+            if (pkg.gallery && pkg.gallery.length > 1) {
+                pkg.gallery.forEach((img, index) => {
+                    thumbnailsRow.innerHTML += `<div class="col-3"><img src="${img}" class="img-fluid rounded thumbnail ${index === 0 ? 'active' : ''}" onclick="changeImage('${img}', this)" alt="Thumbnail ${index + 1}"></div>`;
+                });
+            }
+
+            document.getElementById('packageItinerary').innerHTML = `
+                <div class="accordion" id="itineraryAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse">
+                                <i class="bi bi-calendar3 me-2"></i> Ver Itinerário Completo
+                            </button>
+                        </h2>
+                        <div class="accordion-collapse collapse show">
+                            <div class="accordion-body">
+                                <p>${pkg.description}</p>
+                                <p class="text-muted">Para mais detalhes sobre o itinerário, entre em contato conosco.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function changeImage(src, element) {
+            document.getElementById('mainImage').src = src;
+            document.querySelectorAll('.thumbnail').forEach(thumb => thumb.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        function bookViaWhatsApp() {
+            const packageId = getUrlParameter('id') || 'passeio-turistico-regional';
+            const pkg = packagesData[packageId];
+            const date = document.getElementById('travelDate').value;
+            const travelers = document.getElementById('travelers').value;
+            
+            let message = `Olá! Gostaria de informações sobre o pacote: *${pkg.title}*\n`;
+            message += `Local: ${pkg.location}\n`;
+            message += `Duração: ${pkg.duration}\n`;
+            message += `Preço: ${pkg.priceDisplay}\n`;
+            
+            if (date) message += `Data desejada: ${date}\n`;
+            if (travelers) message += `Viajantes: ${travelers}\n`;
+            
+            const whatsappUrl = `https://wa.me/5592985499999?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        loadPackage();
+    </script>
+</body>
+</html>

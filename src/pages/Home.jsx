@@ -424,11 +424,11 @@ const Home = () => {
       </div>
 
       {/* Popular Packages Section */}
-      <section style={{ paddingTop: '5rem', backgroundColor: '#f8fafc' }}>
+      <section style={{ paddingTop: '3rem', backgroundColor: '#f8fafc' }}>
         <div className="container">
           <div className="section-title">
             <h2 style={{ fontSize: '2.5rem', fontWeight: 800, textAlign: 'center', marginBottom: '1rem' }}>Pacotes de Viagem Populares</h2>
-            <p style={{ textAlign: 'center', color: '#64748b', marginBottom: '4rem' }}>Escolha seu destino e conecte-se com a natureza exuberante.</p>
+            <p style={{ textAlign: 'center', color: '#64748b', marginBottom: '2.5rem' }}>Escolha seu destino e conecte-se com a natureza exuberante.</p>
           </div>
 
           <div style={{ position: 'relative' }}
@@ -476,26 +476,18 @@ const Home = () => {
                       </h3>
                     </Link>
                     
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '0.75rem', color: '#64748b', fontSize: '0.8rem' }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1.25rem', color: '#64748b', fontSize: '0.8rem' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                         <Calendar size={14} color="#7EB53F" /> {pkg.duration}
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        <MapPin size={14} color="#7EB53F" /> {pkg.location.split(',')[0]}
+                        <MapPin size={14} color="#7EB53F" /> {pkg.location}
                       </div>
                     </div>
-                    
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '1.25rem' }}>
-                      <span style={{ fontWeight: 800, fontSize: '0.85rem' }}>{pkg.rating}</span>
-                      <div style={{ display: 'flex', gap: '1px' }}>
-                        {[1, 2, 3, 4, 5].map(s => <Star key={s} size={12} fill="#FFD700" color="#FFD700" />)}
-                      </div>
-                      <span style={{ color: '#94a3b8', fontSize: '0.75rem' }}>({pkg.reviews} avaliações)</span>
-                    </div>
+
                     
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '1rem', borderTop: '1px solid #f1f5f9', marginTop: 'auto' }}>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                        {pkg.oldPrice && <span style={{ fontSize: '0.75rem', color: '#94a3b8', textDecoration: 'line-through' }}>R$ {Number(pkg.oldPrice).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>}
                         {pkg.installments && pkg.installmentPrice ? (
                           <>
                             <span style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 600 }}>
@@ -567,18 +559,18 @@ const Home = () => {
             `}</style>
           </div>
           
-          <div style={{ textAlign: 'center', marginTop: '4rem' }}>
+          <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
             <Link to="/destinations" className="btn" style={{ padding: '1rem 3rem', border: '2px solid #000', borderRadius: '100px', fontWeight: 800, color: '#000', textDecoration: 'none' }}>Ver Todos os Pacotes</Link>
           </div>
         </div>
       </section>
 
       {/* FAQ Section */}
-      <section style={{ backgroundColor: '#fff', padding: '10rem 0', position: 'relative', overflow: 'hidden' }}>
+      <section style={{ backgroundColor: '#fff', padding: '6rem 0', position: 'relative', overflow: 'hidden' }}>
         <div className="container">
           <div className="section-title">
             <h2 style={{ fontSize: 'clamp(1.8rem, 5vw, 3.5rem)', fontWeight: 900, textAlign: 'center', marginBottom: '1rem', color: '#000' }}>Perguntas e Respostas</h2>
-            <p style={{ textAlign: 'center', color: '#64748b', marginBottom: '5rem', fontSize: '1.25rem' }}>Estamos comprometidos em oferecer mais do que apenas produtos — proporcionamos experiências excepcionais.</p>
+            <p style={{ textAlign: 'center', color: '#64748b', marginBottom: '3rem', fontSize: '1.25rem' }}>Estamos comprometidos em oferecer mais do que apenas produtos — proporcionamos experiências excepcionais.</p>
           </div>
 
           <div style={{ maxWidth: '900px', margin: '0 auto' }}>
@@ -618,11 +610,11 @@ const Home = () => {
       </section>
 
       {/* Gallery Section */}
-      <section style={{ backgroundColor: '#f8fafc', padding: '6rem 0' }}>
+      <section style={{ backgroundColor: '#f8fafc', padding: '5rem 0' }}>
         <div className="container">
           <div className="section-title">
             <h2 style={{ fontSize: '2.5rem', fontWeight: 800, textAlign: 'center', marginBottom: '1rem' }}>Galeria da Amazônia</h2>
-            <p style={{ textAlign: 'center', color: '#64748b', marginBottom: '4rem' }}>Um vislumbre das maravilhas que esperam por você.</p>
+            <p style={{ textAlign: 'center', color: '#64748b', marginBottom: '3rem' }}>Um vislumbre das maravilhas que esperam por você.</p>
           </div>
           <div className="gallery-grid" style={{
             display: 'grid',
@@ -674,11 +666,11 @@ const Home = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section style={{ padding: '6rem 0', backgroundColor: '#fff' }}>
+      <section style={{ padding: '5rem 0', backgroundColor: '#fff' }}>
         <div className="container">
           <div className="section-title">
             <h2 style={{ fontSize: '2.5rem', fontWeight: 800, textAlign: 'center', marginBottom: '1rem' }}>O Que Dizem os Viajantes</h2>
-            <p style={{ textAlign: 'center', color: '#64748b', marginBottom: '4rem' }}>Somos referência em atendimento personalizado e experiências inesquecíveis.</p>
+            <p style={{ textAlign: 'center', color: '#64748b', marginBottom: '3rem' }}>Somos referência em atendimento personalizado e experiências inesquecíveis.</p>
           </div>
 
           <div style={{
@@ -817,6 +809,22 @@ const Home = () => {
         @keyframes heroFade {
           from { opacity: 0.1; transform: scale(0.96); }
           to { opacity: 1; transform: scale(1); }
+        }
+
+        @media (max-width: 768px) {
+          .gallery-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            grid-auto-rows: 150px !important;
+            gap: 0.5rem !important;
+          }
+          .gallery-overlay h4 {
+            font-size: 0.85rem !important;
+          }
+          .gallery-overlay svg {
+            width: 20px;
+            height: 20px;
+            margin-bottom: 0.5rem !important;
+          }
         }
       `}</style>
 

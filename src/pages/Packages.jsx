@@ -60,8 +60,7 @@ const Packages = () => {
   const sortOptions = [
     { label: 'Mais Recentes', value: 'recent' },
     { label: 'Menor Preço', value: 'price-low' },
-    { label: 'Maior Preço', value: 'price-high' },
-    { label: 'Melhor Avaliados', value: 'rating' }
+    { label: 'Maior Preço', value: 'price-high' }
   ];
 
   return (
@@ -238,24 +237,16 @@ const Packages = () => {
                           <Clock size={14} color="#FFD700" /> {pkg.duration}
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>
-                          <MapPin size={14} color="#FFD700" /> {pkg.location.split(',')[0]}
+                          <MapPin size={14} color="#FFD700" /> {pkg.location}
                         </div>
                       </div>
 
                       <Link to={`/tour/${pkg.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                         <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem', lineHeight: 1.3, height: '3.2rem', overflow: 'hidden', fontWeight: 800 }}>{pkg.title}</h3>
                       </Link>
-                      
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '1.5rem' }}>
-                        <span style={{ fontWeight: 800, fontSize: '0.9rem' }}>{pkg.rating}</span>
-                        <div style={{ display: 'flex', gap: '2px' }}>
-                          {[1, 2, 3, 4, 5].map(s => <Star key={s} size={12} fill="#FFD700" color="#FFD700" />)}
-                        </div>
-                      </div>
 
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid #f1f5f9' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                          {pkg.oldPrice && <span style={{ fontSize: '0.75rem', color: '#94a3b8', textDecoration: 'line-through' }}>R$ {Number(pkg.oldPrice).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>}
                           {pkg.installments && pkg.installmentPrice ? (
                             <>
                               <span style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 600 }}>

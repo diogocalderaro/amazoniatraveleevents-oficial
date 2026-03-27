@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pacotes Turísticos - Amazonia Travel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #000000;
+            --gold: #FFD700;
+            --green: #7EB53F;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .btn-gold { background: var(--gold); color: #000; font-weight: 600; }
+        .btn-gold:hover { background: #e6c200; color: #000; }
+        .package-card { transition: transform 0.3s; }
+        .package-card:hover { transform: translateY(-5px); }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <img src="../src/assets/logo-branco.png" alt="Amazonia Travel" height="40" class="me-2">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="pacotes.html">Pacotes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="sobre.html">Sobre</a></li>
+                    <li class="nav-item"><a class="nav-link" href="blog.html">Blog</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contato.html">Contato</a></li>
+                </ul>
+                <a href="https://wa.me/5592985499999" class="btn btn-gold ms-lg-3" target="_blank">
+                    <i class="bi bi-whatsapp"></i> WhatsApp
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="bg-dark text-white py-5">
+        <div class="container">
+            <h1 class="display-4 fw-bold">Nossos Pacotes Turísticos</h1>
+            <p class="lead">Encontre a viagem perfeita para você</p>
+        </div>
+    </div>
+
+    <section class="py-5">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <select class="form-select" id="categoriaFilter">
+                        <option value="">Todas as Categorias</option>
+                        <option value="Natureza">Natureza</option>
+                        <option value="Compras">Compras</option>
+                        <option value="Lazer">Lazer</option>
+                        <option value="Aventura">Aventura</option>
+                        <option value="Internacional">Internacional</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <select class="form-select" id="ordenarFilter">
+                        <option value="">Ordenar por</option>
+                        <option value="preco-menor">Menor Preço</option>
+                        <option value="preco-maior">Maior Preço</option>
+                        <option value="avaliacao">Melhor Avaliação</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row g-4" id="packagesGrid">
+                <div class="col-md-4">
+                    <div class="card package-card h-100">
+                        <img src="../src/assets/galeria/001.jpg" class="card-img-top" alt="Passeio Turístico Regional" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <span class="badge bg-success mb-2">Natureza</span>
+                            <h5 class="card-title">Passeio Turístico Regional</h5>
+                            <p class="text-muted mb-1"><i class="bi bi-geo-alt"></i> Manaus, AM</p>
+                            <p class="text-muted mb-2"><i class="bi bi-clock"></i> 1 Dia</p>
+                            <p class="mb-2"><i class="bi bi-star-fill text-warning"></i> 4.9 (154 avaliações)</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fs-5 fw-bold text-warning">Sob Consulta</span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="detalhes.html?id=passeio-turistico-regional" class="btn btn-dark w-100">Ver Detalhes</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card package-card h-100">
+                        <img src="../src/assets/destinos/compras_lethem.jpg" class="card-img-top" alt="Compras em Lethem" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <span class="badge bg-primary mb-2">Compras</span>
+                            <h5 class="card-title">Excursão de Compras Lethem (Março)</h5>
+                            <p class="text-muted mb-1"><i class="bi bi-geo-alt"></i> Lethem, Guiana</p>
+                            <p class="text-muted mb-2"><i class="bi bi-clock"></i> Bate Volta</p>
+                            <p class="mb-2"><i class="bi bi-star-fill text-warning"></i> 4.8 (82 avaliações)</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fs-5 fw-bold text-warning">R$ 350,00</span>
+                            </div>
+                            <small class="text-success">6x de R$ 65,00</small>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="detalhes.html?id=compras-lethem-marco" class="btn btn-dark w-100">Ver Detalhes</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card package-card h-100">
+                        <img src="../src/assets/destinos/lago_do_robertinho.jpg" class="card-img-top" alt="Lago do Robertinho" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <span class="badge bg-info mb-2">Lazer</span>
+                            <h5 class="card-title">Páscoa - Lago Robertinho + Aqua Mak</h5>
+                            <p class="text-muted mb-1"><i class="bi bi-geo-alt"></i> Boa Vista, RR</p>
+                            <p class="text-muted mb-2"><i class="bi bi-clock"></i> 4 Dias</p>
+                            <p class="mb-2"><i class="bi bi-star-fill text-warning"></i> 4.9 (121 avaliações)</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fs-5 fw-bold text-warning">R$ 780,00</span>
+                            </div>
+                            <small class="text-success">10x de R$ 90,00</small>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="detalhes.html?id=pascoa-lago-robertinho" class="btn btn-dark w-100">Ver Detalhes</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card package-card h-100">
+                        <img src="../src/assets/destinos/compras_lethem.jpg" class="card-img-top" alt="Compras em Lethem Abril" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <span class="badge bg-primary mb-2">Compras</span>
+                            <h5 class="card-title">Excursão de Compras Lethem (Abril)</h5>
+                            <p class="text-muted mb-1"><i class="bi bi-geo-alt"></i> Lethem, Guiana</p>
+                            <p class="text-muted mb-2"><i class="bi bi-clock"></i> Bate Volta</p>
+                            <p class="mb-2"><i class="bi bi-star-fill text-warning"></i> 4.7 (65 avaliações)</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fs-5 fw-bold text-warning">R$ 400,00</span>
+                            </div>
+                            <small class="text-success">6x de R$ 75,00</small>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="detalhes.html?id=compras-lethem-abril" class="btn btn-dark w-100">Ver Detalhes</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card package-card h-100">
+                        <img src="../src/assets/destinos/mao_boavista_mao.jpg" class="card-img-top" alt="Feriado Trabalhador" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <span class="badge bg-info mb-2">Lazer</span>
+                            <h5 class="card-title">Feriado do Trabalhador em Roraima</h5>
+                            <p class="text-muted mb-1"><i class="bi bi-geo-alt"></i> Boa Vista, RR</p>
+                            <p class="text-muted mb-2"><i class="bi bi-clock"></i> 4 Dias</p>
+                            <p class="mb-2"><i class="bi bi-star-fill text-warning"></i> 4.9 (80 avaliações)</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fs-5 fw-bold text-warning">R$ 780,00</span>
+                            </div>
+                            <small class="text-success">10x de R$ 90,00</small>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="detalhes.html?id=feriado-trabalhador-roraima" class="btn btn-dark w-100">Ver Detalhes</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card package-card h-100">
+                        <img src="../src/assets/destinos/compras_lethem.jpg" class="card-img-top" alt="Compras Lethem Maio" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <span class="badge bg-primary mb-2">Compras</span>
+                            <h5 class="card-title">Excursão de Compras Lethem (Maio)</h5>
+                            <p class="text-muted mb-1"><i class="bi bi-geo-alt"></i> Lethem, Guiana</p>
+                            <p class="text-muted mb-2"><i class="bi bi-clock"></i> Bate Volta</p>
+                            <p class="mb-2"><i class="bi bi-star-fill text-warning"></i> 4.8 (73 avaliações)</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fs-5 fw-bold text-warning">R$ 400,00</span>
+                            </div>
+                            <small class="text-success">6x de R$ 75,00</small>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="detalhes.html?id=compras-lethem-maio" class="btn btn-dark w-100">Ver Detalhes</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card package-card h-100">
+                        <img src="../src/assets/destinos/aqua_mak.jpg" class="card-img-top" alt="Aqua Mak" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <span class="badge bg-info mb-2">Lazer</span>
+                            <h5 class="card-title">Aqua MAK - Parque Aquático</h5>
+                            <p class="text-muted mb-1"><i class="bi bi-geo-alt"></i> Boa Vista, RR</p>
+                            <p class="text-muted mb-2"><i class="bi bi-clock"></i> 1 Dia</p>
+                            <p class="mb-2"><i class="bi bi-star-fill text-warning"></i> 4.8 (42 avaliações)</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fs-5 fw-bold text-warning">R$ 150,00</span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="detalhes.html?id=aqua-mak" class="btn btn-dark w-100">Ver Detalhes</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card package-card h-100">
+                        <img src="../src/assets/destinos/cira.jpg" class="card-img-top" alt="Cirandeira Bela" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <span class="badge bg-success mb-2">Natureza</span>
+                            <h5 class="card-title">Cirandeira Bela Eco Resort</h5>
+                            <p class="text-muted mb-1"><i class="bi bi-geo-alt"></i> Presidente Figueiredo, AM</p>
+                            <p class="text-muted mb-2"><i class="bi bi-clock"></i> 1 Dia</p>
+                            <p class="mb-2"><i class="bi bi-star-fill text-warning"></i> 4.9 (55 avaliações)</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fs-5 fw-bold text-warning">R$ 250,00</span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="detalhes.html?id=cirandeira-bela" class="btn btn-dark w-100">Ver Detalhes</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card package-card h-100">
+                        <img src="../src/assets/destinos/eco_park.jpg" class="card-img-top" alt="Amazon Ecopark" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <span class="badge bg-success mb-2">Natureza</span>
+                            <h5 class="card-title">Amazon Ecopark Lodge</h5>
+                            <p class="text-muted mb-1"><i class="bi bi-geo-alt"></i> Manaus, AM</p>
+                            <p class="text-muted mb-2"><i class="bi bi-clock"></i> 1 Dia</p>
+                            <p class="mb-2"><i class="bi bi-star-fill text-warning"></i> 4.7 (21 avaliações)</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fs-5 fw-bold text-warning">R$ 450,00</span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="detalhes.html?id=eco-park" class="btn btn-dark w-100">Ver Detalhes</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card package-card h-100">
+                        <img src="../src/assets/destinos/ISRAEL2020.jpg" class="card-img-top" alt="Israel" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <span class="badge bg-warning text-dark mb-2">Internacional</span>
+                            <h5 class="card-title">Caravana Terra Santa - Israel</h5>
+                            <p class="text-muted mb-1"><i class="bi bi-geo-alt"></i> Israel, Oriente Médio</p>
+                            <p class="text-muted mb-2"><i class="bi bi-clock"></i> 12 Dias</p>
+                            <p class="mb-2"><i class="bi bi-star-fill text-warning"></i> 5.0 (12 avaliações)</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fs-5 fw-bold text-warning">R$ 15.800,00</span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="detalhes.html?id=israel-tour" class="btn btn-dark w-100">Ver Detalhes</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card package-card h-100">
+                        <img src="../src/assets/destinos/lago_do_robertinho.jpg" class="card-img-top" alt="Lago Robertinho" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <span class="badge bg-info mb-2">Lazer</span>
+                            <h5 class="card-title">Lago do Robertinho</h5>
+                            <p class="text-muted mb-1"><i class="bi bi-geo-alt"></i> Boa Vista, RR</p>
+                            <p class="text-muted mb-2"><i class="bi bi-clock"></i> 1 Dia</p>
+                            <p class="mb-2"><i class="bi bi-star-fill text-warning"></i> 4.8 (38 avaliações)</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fs-5 fw-bold text-warning">R$ 180,00</span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="detalhes.html?id=lago-robertinho" class="btn btn-dark w-100">Ver Detalhes</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card package-card h-100">
+                        <img src="../src/assets/destinos/ilha_margarita.jpg" class="card-img-top" alt="Ilha de Margarita" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <span class="badge bg-warning text-dark mb-2">Internacional</span>
+                            <h5 class="card-title">Ilha de Margarita</h5>
+                            <p class="text-muted mb-1"><i class="bi bi-geo-alt"></i> Venezuela</p>
+                            <p class="text-muted mb-2"><i class="bi bi-clock"></i> 5 Dias</p>
+                            <p class="mb-2"><i class="bi bi-star-fill text-warning"></i> 4.5 (200 avaliações)</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fs-5 fw-bold text-warning">R$ 2.800,00</span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="detalhes.html?id=margarita-island" class="btn btn-dark w-100">Ver Detalhes</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card package-card h-100">
+                        <img src="../src/assets/destinos/machupichu.jpg" class="card-img-top" alt="Machu Picchu" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <span class="badge bg-warning text-dark mb-2">Internacional</span>
+                            <h5 class="card-title">Expedição Machu Picchu</h5>
+                            <p class="text-muted mb-1"><i class="bi bi-geo-alt"></i> Peru</p>
+                            <p class="text-muted mb-2"><i class="bi bi-clock"></i> 8 Dias</p>
+                            <p class="mb-2"><i class="bi bi-star-fill text-warning"></i> 5.0 (95 avaliações)</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fs-5 fw-bold text-warning">R$ 5.500,00</span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="detalhes.html?id=machupichu-exp" class="btn btn-dark w-100">Ver Detalhes</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card package-card h-100">
+                        <img src="../src/assets/destinos/safari_amazonico.jpg" class="card-img-top" alt="Safari Amazônico" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <span class="badge bg-success mb-2">Aventura</span>
+                            <h5 class="card-title">Safari Amazônico</h5>
+                            <p class="text-muted mb-1"><i class="bi bi-geo-alt"></i> Rio Negro, AM</p>
+                            <p class="text-muted mb-2"><i class="bi bi-clock"></i> 1 Dia</p>
+                            <p class="mb-2"><i class="bi bi-star-fill text-warning"></i> 4.9 (140 avaliações)</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fs-5 fw-bold text-warning">R$ 380,00</span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="detalhes.html?id=safari-amazonico" class="btn btn-dark w-100">Ver Detalhes</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-dark text-white py-4">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2026 Amazonia Travel e Events. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <a href="https://wa.me/5592985499999" class="position-fixed bottom-0 end-0 m-4 btn btn-success rounded-circle shadow-lg" style="width: 60px; height: 60px; z-index: 1000;" target="_blank">
+        <i class="bi bi-whatsapp fs-3"></i>
+    </a>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

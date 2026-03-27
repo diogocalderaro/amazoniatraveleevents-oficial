@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - Amazonia Travel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root { --gold: #FFD700; }
+        body { font-family: 'Inter', sans-serif; }
+        .btn-gold { background: var(--gold); color: #000; font-weight: 600; }
+        .btn-gold:hover { background: #e6c200; color: #000; }
+        .blog-card { transition: transform 0.3s; }
+        .blog-card:hover { transform: translateY(-5px); }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <img src="../src/assets/logo-branco.png" alt="Amazonia Travel" height="40" class="me-2">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="pacotes.html">Pacotes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="sobre.html">Sobre</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="blog.html">Blog</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contato.html">Contato</a></li>
+                </ul>
+                <a href="https://wa.me/5592985499999" class="btn btn-gold ms-lg-3" target="_blank">
+                    <i class="bi bi-whatsapp"></i> WhatsApp
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="bg-dark text-white py-5">
+        <div class="container">
+            <h1 class="display-4 fw-bold">Blog da Amazonia Travel</h1>
+            <p class="lead">Dicas, notícias e histórias sobre a Amazônia</p>
+        </div>
+    </div>
+
+    <section class="py-5">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <article class="card blog-card h-100">
+                        <img src="../src/assets/galeria/001.jpg" class="card-img-top" alt="Encontro das Águas" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <span class="badge bg-success mb-2">Turismo</span>
+                            <h5 class="card-title">Por que visitar o Encontro das Águas?</h5>
+                            <p class="card-text text-muted">Descubra por que este fenômeno natural é um dos principais pontos turísticos de Manaus...</p>
+                            <a href="#" class="btn btn-sm btn-outline-dark">Ler mais</a>
+                        </div>
+                        <div class="card-footer text-muted">
+                            <small><i class="bi bi-calendar"></i> 15/03/2026</small>
+                        </div>
+                    </article>
+                </div>
+                <div class="col-md-4">
+                    <article class="card blog-card h-100">
+                        <img src="../src/assets/destinos/compras_lethem.jpg" class="card-img-top" alt="Compras na Guiana" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <span class="badge bg-primary mb-2">Dicas</span>
+                            <h5 class="card-title">Guia completo para compras em Lethem</h5>
+                            <p class="card-text text-muted">Tudo o que você precisa saber sobre a fronteira e as melhores lojas para visitar...</p>
+                            <a href="#" class="btn btn-sm btn-outline-dark">Ler mais</a>
+                        </div>
+                        <div class="card-footer text-muted">
+                            <small><i class="bi bi-calendar"></i> 10/03/2026</small>
+                        </div>
+                    </article>
+                </div>
+                <div class="col-md-4">
+                    <article class="card blog-card h-100">
+                        <img src="../src/assets/destinos/lago_do_robertinho.jpg" class="card-img-top" alt="Lago do Robertinho" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <span class="badge bg-info mb-2">Destinos</span>
+                            <h5 class="card-title">Lago do Robertinho: o Caribe amazônico</h5>
+                            <p class="card-text text-muted">Conheças as belezas naturais de Boa Vista e suas praias de água doce...</p>
+                            <a href="#" class="btn btn-sm btn-outline-dark">Ler mais</a>
+                        </div>
+                        <div class="card-footer text-muted">
+                            <small><i class="bi bi-calendar"></i> 05/03/2026</small>
+                        </div>
+                    </article>
+                </div>
+                <div class="col-md-4">
+                    <article class="card blog-card h-100">
+                        <img src="../src/assets/destinos/cira.jpg" class="card-img-top" alt="Presidente Figueiredo" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <span class="badge bg-success mb-2">Natureza</span>
+                            <h5 class="card-title">Cachoeiras de Presidente Figueiredo</h5>
+                            <p class="card-text text-muted">Explore a terra das cachoeiras e descubra os melhores passeios...</p>
+                            <a href="#" class="btn btn-sm btn-outline-dark">Ler mais</a>
+                        </div>
+                        <div class="card-footer text-muted">
+                            <small><i class="bi bi-calendar"></i> 28/02/2026</small>
+                        </div>
+                    </article>
+                </div>
+                <div class="col-md-4">
+                    <article class="card blog-card h-100">
+                        <img src="../src/assets/destinos/safari_amazonico.jpg" class="card-img-top" alt="Safari Amazônico" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <span class="badge bg-warning text-dark mb-2">Aventura</span>
+                            <h5 class="card-title">Safari Amazônico: encontro com os botos</h5>
+                            <p class="card-text text-muted">Uma experiência única navegando pelo Rio Negro e interagindo com os botos cor-de-rosa...</p>
+                            <a href="#" class="btn btn-sm btn-outline-dark">Ler mais</a>
+                        </div>
+                        <div class="card-footer text-muted">
+                            <small><i class="bi bi-calendar"></i> 20/02/2026</small>
+                        </div>
+                    </article>
+                </div>
+                <div class="col-md-4">
+                    <article class="card blog-card h-100">
+                        <img src="../src/assets/destinos/eco_park.jpg" class="card-img-top" alt="Ecopark" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <span class="badge bg-success mb-2">Dicas</span>
+                            <h5 class="card-title">O que levar para um passeio na Amazônia</h5>
+                            <p class="card-text text-muted">Lista completa de itens essenciais para sua viagem regional...</p>
+                            <a href="#" class="btn btn-sm btn-outline-dark">Ler mais</a>
+                        </div>
+                        <div class="card-footer text-muted">
+                            <small><i class="bi bi-calendar"></i> 15/02/2026</small>
+                        </div>
+                    </article>
+                </div>
+            </div>
+
+            <nav class="mt-5" aria-label="Navegação do blog">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled">
+                        <span class="page-link">Anterior</span>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Próxima</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </section>
+
+    <section class="py-5 bg-light">
+        <div class="container text-center">
+            <h3 class="mb-4">Receba nossas notícias</h3>
+            <p class="text-muted mb-4">Assine nossa newsletter para receber dicas de viagem e promoções exclusivas.</p>
+            <form class="row justify-content-center g-3">
+                <div class="col-md-4">
+                    <input type="email" class="form-control" placeholder="Seu melhor e-mail" required>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-dark w-100">Assinar</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <footer class="bg-dark text-white py-4">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2026 Amazonia Travel e Events. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <a href="https://wa.me/5592985499999" class="position-fixed bottom-0 end-0 m-4 btn btn-success rounded-circle shadow-lg" style="width: 60px; height: 60px; z-index: 1000;" target="_blank">
+        <i class="bi bi-whatsapp fs-3"></i>
+    </a>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
