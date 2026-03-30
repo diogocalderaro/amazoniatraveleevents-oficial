@@ -49,8 +49,12 @@ app.get('/api/health', (req, res) => {
 // Initialize database and start server
 initializeDatabase();
 
-app.listen(PORT, () => {
-  console.log(`\n🚀 Amazonia Admin Server running on http://localhost:${PORT}`);
-  console.log(`📁 Uploads dir: ${join(__dirname, 'uploads')}`);
-  console.log(`🗄️  Database: SQLite\n`);
-});
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`\n🚀 Amazonia Admin Server running on http://localhost:${PORT}`);
+    console.log(`📁 Uploads dir: ${join(__dirname, 'uploads')}`);
+    console.log(`🗄️  Database: SQLite\n`);
+  });
+}
+
+export default app;

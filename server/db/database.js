@@ -9,9 +9,10 @@ const __dirname = dirname(__filename);
 
 const dbPath = join(__dirname, 'amazonia.db');
 let db = null;
+const isVercel = !!process.env.VERCEL;
 
 function saveDb() {
-  if (db) {
+  if (db && !isVercel) {
     const data = db.export();
     const buffer = Buffer.from(data);
     writeFileSync(dbPath, buffer);
@@ -19,12 +20,14 @@ function saveDb() {
 }
 
 // Auto-save every 30 seconds
-setInterval(saveDb, 30000);
+if (!isVercel) {
+  setInterval(saveDb, 30000);
+}
 
 export async function initializeDatabase() {
   const SQL = await initSqlJs();
 
-  if (existsSync(dbPath)) {
+  if (!isVercel && existsSync(dbPath)) {
     const fileBuffer = readFileSync(dbPath);
     db = new SQL.Database(fileBuffer);
   } else {
