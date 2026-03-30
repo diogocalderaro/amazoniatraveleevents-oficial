@@ -1,0 +1,141 @@
+import React, { useState, useEffect } from 'react';
+import { Plus, Edit, Trash2, X, Save, ToggleLeft, ToggleRight, HelpCircle } from 'lucide-react';
+
+const PainelFAQ = () => {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [editing, setEditing] = useState(null);
+  const [form, setForm] = useState({ question: '', answer: '', category: 'Geral', sort_order: 0 });
+  const token = localStorage.getItem('admin_token');
+  const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
+
+  useEffect(() => { fetchItems(); }, []);
+
+  async function fetchItems() {
+    try {
+      const res = await fetch('/api/faq', { headers });
+      if (res.ok) setItems(await res.json());
+    } catch (err) { console.error(err); }
+    finally { setLoading(false); }
+  }
+
+  function openCreate() {
+    setEditing(null);
+    setForm({ question: '', answer: '', category: 'Geral', sort_order: 0 });
+    setShowModal(true);
+  }
+
+  function openEdit(item) {
+    setEditing(item);
+    setForm({ question: item.question, answer: item.answer, category: item.category || 'Geral', sort_order: item.sort_order || 0 });
+    setShowModal(true);
+  }
+
+  async function handleSave(e) {
+    e.preventDefault();
+    try {
+      if (editing) {
+        await fetch(`/api/faq/${editing.id}`, { method: 'PUT', headers, body: JSON.stringify({ ...form, is_active: editing.is_active }) });
+      } else {
+        await fetch('/api/faq', { method: 'POST', headers, body: JSON.stringify(form) });
+      }
+      setShowModal(false);
+      fetchItems();
+    } catch (err) { console.error(err); }
+  }
+
+  async function handleDelete(id) {
+    if (!confirm('Excluir esta pergunta?')) return;
+    await fetch(`/api/faq/${id}`, { method: 'DELETE', headers });
+    fetchItems();
+  }
+
+  async function toggleActive(item) {
+    await fetch(`/api/faq/${item.id}`, { method: 'PUT', headers, body: JSON.stringify({ ...item, is_active: item.is_active ? 0 : 1 }) });
+    fetchItems();
+  }
+
+  if (loading) return <div className="admin-page"><div className="admin-loading">Carregando...</div></div>;
+
+  return (
+    <div className="admin-page">
+      <div className="admin-page-header">
+        <div>
+          <h1 className="admin-page-title">Perguntas Frequentes</h1>
+          <p className="admin-page-subtitle">Gerencie as perguntas e respostas do FAQ.</p>
+        </div>
+        <button className="admin-btn admin-btn-primary" onClick={openCreate}><Plus size={18} /> Nova Pergunta</button>
+      </div>
+
+      <div className="admin-card">
+        {items.length === 0 ? (
+          <div className="admin-placeholder">
+            <HelpCircle size={48} />
+            <h3>Nenhuma pergunta cadastrada</h3>
+            <p>Clique em "Nova Pergunta" para adicionar ao FAQ.</p>
+          </div>
+        ) : (
+          <div className="faq-list">
+            {items.map(item => (
+              <div key={item.id} className={`faq-item ${!item.is_active ? 'faq-inactive' : ''}`}>
+                <div className="faq-item-content">
+                  <div className="faq-question">{item.question}</div>
+                  <div className="faq-answer">{item.answer}</div>
+                  <div className="faq-meta">
+                    <span className="tag">{item.category}</span>
+                    <span className="cell-sub">Ordem: {item.sort_order}</span>
+                  </div>
+                </div>
+                <div className="faq-actions">
+                  <button className="btn-icon" onClick={() => toggleActive(item)} title={item.is_active ? 'Desativar' : 'Ativar'}>
+                    {item.is_active ? <ToggleRight size={20} style={{ color: 'var(--admin-success)' }} /> : <ToggleLeft size={20} />}
+                  </button>
+                  <button className="btn-icon" onClick={() => openEdit(item)} title="Editar"><Edit size={16} /></button>
+                  <button className="btn-icon btn-danger" onClick={() => handleDelete(item.id)} title="Excluir"><Trash2 size={16} /></button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {showModal && (
+        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>{editing ? 'Editar Pergunta' : 'Nova Pergunta'}</h2>
+              <button className="btn-icon" onClick={() => setShowModal(false)}><X size={20} /></button>
+            </div>
+            <form onSubmit={handleSave} className="modal-body">
+              <div className="form-group">
+                <label>Pergunta *</label>
+                <input value={form.question} onChange={e => setForm({...form, question: e.target.value})} required placeholder="Ex: Como faço para reservar?" />
+              </div>
+              <div className="form-group">
+                <label>Resposta *</label>
+                <textarea rows="4" value={form.answer} onChange={e => setForm({...form, answer: e.target.value})} required placeholder="Resposta detalhada..." />
+              </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Categoria</label>
+                  <input value={form.category} onChange={e => setForm({...form, category: e.target.value})} placeholder="Geral" />
+                </div>
+                <div className="form-group">
+                  <label>Ordem</label>
+                  <input type="number" value={form.sort_order} onChange={e => setForm({...form, sort_order: parseInt(e.target.value) || 0})} />
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="admin-btn admin-btn-secondary" onClick={() => setShowModal(false)}>Cancelar</button>
+                <button type="submit" className="admin-btn admin-btn-primary"><Save size={16} /> Salvar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default PainelFAQ;

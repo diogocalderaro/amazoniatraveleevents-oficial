@@ -12,58 +12,72 @@ import HowToBuy from './pages/HowToBuy';
 import SearchResults from './pages/SearchResults';
 import NotFound from './pages/NotFound';
 import { CartProvider } from './context/CartContext';
+import { AuthProvider } from './context/AuthContext';
 import ScrollToTop from './components/ScrollToTop';
 
 // Layouts
 import PublicLayout from './layouts/PublicLayout';
 import AdminLayout from './layouts/AdminLayout';
 
-// Admin Pages
-import AdminDashboard from './pages/admin/AdminDashboard';
-import AdminPacotes from './pages/admin/AdminPacotes';
-import AdminCategorias from './pages/admin/AdminCategorias';
-import AdminVendas from './pages/admin/AdminVendas';
-import AdminPerguntas from './pages/admin/AdminPerguntas';
-import AdminGaleria from './pages/admin/AdminGaleria';
-import AdminComentarios from './pages/admin/AdminComentarios';
+// Painel Pages
+import PainelLogin from './pages/painel/PainelLogin';
+import PainelDashboard from './pages/painel/PainelDashboard';
+import PainelDestinos from './pages/painel/PainelDestinos';
+import PainelPaginas from './pages/painel/PainelPaginas';
+import PainelReservas from './pages/painel/PainelReservas';
+import PainelBlog from './pages/painel/PainelBlog';
+import PainelFAQ from './pages/painel/PainelFAQ';
+import PainelGaleria from './pages/painel/PainelGaleria';
+import PainelComentarios from './pages/painel/PainelComentarios';
+import PainelRelatorios from './pages/painel/PainelRelatorios';
 
 function App() {
   return (
-    <CartProvider>
-      <Router basename="/">
-        <ScrollToTop />
-        <Routes>
-          {/* Public Routes */}
-          <Route element={<PublicLayout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/tour/:id" element={<TourDetails />} />
-            <Route path="/checkout" element={<BookingFlow />} />
-            <Route path="/destinations" element={<Packages />} />
-            <Route path="/pacotes" element={<Navigate to="/destinations" replace />} />
-            <Route path="/destinos" element={<Navigate to="/destinations" replace />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:id" element={<BlogPost />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/search" element={<SearchResults />} />
-            <Route path="/book/:id" element={<BookingFlow />} />
-            <Route path="/how-to-buy" element={<HowToBuy />} />
-            <Route path="*" element={<NotFound />} />
-          </Route>
+    <AuthProvider>
+      <CartProvider>
+        <Router basename="/">
+          <ScrollToTop />
+          <Routes>
+            {/* Public Routes */}
+            <Route element={<PublicLayout />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/tour/:id" element={<TourDetails />} />
+              <Route path="/checkout" element={<BookingFlow />} />
+              <Route path="/destinations" element={<Packages />} />
+              <Route path="/pacotes" element={<Navigate to="/destinations" replace />} />
+              <Route path="/destinos" element={<Navigate to="/destinations" replace />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:id" element={<BlogPost />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/search" element={<SearchResults />} />
+              <Route path="/book/:id" element={<BookingFlow />} />
+              <Route path="/how-to-buy" element={<HowToBuy />} />
+              <Route path="*" element={<NotFound />} />
+            </Route>
 
-          {/* Admin Routes */}
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<AdminDashboard />} />
-            <Route path="pacotes" element={<AdminPacotes />} />
-            <Route path="categorias" element={<AdminCategorias />} />
-            <Route path="vendas" element={<AdminVendas />} />
-            <Route path="perguntas" element={<AdminPerguntas />} />
-            <Route path="galeria" element={<AdminGaleria />} />
-            <Route path="comentarios" element={<AdminComentarios />} />
-          </Route>
-        </Routes>
-      </Router>
-    </CartProvider>
+            {/* Painel Login (outside layout) */}
+            <Route path="/painel/login" element={<PainelLogin />} />
+
+            {/* Painel Routes (protected by AdminLayout) */}
+            <Route path="/painel" element={<AdminLayout />}>
+              <Route index element={<PainelDashboard />} />
+              <Route path="destinos" element={<PainelDestinos />} />
+              <Route path="paginas" element={<PainelPaginas />} />
+              <Route path="reservas" element={<PainelReservas />} />
+              <Route path="blog" element={<PainelBlog />} />
+              <Route path="faq" element={<PainelFAQ />} />
+              <Route path="galeria" element={<PainelGaleria />} />
+              <Route path="comentarios" element={<PainelComentarios />} />
+              <Route path="relatorios" element={<PainelRelatorios />} />
+            </Route>
+
+            {/* Redirect old /admin to /painel */}
+            <Route path="/admin/*" element={<Navigate to="/painel" replace />} />
+          </Routes>
+        </Router>
+      </CartProvider>
+    </AuthProvider>
   );
 }
 
