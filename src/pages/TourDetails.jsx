@@ -16,93 +16,113 @@ import gal013 from '../assets/galeria/013.jpg';
 import gal001 from '../assets/galeria/001.jpg';
 import gal002 from '../assets/galeria/002.jpg';
 
-import { packagesData } from '../data/toursData';
 
 const TourDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const [tourData, setTourData] = useState(null);
   const [selectedDate, setSelectedDate] = useState('');
   const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
   const [activeTab, setActiveTab] = useState('sobre');
   const [selectedImage, setSelectedImage] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [showToast, setShowToast] = useState(false);
-  const [licenseType, setLicenseType] = useState('personal');
+  const [planType, setPlanType] = useState('regional');
   const [extras, setExtras] = useState([]);
 
-  const tourData = packagesData.find(pkg => pkg.id === id) || packagesData[0];
+  useEffect(() => {
+    fetchTour();
+    window.scrollTo(0, 0);
+  }, [id]);
 
-  const getExtrasPrice = () => {
-    return extras.reduce((sum, extra) => sum + extra.price, 0);
+  async function fetchTour() {
+    try {
+      setIsLoading(true);
+      const res = await fetch(`/api/packages/${id}`);
+      if (res.ok) {
+        const data = await res.json();
+        setTourData({
+          ...data,
+          highlights: data.highlights?.map(h => h.text) || [],
+          itinerary: data.itinerary?.map(it => ({ day: it.day, title: it.title, desc: it.description })) || [],
+          included: data.included?.map(i => i.text) || [],
+          excluded: data.excluded?.map(e => e.text) || [],
+          gallery: data.gallery?.map(g => g.image_url) || [data.image_url]
+        });
+        if (data.travel_date) setSelectedDate(data.travel_date);
+      } else {
+        navigate('/destinos');
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  const getPlanPrice = () => {
+    if (!tourData) return 0;
+    let basePrice = tourData.price || 0;
+    if (planType === 'vip') basePrice = tourData.price_vip || tourData.price * 1.35;
+    if (planType === 'executivo') basePrice = tourData.price_exec || tourData.price * 1.5;
+    
+    const adultTotal = basePrice * adults;
+    const childTotal = (tourData.price_child || basePrice * 0.7) * children;
+    
+    return adultTotal + childTotal;
   };
 
-  const currentPrice = (licenseType === 'personal' ? tourData.price : tourData.price * 1.45) + getExtrasPrice();
+  const getExtrasPrice = () => {
+    return extras.reduce((sum, extra) => sum + extra.price, 0) * (adults + children);
+  };
+
+  const totalPrice = getPlanPrice() + getExtrasPrice();
+  const perPersonPrice = (adults + children) > 0 ? totalPrice / (adults + children) : 0;
 
   const handleAddToCart = () => {
     if (!selectedDate) return;
     
-    setIsLoading(true);
-    
-    // Simulate loading
-    setTimeout(() => {
-      const cartData = {
-        id: id || tourData.id,
-        title: tourData.title,
-        duration: tourData.duration,
-        destinations: tourData.destinations || "1 Destino",
-        date: selectedDate,
-        guests: `${adults} adultos - ${children} crianças`,
-        price: currentPrice,
-        license: licenseType === 'personal' ? 'Simples' : 'Premium',
-        extras: extras.map(e => e.label).join(', '),
-        image: tourData.gallery[0]
-      };
-      addToCart(cartData);
-      setIsLoading(false);
-      setShowToast(true);
-      
-      // Navigate to checkout after a delay or just stay and show toast?
-      // The user wants a bar at the bottom, so I'll stay for a few seconds.
-      setTimeout(() => {
-        setShowToast(false);
-      }, 5000);
-    }, 800);
+    // Simulate cart add animation
+    const cartData = {
+      id: tourData.id,
+      title: tourData.title,
+      duration: tourData.duration,
+      date: selectedDate,
+      guests: `${adults} adultos - ${children} crianças`,
+      price: totalPrice,
+      plan: planType.charAt(0).toUpperCase() + planType.slice(1),
+      image: tourData.image_url
+    };
+    addToCart(cartData);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 5000);
   };
 
   const openWhatsApp = () => {
     const phoneNumber = "9293502913";
-    const message = `Olá! Gostaria de mais informações sobre o pacote: ${tourData.title}`;
+    const message = `Olá! Gostaria de mais informações sobre o pacote: ${tourData?.title}`;
     window.open(`https://wa.me/55${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
   };
-
-  // Scroll to top on load
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
 
   // Logic to detect active section on scroll
   useEffect(() => {
     const handleScroll = () => {
       const sections = ['sobre', 'fotos', 'itinerario', 'politicas'];
       const scrollPosition = window.scrollY + 250;
-
       for (const section of sections) {
         const element = document.getElementById(section);
-        if (element) {
-          const offsetTop = element.offsetTop;
-          const height = element.offsetHeight;
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + height) {
-            setActiveTab(section);
-          }
+        if (element && scrollPosition >= element.offsetTop && scrollPosition < element.offsetTop + element.offsetHeight) {
+          setActiveTab(section);
         }
       }
     };
-
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  if (isLoading || !tourData) return <div className="loading-screen" style={{ height: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Carregando destino...</div>;
 
   return (
     <div className="tour-details-page" style={{ backgroundColor: '#f8fafc' }}>
@@ -111,7 +131,7 @@ const TourDetails = () => {
         position: 'relative',
         height: '60vh',
         minHeight: '400px',
-        backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5)), url(${tourData.gallery[1]})`,
+        backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5)), url(${tourData.gallery[0] || tourData.image_url})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         display: 'flex',
@@ -139,11 +159,11 @@ const TourDetails = () => {
       <div style={{ backgroundColor: '#fff', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: '70px', zIndex: 100 }}>
         <div className="container" style={{ display: 'flex', gap: '1rem', overflowX: 'auto' }}>
           {[
-            { id: 'sobre', label: 'Sobre', icon: <Info size={18} /> },
-            { id: 'fotos', label: 'Fotos', icon: <ImageIcon size={18} /> },
-            { id: 'itinerario', label: 'Itinerário', icon: <ListChecks size={18} /> },
-            { id: 'politicas', label: 'Políticas', icon: <FileText size={18} /> }
-          ].map((tab) => (
+            { id: 'sobre', label: 'Sobre', icon: <Info size={18} />, show: true },
+            { id: 'fotos', label: 'Fotos', icon: <ImageIcon size={18} />, show: tourData.gallery?.length > 1 },
+            { id: 'itinerario', label: 'Roteiro', icon: <ListChecks size={18} />, show: tourData.itinerary?.length > 0 },
+            { id: 'politicas', label: 'Políticas', icon: <FileText size={18} />, show: (tourData.included?.length > 0 || tourData.excluded?.length > 0) }
+          ].filter(t => t.show).map((tab) => (
             <a 
               key={tab.id} 
               href={`#${tab.id}`} 
@@ -186,11 +206,13 @@ const TourDetails = () => {
                 <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
                    <Info size={32} className="text-primary" /> Sobre o Pacote
                 </h2>
-                <p style={{ fontSize: '1.125rem', color: '#475569', lineHeight: 1.8, marginBottom: '2rem' }}>
-                  {tourData.description}
-                </p>
+                <div 
+                  className="tour-desc-content"
+                  style={{ fontSize: '1.125rem', color: '#475569', lineHeight: 1.8, marginBottom: '2rem' }}
+                  dangerouslySetInnerHTML={{ __html: tourData.description }}
+                />
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
-                  {tourData.highlights.map((item, i) => (
+                  {tourData.highlights?.map((item, i) => (
                     <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#334155', fontWeight: 600 }}>
                       <div style={{ backgroundColor: '#f0fdf4', color: '#16a34a', padding: '6px', borderRadius: '50%' }}><Check size={18} /></div>
                       {item}
@@ -200,89 +222,91 @@ const TourDetails = () => {
               </section>
 
                {/* Gallery Section */}
-               <section id="fotos" style={{ marginBottom: '2rem' }}>
-                <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                   <ImageIcon size={32} className="text-primary" /> Galeria de Fotos
-                </h2>
-                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
-                  {tourData.gallery.map((img, i) => (
-                    <div 
-                      key={i} 
-                      onClick={() => setSelectedImage(img)}
-                      style={{ 
-                        borderRadius: '12px', 
-                        overflow: 'hidden', 
-                        height: '180px', 
-                        cursor: 'zoom-in',
-                        transition: 'transform 0.3s ease'
-                      }}
-                      onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
-                      onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-                    >
-                      <img src={img} alt={`Gallery ${i}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    </div>
-                  ))}
-                  {/* Extra placeholder images to fulfill "more photos" request if listing is small */}
-                  {[gal010, gal011, gal012, gal001, gal002].map((img, i) => (
-                    <div 
-                      key={`extra-${i}`} 
-                      onClick={() => setSelectedImage(img)}
-                      style={{ borderRadius: '12px', overflow: 'hidden', height: '180px', cursor: 'zoom-in' }}
-                    >
-                      <img src={img} alt={`Extra Gallery ${i}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    </div>
-                  ))}
-                </div>
-              </section>
+               {tourData.gallery?.length > 1 && (
+                 <section id="fotos" style={{ marginBottom: '2rem' }}>
+                  <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                     <ImageIcon size={32} className="text-primary" /> Galeria de Fotos
+                  </h2>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
+                    {tourData.gallery.map((img, i) => (
+                      <div 
+                        key={i} 
+                        onClick={() => setSelectedImage(img)}
+                        style={{ 
+                          borderRadius: '12px', 
+                          overflow: 'hidden', 
+                          height: '180px', 
+                          cursor: 'zoom-in',
+                          transition: 'transform 0.3s ease'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
+                        onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                      >
+                        <img src={img} alt={`Gallery ${i}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      </div>
+                    ))}
+                  </div>
+                </section>
+               )}
 
                {/* Itinerary Section */}
-               <section id="itinerario" style={{ marginBottom: '2rem' }}>
-                <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                   <ListChecks size={32} className="text-primary" /> Roteiro da Viagem
-                </h2>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                  {tourData.itinerary.map((item, i) => (
-                    <div key={i} style={{ display: 'flex', gap: '2rem', borderLeft: '3px solid #FFD700', paddingLeft: '2rem', paddingBottom: '1rem' }}>
-                      <div style={{ flexShrink: 0 }}>
-                        <div style={{ backgroundColor: '#000', color: '#FFD700', width: '60px', height: '60px', borderRadius: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '0.9rem' }}>{item.day}</div>
+               {tourData.itinerary?.length > 0 && (
+                 <section id="itinerario" style={{ marginBottom: '2rem' }}>
+                  <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                     <ListChecks size={32} className="text-primary" /> Roteiro da Viagem
+                  </h2>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                    {tourData.itinerary.map((item, i) => (
+                      <div key={i} style={{ display: 'flex', gap: '2rem', borderLeft: '3px solid #FFD700', paddingLeft: '2rem', paddingBottom: '1rem' }}>
+                        <div style={{ flexShrink: 0 }}>
+                           <div style={{ backgroundColor: '#000', color: '#FFD700', width: 'auto', minWidth: '60px', padding: '0 10px', height: '60px', borderRadius: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '0.9rem' }}>
+                             {item.day}
+                           </div>
+                        </div>
+                        <div>
+                          <h4 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.5rem' }}>{item.title}</h4>
+                          <p style={{ color: '#64748b' }}>{item.desc}</p>
+                        </div>
                       </div>
-                      <div>
-                        <h4 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.5rem' }}>{item.title}</h4>
-                        <p style={{ color: '#64748b' }}>{item.desc}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
+                    ))}
+                  </div>
+                </section>
+               )}
 
                {/* Policy Section */}
-               <section id="politicas" style={{ marginBottom: '2rem' }}>
-                <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                   <FileText size={32} className="text-primary" /> Políticas do Tour
-                </h2>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
-                  <div style={{ backgroundColor: '#fff', padding: '2rem', borderRadius: '20px', border: '1px solid #f1f5f9' }}>
-                    <h4 style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.5rem', color: '#16a34a' }}><CheckCircle2 size={24} /> O QUE ESTÁ INCLUSO</h4>
-                    <ul style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                      {tourData.included.map((item, i) => (
-                        <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#64748b', fontSize: '0.95rem' }}>
-                          <div style={{ color: '#16a34a' }}><Check size={18} /></div> {item}
-                        </li>
-                      ))}
-                    </ul>
+               {(tourData.included?.length > 0 || tourData.excluded?.length > 0) && (
+                 <section id="politicas" style={{ marginBottom: '2rem' }}>
+                  <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                     <FileText size={32} className="text-primary" /> Políticas do Tour
+                  </h2>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
+                    {tourData.included?.length > 0 && (
+                      <div style={{ backgroundColor: '#fff', padding: '2rem', borderRadius: '20px', border: '1px solid #f1f5f9' }}>
+                        <h4 style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.5rem', color: '#16a34a' }}><CheckCircle2 size={24} /> O QUE ESTÁ INCLUSO</h4>
+                        <ul style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                          {tourData.included.map((item, i) => (
+                            <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#64748b', fontSize: '0.95rem' }}>
+                              <div style={{ color: '#16a34a' }}><Check size={18} /></div> {item}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {tourData.excluded?.length > 0 && (
+                      <div style={{ backgroundColor: '#fff', padding: '2rem', borderRadius: '20px', border: '1px solid #f1f5f9' }}>
+                        <h4 style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.5rem', color: '#ef4444' }}><X size={24} /> NÃO INCLUSO</h4>
+                        <ul style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                          {tourData.excluded.map((item, i) => (
+                            <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#64748b', fontSize: '0.95rem' }}>
+                              <div style={{ color: '#ef4444' }}><Plus size={18} style={{ transform: 'rotate(45deg)' }} /></div> {item}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </div>
-                  <div style={{ backgroundColor: '#fff', padding: '2rem', borderRadius: '20px', border: '1px solid #f1f5f9' }}>
-                    <h4 style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.5rem', color: '#ef4444' }}><X size={24} /> NÃO INCLUSO</h4>
-                    <ul style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                      {tourData.excluded.map((item, i) => (
-                        <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#64748b', fontSize: '0.95rem' }}>
-                          <div style={{ color: '#ef4444' }}><Plus size={18} style={{ transform: 'rotate(45deg)' }} /></div> {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </section>
+                </section>
+               )}
             </div>
 
              {/* Sticky Sidebar Booking Widget */}
@@ -297,8 +321,7 @@ const TourDetails = () => {
                 <div style={{ marginBottom: '2rem' }}>
                   <p style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px' }}>Preço Total</p>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
-                    <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#000' }}>R$ {currentPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                    <span style={{ color: '#94a3b8', fontWeight: 600 }}>/pessoa</span>
+                    <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#000' }}>R$ {totalPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                   </div>
                 </div>
 
@@ -332,38 +355,63 @@ const TourDetails = () => {
                   {/* Pricing Options (License/License Style) */}
                   <div style={{ backgroundColor: '#f8fafc', padding: '1.1rem', borderRadius: '15px', border: '1.5px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                     <div 
-                      onClick={() => setLicenseType('personal')}
+                      onClick={() => setPlanType('regional')}
                       style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', padding: '0.2rem 0' }}
                     >
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
                         <div style={{ 
                           width: '18px', height: '18px', borderRadius: '50%', flexShrink: 0,
-                          border: `2px solid ${licenseType === 'personal' ? '#7EB53F' : '#cbd5e1'}`,
+                          border: `2px solid ${planType === 'regional' ? '#7EB53F' : '#cbd5e1'}`,
                           display: 'flex', alignItems: 'center', justifyContent: 'center'
                         }}>
-                          {licenseType === 'personal' && <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#7EB53F' }} />}
+                          {planType === 'regional' && <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#7EB53F' }} />}
                         </div>
                         <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#334155', whiteSpace: 'nowrap' }}>Plano Regional</span>
                       </div>
-                      <span style={{ fontWeight: 800, fontSize: '0.9rem', marginLeft: '10px', whiteSpace: 'nowrap' }}>R$ {tourData.price.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                      <span style={{ fontWeight: 800, fontSize: '0.9rem', marginLeft: '10px', whiteSpace: 'nowrap' }}>R$ {tourData.price?.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
 
-                    <div 
-                      onClick={() => setLicenseType('commercial')}
-                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', padding: '0.2rem 0' }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
-                        <div style={{ 
-                          width: '18px', height: '18px', borderRadius: '50%', flexShrink: 0,
-                          border: `2px solid ${licenseType === 'commercial' ? '#7EB53F' : '#cbd5e1'}`,
-                          display: 'flex', alignItems: 'center', justifyContent: 'center'
-                        }}>
-                          {licenseType === 'commercial' && <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#7EB53F' }} />}
+                    {(tourData.price_vip || tourData.price_exec) && (
+                      <div style={{ height: '1px', backgroundColor: '#e2e8f0', margin: '4px 0' }} />
+                    )}
+
+                    {tourData.price_vip && (
+                      <div 
+                        onClick={() => setPlanType('vip')}
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', padding: '0.2rem 0' }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
+                          <div style={{ 
+                            width: '18px', height: '18px', borderRadius: '50%', flexShrink: 0,
+                            border: `2px solid ${planType === 'vip' ? '#7EB53F' : '#cbd5e1'}`,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center'
+                          }}>
+                            {planType === 'vip' && <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#7EB53F' }} />}
+                          </div>
+                          <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#000', whiteSpace: 'nowrap' }}>Plano VIP</span>
                         </div>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#000', whiteSpace: 'nowrap' }}>Plano VIP / Executivo</span>
+                        <span style={{ fontWeight: 800, fontSize: '0.9rem', marginLeft: '10px', whiteSpace: 'nowrap' }}>R$ {tourData.price_vip.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                       </div>
-                      <span style={{ fontWeight: 800, fontSize: '0.9rem', marginLeft: '10px', whiteSpace: 'nowrap' }}>R$ {(tourData.price * 1.45).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                    </div>
+                    )}
+
+                    {tourData.price_exec && (
+                      <div 
+                        onClick={() => setPlanType('executivo')}
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', padding: '0.2rem 0' }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
+                          <div style={{ 
+                            width: '18px', height: '18px', borderRadius: '50%', flexShrink: 0,
+                            border: `2px solid ${planType === 'executivo' ? '#7EB53F' : '#cbd5e1'}`,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center'
+                          }}>
+                            {planType === 'executivo' && <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#7EB53F' }} />}
+                          </div>
+                          <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#000', whiteSpace: 'nowrap' }}>Plano Executivo</span>
+                        </div>
+                        <span style={{ fontWeight: 800, fontSize: '0.9rem', marginLeft: '10px', whiteSpace: 'nowrap' }}>R$ {tourData.price_exec.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                      </div>
+                    )}
 
                     <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '1rem', marginTop: '0.25rem' }}>
                       <p style={{ fontSize: '0.7rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '1rem', letterSpacing: '0.5px' }}>Serviços Populares Adicionais</p>
@@ -469,21 +517,24 @@ const TourDetails = () => {
           </div>
       </div>
 
-      {/* Reviews Banner Section */}
-      <section style={{ backgroundColor: '#fff', padding: '6rem 0' }}>
-         <div className="container">
-            <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto' }}>
-               <h2 style={{ fontSize: '2.5rem', fontWeight: 900, marginBottom: '1.5rem' }}>Avaliações de Clientes</h2>
-               <div style={{ display: 'flex', justifyContent: 'center', gap: '4px', color: '#FFD700', marginBottom: '2rem' }}>
-                  <Star size={32} fill="#FFD700" /><Star size={32} fill="#FFD700" /><Star size={32} fill="#FFD700" /><Star size={32} fill="#FFD700" /><Star size={32} fill="#FFD700" />
-               </div>
-               <p style={{ fontSize: '1.25rem', color: '#64748b', lineHeight: 1.8, fontStyle: 'italic' }}>
-                  "Uma experiência que mudou minha vida. A organização da Amazonia Travel foi impecável desde o primeiro contato até o retorno para casa."
-               </p>
-               <p style={{ fontWeight: 800, marginTop: '1.5rem', fontSize: '1.1rem' }}>— Marcos Silveira, São Paulo</p>
-            </div>
-         </div>
-      </section>
+      {tourData.featured_review && (
+        <section style={{ backgroundColor: '#fff', padding: '6rem 0' }}>
+           <div className="container">
+              <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto' }}>
+                 <h2 style={{ fontSize: '2.5rem', fontWeight: 900, marginBottom: '1.5rem' }}>Avaliação de Cliente</h2>
+                 <div style={{ display: 'flex', justifyContent: 'center', gap: '4px', color: '#FFD700', marginBottom: '2rem' }}>
+                    <Star size={32} fill="#FFD700" /><Star size={32} fill="#FFD700" /><Star size={32} fill="#FFD700" /><Star size={32} fill="#FFD700" /><Star size={32} fill="#FFD700" />
+                 </div>
+                 <p style={{ fontSize: '1.25rem', color: '#64748b', lineHeight: 1.8, fontStyle: 'italic' }}>
+                    "{tourData.featured_review}"
+                 </p>
+                 {tourData.featured_review_author && (
+                   <p style={{ fontWeight: 800, marginTop: '1.5rem', fontSize: '1.1rem' }}>— {tourData.featured_review_author}</p>
+                 )}
+              </div>
+           </div>
+        </section>
+      )}
 
       {/* Bottom Booking Banner */}
       <section style={{

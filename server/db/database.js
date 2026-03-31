@@ -54,10 +54,18 @@ export async function initializeDatabase() {
       title TEXT NOT NULL,
       location TEXT NOT NULL,
       price REAL NOT NULL DEFAULT 0,
+      price_vip REAL,
+      price_exec REAL,
+      price_child REAL,
       price_display TEXT,
       old_price REAL,
       installments INTEGER,
       installment_price REAL,
+      max_adults INTEGER DEFAULT 10,
+      max_children INTEGER DEFAULT 10,
+      travel_date TEXT,
+      featured_review TEXT,
+      featured_review_author TEXT,
       duration TEXT,
       category TEXT,
       description TEXT,
@@ -67,6 +75,25 @@ export async function initializeDatabase() {
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `);
+
+  // Migrations for existing databases
+  const tableInfo = db.exec("PRAGMA table_info(packages)");
+  const cols = tableInfo[0].values.map(v => v[1]);
+  if (!cols.includes('price_vip')) db.run('ALTER TABLE packages ADD COLUMN price_vip REAL');
+  if (!cols.includes('price_exec')) db.run('ALTER TABLE packages ADD COLUMN price_exec REAL');
+  if (!cols.includes('price_child')) db.run('ALTER TABLE packages ADD COLUMN price_child REAL');
+  if (!cols.includes('price_display')) db.run('ALTER TABLE packages ADD COLUMN price_display TEXT');
+  if (!cols.includes('old_price')) db.run('ALTER TABLE packages ADD COLUMN old_price REAL');
+  if (!cols.includes('installments')) db.run('ALTER TABLE packages ADD COLUMN installments INTEGER');
+  if (!cols.includes('installment_price')) db.run('ALTER TABLE packages ADD COLUMN installment_price REAL');
+  if (!cols.includes('max_adults')) db.run('ALTER TABLE packages ADD COLUMN max_adults INTEGER DEFAULT 10');
+  if (!cols.includes('max_children')) db.run('ALTER TABLE packages ADD COLUMN max_children INTEGER DEFAULT 10');
+  if (!cols.includes('travel_date')) db.run('ALTER TABLE packages ADD COLUMN travel_date TEXT');
+  if (!cols.includes('featured_review')) db.run('ALTER TABLE packages ADD COLUMN featured_review TEXT');
+  if (!cols.includes('featured_review_author')) db.run('ALTER TABLE packages ADD COLUMN featured_review_author TEXT');
+  if (!cols.includes('duration')) db.run('ALTER TABLE packages ADD COLUMN duration TEXT');
+  if (!cols.includes('category')) db.run('ALTER TABLE packages ADD COLUMN category TEXT');
+  if (!cols.includes('description')) db.run('ALTER TABLE packages ADD COLUMN description TEXT');
 
   db.run(`CREATE TABLE IF NOT EXISTS package_highlights (id INTEGER PRIMARY KEY AUTOINCREMENT, package_id INTEGER NOT NULL, text TEXT NOT NULL, sort_order INTEGER DEFAULT 0, FOREIGN KEY (package_id) REFERENCES packages(id) ON DELETE CASCADE)`);
   db.run(`CREATE TABLE IF NOT EXISTS package_itinerary (id INTEGER PRIMARY KEY AUTOINCREMENT, package_id INTEGER NOT NULL, day TEXT NOT NULL, title TEXT NOT NULL, description TEXT, sort_order INTEGER DEFAULT 0, FOREIGN KEY (package_id) REFERENCES packages(id) ON DELETE CASCADE)`);
