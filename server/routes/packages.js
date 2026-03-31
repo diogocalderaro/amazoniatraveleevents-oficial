@@ -30,7 +30,7 @@ router.post('/', authMiddleware, (req, res) => {
     const { title, slug, location, price, price_display, old_price, installments, installment_price, duration, category, description, image_url, highlights, itinerary, included, excluded, features } = req.body;
     const finalSlug = slug || title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
     const result = run('INSERT INTO packages (slug, title, location, price, price_display, old_price, installments, installment_price, duration, category, description, image_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      [finalSlug, title, location, price || 0, price_display, old_price, installments, installment_price, duration, category, description, image_url]);
+      [finalSlug, title, location, price || 0, price_display || null, old_price || null, installments || null, installment_price || null, duration || null, category || null, description || null, image_url || null]);
     const pkgId = result.lastInsertRowid;
     if (highlights?.length) highlights.forEach((h, i) => run('INSERT INTO package_highlights (package_id, text, sort_order) VALUES (?, ?, ?)', [pkgId, h, i]));
     if (itinerary?.length) itinerary.forEach((it, i) => run('INSERT INTO package_itinerary (package_id, day, title, description, sort_order) VALUES (?, ?, ?, ?, ?)', [pkgId, it.day, it.title, it.description, i]));
@@ -46,7 +46,7 @@ router.put('/:id', authMiddleware, (req, res) => {
     const { title, slug, location, price, price_display, old_price, installments, installment_price, duration, category, description, image_url, is_active, highlights, itinerary, included, excluded, features } = req.body;
     const pkgId = parseInt(req.params.id);
     run('UPDATE packages SET title=?, slug=?, location=?, price=?, price_display=?, old_price=?, installments=?, installment_price=?, duration=?, category=?, description=?, image_url=?, is_active=?, updated_at=CURRENT_TIMESTAMP WHERE id=?',
-      [title, slug, location, price, price_display, old_price, installments, installment_price, duration, category, description, image_url, is_active ?? 1, pkgId]);
+      [title, slug || null, location, price || 0, price_display || null, old_price || null, installments || null, installment_price || null, duration || null, category || null, description || null, image_url || null, is_active ?? 1, pkgId]);
     run('DELETE FROM package_highlights WHERE package_id = ?', [pkgId]);
     run('DELETE FROM package_itinerary WHERE package_id = ?', [pkgId]);
     run('DELETE FROM package_included WHERE package_id = ?', [pkgId]);

@@ -14,6 +14,7 @@ import galleryRoutes from './routes/gallery.js';
 import commentsRoutes from './routes/comments.js';
 import reportsRoutes from './routes/reports.js';
 import uploadRoutes from './routes/upload.js';
+import categoriesRoutes from './routes/categories.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -40,6 +41,7 @@ app.use('/api/gallery', galleryRoutes);
 app.use('/api/comments', commentsRoutes);
 app.use('/api/reports', reportsRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/blog-categories', categoriesRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

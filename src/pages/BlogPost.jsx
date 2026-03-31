@@ -157,7 +157,7 @@ const BlogPost = () => {
                <div style={{ backgroundColor: '#000', padding: '2rem', borderRadius: '20px', color: '#fff' }}>
                   <h4 style={{ color: '#FFD700', fontWeight: 800, marginBottom: '1rem' }}>Viaje Conosco!</h4>
                   <p style={{ fontSize: '0.85rem', marginBottom: '1.5rem', opacity: 0.8 }}>Gostou do conteúdo? Venha viver essa experiência de perto.</p>
-                  <Link to="/destinations" style={{ 
+                  <Link to="/destinos" style={{ 
                     display: 'block', 
                     textAlign: 'center', 
                     backgroundColor: '#FFD700', 

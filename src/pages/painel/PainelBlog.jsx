@@ -11,7 +11,19 @@ const PainelBlog = () => {
   const token = localStorage.getItem('admin_token');
   const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
 
-  useEffect(() => { fetchPosts(); }, []);
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => { 
+    fetchPosts(); 
+    fetchCategories();
+  }, []);
+
+  async function fetchCategories() {
+    try {
+      const res = await fetch('/api/blog-categories', { headers });
+      if (res.ok) setCategories(await res.json());
+    } catch (err) { console.error(err); }
+  }
 
   async function fetchPosts() {
     try {
@@ -167,7 +179,12 @@ const PainelBlog = () => {
                 </div>
                 <div className="form-group">
                   <label>Categoria</label>
-                  <input value={form.category} onChange={e => setForm({...form, category: e.target.value})} placeholder="Natureza, Dicas..." />
+                  <select value={form.category} onChange={e => setForm({...form, category: e.target.value})}>
+                    <option value="">Sem Categoria</option>
+                    {categories.map(cat => (
+                      <option key={cat.id} value={cat.name}>{cat.name}</option>
+                    ))}
+                  </select>
                 </div>
                 <div className="form-group">
                   <label>Autor</label>

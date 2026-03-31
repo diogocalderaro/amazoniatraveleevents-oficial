@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { NavLink, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import {
   LayoutDashboard,
@@ -13,7 +13,6 @@ import {
   BarChart3,
   LogOut,
   ChevronLeft,
-  Menu,
   X
 } from 'lucide-react';
 
@@ -22,7 +21,14 @@ const menuItems = [
   { to: '/painel/destinos', icon: Map, label: 'Destinos' },
   { to: '/painel/paginas', icon: FileText, label: 'Páginas' },
   { to: '/painel/reservas', icon: ClipboardList, label: 'Reservas' },
-  { to: '/painel/blog', icon: PenSquare, label: 'Blog' },
+  { 
+    label: 'Blog', 
+    icon: PenSquare, 
+    subItems: [
+      { to: '/painel/blog', label: 'Posts', end: true },
+      { to: '/painel/blog/categorias', label: 'Categorias' }
+    ]
+  },
   { to: '/painel/faq', icon: HelpCircle, label: 'FAQ' },
   { to: '/painel/galeria', icon: ImageIcon, label: 'Galeria' },
   { to: '/painel/comentarios', icon: MessageCircle, label: 'Comentários' },
@@ -31,6 +37,22 @@ const menuItems = [
 
 const Sidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }) => {
   const { logout } = useAuth();
+  const location = useLocation();
+  const [openSubmenus, setOpenSubmenus] = useState([]);
+
+  const toggleSubmenu = (label) => {
+    setOpenSubmenus(prev => 
+      prev.includes(label) ? prev.filter(l => l !== label) : [...prev, label]
+    );
+  };
+
+  useEffect(() => {
+    menuItems.forEach(item => {
+      if (item.subItems && item.subItems.some(sub => location.pathname.startsWith(sub.to))) {
+        setOpenSubmenus(prev => prev.includes(item.label) ? prev : [...prev, item.label]);
+      }
+    });
+  }, [location.pathname]);
 
   return (
     <>
@@ -40,8 +62,8 @@ const Sidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }) => {
       <aside className={`admin-sidebar ${collapsed ? 'collapsed' : ''} ${mobileOpen ? 'mobile-open' : ''}`}>
         <div className="sidebar-header">
           <Link to="/painel" className="sidebar-logo">
-            {!collapsed && <>Amazonia<span>Admin</span></>}
-            {collapsed && <span>A</span>}
+            {!collapsed && <>Painel</>}
+            {collapsed && <span>P</span>}
           </Link>
           <button className="btn-icon sidebar-toggle hide-mobile" onClick={onToggle}>
             <ChevronLeft size={18} style={{ transform: collapsed ? 'rotate(180deg)' : 'none', transition: 'transform 0.3s' }} />
@@ -54,17 +76,52 @@ const Sidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }) => {
         <nav className="sidebar-nav">
           <ul className="nav-list">
             {menuItems.map(item => (
-              <li key={item.to} className="nav-item">
-                <NavLink
-                  to={item.to}
-                  end={item.end}
-                  className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-                  onClick={onMobileClose}
-                  title={collapsed ? item.label : ''}
-                >
-                  <item.icon size={20} />
-                  {!collapsed && <span>{item.label}</span>}
-                </NavLink>
+              <li key={item.label} className="nav-item">
+                {item.subItems ? (
+                  <>
+                    <div 
+                      className={`nav-link submenu-trigger ${item.subItems.some(sub => window.location.pathname === sub.to) ? 'active' : ''}`}
+                      onClick={() => toggleSubmenu(item.label)}
+                    >
+                      <item.icon size={20} />
+                      {!collapsed && (
+                        <>
+                          <span>{item.label}</span>
+                          <span style={{ marginLeft: 'auto', fontSize: '0.7rem', opacity: 0.5 }}>
+                            {openSubmenus.includes(item.label) ? '▼' : '▶'}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    {openSubmenus.includes(item.label) && !collapsed && (
+                      <ul className="submenu-list">
+                        {item.subItems.map(subItem => (
+                          <li key={subItem.to} className="submenu-item">
+                            <NavLink
+                              to={subItem.to}
+                              end={subItem.end}
+                              className={({ isActive }) => `submenu-link ${isActive ? 'active' : ''}`}
+                              onClick={onMobileClose}
+                            >
+                              {subItem.label}
+                            </NavLink>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </>
+                ) : (
+                  <NavLink
+                    to={item.to}
+                    end={item.end}
+                    className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                    onClick={onMobileClose}
+                    title={collapsed ? item.label : ''}
+                  >
+                    <item.icon size={20} />
+                    {!collapsed && <span>{item.label}</span>}
+                  </NavLink>
+                )}
               </li>
             ))}
           </ul>

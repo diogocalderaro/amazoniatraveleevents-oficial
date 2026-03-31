@@ -35,7 +35,7 @@ const PainelLogin = () => {
             <div className="login-logo">
               <Compass size={32} />
             </div>
-            <h1>Amazonia<span>Admin</span></h1>
+            <h1>Painel</h1>
             <p>Painel de Controle</p>
           </div>
 

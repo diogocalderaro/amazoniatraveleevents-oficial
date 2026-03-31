@@ -49,12 +49,6 @@ const Home = () => {
   const carouselRef = React.useRef(null);
   const isHoveredRef = React.useRef(false);
 
-  const scrollCarousel = (direction) => {
-    if (carouselRef.current) {
-      const scrollAmount = direction === 'left' ? -350 : 350;
-      carouselRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    }
-  };
 
   const handleCarouselScroll = (e) => {
     const scrollLeft = e.target.scrollLeft;
@@ -68,7 +62,10 @@ const Home = () => {
     const interval = setInterval(() => {
       if (carouselRef.current && !isHoveredRef.current) {
         const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
-        if (scrollLeft + clientWidth >= scrollWidth - 10) {
+        
+        // If near end, jump back to start smoothly (will improve with cloning later if needed)
+        // For now, making it a continuous loop by detecting the end
+        if (scrollLeft + clientWidth >= scrollWidth - 50) {
           carouselRef.current.scrollTo({ left: 0, behavior: 'smooth' });
         } else {
           carouselRef.current.scrollBy({ left: 350, behavior: 'smooth' });
@@ -77,6 +74,28 @@ const Home = () => {
     }, 5000);
     return () => clearInterval(interval);
   }, []);
+
+  // Infinite loop logic for manual arrows
+  const scrollCarousel = (direction) => {
+    if (carouselRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
+      const scrollAmount = 350;
+      
+      if (direction === 'left') {
+        if (scrollLeft <= 0) {
+          carouselRef.current.scrollTo({ left: scrollWidth - clientWidth, behavior: 'smooth' });
+        } else {
+          carouselRef.current.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+        }
+      } else {
+        if (scrollLeft + clientWidth >= scrollWidth - 50) {
+          carouselRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          carouselRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        }
+      }
+    }
+  };
 
   const toggleFaq = (index) => {
     setActiveFaq(activeFaq === index ? null : index);
@@ -263,7 +282,7 @@ const Home = () => {
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', flexWrap: 'wrap' }}>
                 <button 
-                  onClick={() => navigate('/destinations')}
+                  onClick={() => navigate('/destinos')}
                   className="btn btn-primary" 
                   style={{ backgroundColor: '#FFD700', color: '#000', padding: '1.25rem 2.5rem', fontSize: '1.1rem', borderRadius: '100px', fontWeight: 800, border: 'none' }}
                 >
@@ -412,7 +431,7 @@ const Home = () => {
             </div>
           </div>
           <button 
-            onClick={() => navigate('/search')}
+            onClick={() => navigate('/buscar')}
             className="btn btn-primary" style={{
             minWidth: '140px', height: '60px', borderRadius: '12px',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -464,13 +483,13 @@ const Home = () => {
                   margin: '0.5rem 0'
                 }}>
                   <div style={{ position: 'relative', height: '220px', overflow: 'hidden' }}>
-                    <Link to={`/tour/${pkg.id}`}>
+                    <Link to={`/passeio/${pkg.id}`}>
                       <img src={pkg.image} alt={pkg.title} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s ease' }} className="pkg-img-hover" />
                     </Link>
                   </div>
                   
                   <div style={{ padding: '1.25rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <Link to={`/tour/${pkg.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <Link to={`/passeio/${pkg.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                       <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '0.75rem', lineHeight: 1.3, height: '2.8rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                         {pkg.title}
                       </h3>
@@ -504,7 +523,7 @@ const Home = () => {
                           <span style={{ fontSize: '1.2rem', fontWeight: 800, color: '#000' }}>{pkg.priceDisplay || new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(pkg.price)}</span>
                         )}
                       </div>
-                      <Link to={`/tour/${pkg.id}`} className="nav-arrow-btn">
+                      <Link to={`/passeio/${pkg.id}`} className="nav-arrow-btn">
                         <ArrowRight size={20} />
                       </Link>
                     </div>
@@ -560,7 +579,7 @@ const Home = () => {
           </div>
           
           <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
-            <Link to="/destinations" className="btn" style={{ padding: '1rem 3rem', border: '2px solid #000', borderRadius: '100px', fontWeight: 800, color: '#000', textDecoration: 'none' }}>Ver Todos os Pacotes</Link>
+            <Link to="/destinos" className="btn" style={{ padding: '1rem 3rem', border: '2px solid #000', borderRadius: '100px', fontWeight: 800, color: '#000', textDecoration: 'none' }}>Ver Todos os Pacotes</Link>
           </div>
         </div>
       </section>

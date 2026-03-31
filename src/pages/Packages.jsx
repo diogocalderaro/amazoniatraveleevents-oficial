@@ -149,7 +149,7 @@ const Packages = () => {
                 <p style={{ fontSize: '0.875rem', marginBottom: '1.5rem', opacity: 0.9 }}>
                   Nossos especialistas podem criar um roteiro 100% personalizado para você.
                 </p>
-                <Link to="/contact" className="btn btn-primary" style={{ width: '100%', display: 'flex', justifyContent: 'center', backgroundColor: '#FFD700', color: '#000', fontWeight: 800 }}>
+                <Link to="/contato" className="btn btn-primary" style={{ width: '100%', display: 'flex', justifyContent: 'center', backgroundColor: '#FFD700', color: '#000', fontWeight: 800 }}>
                   Falar com Consultor
                 </Link>
               </div>
@@ -214,16 +214,25 @@ const Packages = () => {
             </div>
 
             {filteredPackages.length > 0 ? (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '2rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(330px, 1fr))', gap: '2rem' }}>
                 {filteredPackages.map(pkg => (
-                  <div key={pkg.id} className="package-card-new" style={{ backgroundColor: '#fff', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column' }}>
-                    <div style={{ position: 'relative', height: '220px' }}>
-                      <Link to={`/tour/${pkg.id}`}>
+                  <div key={pkg.id} className="package-card-new package-item" style={{ 
+                    backgroundColor: '#fff', 
+                    borderRadius: '16px', 
+                    overflow: 'hidden', 
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.08)', 
+                    display: 'flex', 
+                    flexDirection: 'column',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                  }}>
+                    <div style={{ position: 'relative', height: '220px', overflow: 'hidden' }}>
+                      <Link to={`/passeio/${pkg.id}`}>
                         <img 
                           src={pkg.image} 
                           alt={pkg.title} 
-                          loading="lazy"
-                          style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                          loading="lazy" 
+                          style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s ease' }} 
+                          className="pkg-img-hover" 
                         />
                       </Link>
                       <div style={{ position: 'absolute', bottom: '1rem', left: '1rem', backgroundColor: '#000', color: '#FFD700', padding: '0.25rem 0.75rem', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 800 }}>
@@ -231,21 +240,23 @@ const Packages = () => {
                       </div>
                     </div>
                     
-                    <div style={{ padding: '1.5rem' }}>
-                      <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.75rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>
-                          <Clock size={14} color="#FFD700" /> {pkg.duration}
+                    <div style={{ padding: '1.25rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <Link to={`/passeio/${pkg.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '0.75rem', lineHeight: 1.3, height: '2.8rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                          {pkg.title}
+                        </h3>
+                      </Link>
+                      
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1.25rem', color: '#64748b', fontSize: '0.8rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <Clock size={14} color="#7EB53F" /> {pkg.duration}
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>
-                          <MapPin size={14} color="#FFD700" /> {pkg.location}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <MapPin size={14} color="#7EB53F" /> {pkg.location}
                         </div>
                       </div>
 
-                      <Link to={`/tour/${pkg.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem', lineHeight: 1.3, height: '3.2rem', overflow: 'hidden', fontWeight: 800 }}>{pkg.title}</h3>
-                      </Link>
-
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid #f1f5f9' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '1rem', borderTop: '1px solid #f1f5f9', marginTop: 'auto' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                           {pkg.installments && pkg.installmentPrice ? (
                             <>
@@ -255,18 +266,24 @@ const Packages = () => {
                                   R$ {Number(pkg.installmentPrice).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                 </strong>
                               </span>
-                              <span style={{ fontSize: '1.25rem', fontWeight: 800, color: '#000' }}>
+                              <span style={{ fontSize: '1.15rem', fontWeight: 800, color: '#000' }}>
                                 à vista R$ {Number(pkg.price).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                               </span>
                             </>
                           ) : (
-                            <span style={{ fontSize: '1.35rem', fontWeight: 800, color: '#000' }}>{pkg.priceDisplay || new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(pkg.price)}</span>
+                            <span style={{ fontSize: '1.2rem', fontWeight: 800, color: '#000' }}>{pkg.priceDisplay || new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(pkg.price)}</span>
                           )}
                         </div>
-                        <Link to={`/tour/${pkg.id}`} style={{ 
-                          width: '40px', height: '40px', borderRadius: '50%', 
-                          backgroundColor: '#FFD700', color: '#000', 
-                          display: 'flex', alignItems: 'center', justifyContent: 'center'
+                        <Link to={`/passeio/${pkg.id}`} className="nav-arrow-btn" style={{ 
+                          width: '42px', 
+                          height: '42px', 
+                          borderRadius: '50%', 
+                          backgroundColor: '#FFD700', 
+                          color: '#000', 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          justifyContent: 'center',
+                          transition: 'all 0.2s ease'
                         }}>
                           <ArrowRight size={20} />
                         </Link>

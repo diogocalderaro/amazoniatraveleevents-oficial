@@ -194,7 +194,9 @@ const BookingFlow = () => {
                   <div style={{ backgroundColor: '#fff', borderRadius: '12px', padding: '4rem 2rem', textAlign: 'center' }}>
                      <div style={{ color: '#ccc', marginBottom: '1.5rem' }}><ShoppingCart size={64} /></div>
                      <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '1rem' }}>Seu carrinho está vazio</h3>
-                     <Link to="/" className="btn btn-primary" style={{ padding: '0.75rem 2rem' }}>Explorar Destinos</Link>
+                     <Link to="/contato" className="btn btn-primary" style={{ width: '100%', display: 'flex', justifyContent: 'center', backgroundColor: '#FFD700', color: '#000', fontWeight: 800, padding: '0.75rem 2rem', textDecoration: 'none', borderRadius: '8px' }}>
+                        Falar com Consultor
+                     </Link>
                   </div>
                 ) : cartItems.map((item) => (
                   <div key={item.id} className="cart-item" style={{ 
@@ -206,11 +208,11 @@ const BookingFlow = () => {
                   }}>
                     {/* Desktop layout */}
                     <div className="cart-item-desktop" style={{ display: 'flex', gap: '1.25rem', alignItems: 'flex-start' }}>
-                      <Link to={`/tour/${item.id}`} style={{ flexShrink: 0 }}>
+                      <Link to={`/passeio/${item.id}`} style={{ flexShrink: 0 }}>
                         <img src={item.image} alt={item.title} loading="lazy" style={{ width: '160px', height: '110px', borderRadius: '8px', objectFit: 'cover', display: 'block' }} />
                       </Link>
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <Link to={`/tour/${item.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <Link to={`/passeio/${item.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                           <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 0.5rem 0', lineHeight: 1.3 }}>{item.title}</h3>
                         </Link>
                         <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.4rem', color: '#666', fontSize: '0.85rem', flexWrap: 'wrap' }}>
@@ -241,10 +243,10 @@ const BookingFlow = () => {
 
                     {/* Mobile layout */}
                     <div className="cart-item-mobile" style={{ display: 'none' }}>
-                      <Link to={`/tour/${item.id}`} style={{ display: 'block', margin: '-1.25rem -1.25rem 1rem -1.25rem' }}>
+                      <Link to={`/passeio/${item.id}`} style={{ display: 'block', margin: '-1.25rem -1.25rem 1rem -1.25rem' }}>
                         <img src={item.image} alt={item.title} loading="lazy" style={{ width: '100%', height: '180px', objectFit: 'cover', display: 'block', borderRadius: '12px 12px 0 0' }} />
                       </Link>
-                      <Link to={`/tour/${item.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                      <Link to={`/passeio/${item.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                         <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 0.75rem 0', lineHeight: 1.3 }}>{item.title}</h3>
                       </Link>
                       <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.5rem', color: '#666', fontSize: '0.85rem', flexWrap: 'wrap' }}>
@@ -493,7 +495,7 @@ const BookingFlow = () => {
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem' }}>
-                <Link to="/" style={{ 
+                <Link to="/destinos" style={{ 
                   display: 'flex', 
                   alignItems: 'center', 
                   gap: '8px', 

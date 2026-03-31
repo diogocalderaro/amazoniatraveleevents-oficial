@@ -13,13 +13,13 @@ const Header = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'Destinos', path: '/destinations' },
-    { name: 'Como comprar', path: '/how-to-buy' },
-    { name: 'Sobre', path: '/about' },
+  const menuItems = [
+    { name: 'Início', path: '/' },
+    { name: 'Destinos', path: '/destinos' },
+    { name: 'Como comprar', path: '/como-comprar' },
+    { name: 'Sobre', path: '/sobre' },
     { name: 'Blog', path: '/blog' },
-    { name: 'Contato', path: '/contact' },
+    { name: 'Contato', path: '/contato' },
   ];
 
   const isActive = (path) => {
@@ -56,7 +56,7 @@ const Header = () => {
             gap: '2rem',
             alignItems: 'center'
           }}>
-            {navLinks.map((link) => (
+            {menuItems.map((link) => (
               <li key={link.name}>
                 <Link 
                   to={link.path}
@@ -87,7 +87,7 @@ const Header = () => {
         {/* Action Buttons */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
           <Link 
-            to="/checkout"
+            to="/reservar"
             style={{
               background: 'none',
               border: 'none',

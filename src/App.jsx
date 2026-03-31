@@ -30,6 +30,7 @@ import PainelFAQ from './pages/painel/PainelFAQ';
 import PainelGaleria from './pages/painel/PainelGaleria';
 import PainelComentarios from './pages/painel/PainelComentarios';
 import PainelRelatorios from './pages/painel/PainelRelatorios';
+import PainelBlogCategorias from './pages/painel/PainelBlogCategorias';
 
 function App() {
   return (
@@ -41,18 +42,28 @@ function App() {
             {/* Public Routes */}
             <Route element={<PublicLayout />}>
               <Route path="/" element={<Home />} />
-              <Route path="/tour/:id" element={<TourDetails />} />
-              <Route path="/checkout" element={<BookingFlow />} />
-              <Route path="/destinations" element={<Packages />} />
-              <Route path="/pacotes" element={<Navigate to="/destinations" replace />} />
-              <Route path="/destinos" element={<Navigate to="/destinations" replace />} />
-              <Route path="/about" element={<About />} />
+              <Route path="/passeio/:id" element={<TourDetails />} />
+              <Route path="/reservar" element={<BookingFlow />} />
+              <Route path="/pagamento" element={<BookingFlow />} />
+              <Route path="/destinos" element={<Packages />} />
+              <Route path="/sobre" element={<About />} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/:id" element={<BlogPost />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/search" element={<SearchResults />} />
-              <Route path="/book/:id" element={<BookingFlow />} />
-              <Route path="/how-to-buy" element={<HowToBuy />} />
+              <Route path="/contato" element={<Contact />} />
+              <Route path="/buscar" element={<SearchResults />} />
+              <Route path="/reservar/:id" element={<BookingFlow />} />
+              <Route path="/como-comprar" element={<HowToBuy />} />
+              
+              {/* Redirects for old English paths */}
+              <Route path="/tour/:id" element={<Navigate to="/passeio/:id" replace />} />
+              <Route path="/checkout" element={<Navigate to="/reservar" replace />} />
+              <Route path="/destinations" element={<Navigate to="/destinos" replace />} />
+              <Route path="/pacotes" element={<Navigate to="/destinos" replace />} />
+              <Route path="/about" element={<Navigate to="/sobre" replace />} />
+              <Route path="/contact" element={<Navigate to="/contato" replace />} />
+              <Route path="/search" element={<Navigate to="/buscar" replace />} />
+              <Route path="/book/:id" element={<Navigate to="/reservar/:id" replace />} />
+              <Route path="/how-to-buy" element={<Navigate to="/como-comprar" replace />} />
               <Route path="*" element={<NotFound />} />
             </Route>
 
@@ -66,6 +77,7 @@ function App() {
               <Route path="paginas" element={<PainelPaginas />} />
               <Route path="reservas" element={<PainelReservas />} />
               <Route path="blog" element={<PainelBlog />} />
+              <Route path="blog/categorias" element={<PainelBlogCategorias />} />
               <Route path="faq" element={<PainelFAQ />} />
               <Route path="galeria" element={<PainelGaleria />} />
               <Route path="comentarios" element={<PainelComentarios />} />

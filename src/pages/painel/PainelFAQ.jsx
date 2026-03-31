@@ -56,6 +56,31 @@ const PainelFAQ = () => {
     fetchItems();
   }
 
+  async function handleSort(draggedId, droppedId) {
+    const list = [...items];
+    const draggedIndex = list.findIndex(i => i.id === draggedId);
+    const droppedIndex = list.findIndex(i => i.id === droppedId);
+    if (draggedIndex === droppedIndex) return;
+
+    const item = list.splice(draggedIndex, 1)[0];
+    list.splice(droppedIndex, 0, item);
+
+    // Update locally for instant feedback
+    setItems(list.map((it, idx) => ({ ...it, sort_order: idx + 1 })));
+
+    // Send all updates to backend
+    const updates = list.map((it, idx) => ({ id: it.id, sort_order: idx + 1 }));
+    try {
+      await fetch('/api/faq/reorder', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ updates })
+      });
+    } catch (err) { console.error('Error reordering:', err); }
+  }
+
+  const [draggedItemId, setDraggedItemId] = useState(null);
+
   if (loading) return <div className="admin-page"><div className="admin-loading">Carregando...</div></div>;
 
   return (
@@ -63,7 +88,7 @@ const PainelFAQ = () => {
       <div className="admin-page-header">
         <div>
           <h1 className="admin-page-title">Perguntas Frequentes</h1>
-          <p className="admin-page-subtitle">Gerencie as perguntas e respostas do FAQ.</p>
+          <p className="admin-page-subtitle">Arraste para reordenar as perguntas e respostas do FAQ.</p>
         </div>
         <button className="admin-btn admin-btn-primary" onClick={openCreate}><Plus size={18} /> Nova Pergunta</button>
       </div>
@@ -77,14 +102,28 @@ const PainelFAQ = () => {
           </div>
         ) : (
           <div className="faq-list">
-            {items.map(item => (
-              <div key={item.id} className={`faq-item ${!item.is_active ? 'faq-inactive' : ''}`}>
+            {items.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0)).map(item => (
+              <div 
+                key={item.id} 
+                className={`faq-item ${!item.is_active ? 'faq-inactive' : ''} ${draggedItemId === item.id ? 'dragging' : ''}`}
+                draggable
+                onDragStart={() => setDraggedItemId(item.id)}
+                onDragEnd={() => setDraggedItemId(null)}
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={() => handleSort(draggedItemId, item.id)}
+              >
+                <div className="faq-drag-handle">
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                    <span style={{ display: 'block', width: '12px', height: '2px', background: 'var(--admin-text-muted)', opacity: 0.5 }}></span>
+                    <span style={{ display: 'block', width: '12px', height: '2px', background: 'var(--admin-text-muted)', opacity: 0.5 }}></span>
+                    <span style={{ display: 'block', width: '12px', height: '2px', background: 'var(--admin-text-muted)', opacity: 0.5 }}></span>
+                  </div>
+                </div>
                 <div className="faq-item-content">
                   <div className="faq-question">{item.question}</div>
                   <div className="faq-answer">{item.answer}</div>
                   <div className="faq-meta">
                     <span className="tag">{item.category}</span>
-                    <span className="cell-sub">Ordem: {item.sort_order}</span>
                   </div>
                 </div>
                 <div className="faq-actions">

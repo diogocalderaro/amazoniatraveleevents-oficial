@@ -540,7 +540,7 @@ const TourDetails = () => {
          maxWidth: '90vw'
        }}>
          <span style={{ fontWeight: 700, fontSize: '1rem' }}>Inserido no carrinho.</span>
-         <Link to="/checkout" style={{ color: '#FFD700', fontWeight: 800, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '5px' }}>
+         <Link to="/reservar" style={{ color: '#FFD700', fontWeight: 800, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '5px' }}>
            Ver carrinho <ArrowRight size={18} />
          </Link>
          <button onClick={() => setShowToast(false)} style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', marginLeft: '10px' }}>

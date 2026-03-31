@@ -12,6 +12,16 @@ router.get('/', (req, res) => {
   } catch (err) { res.status(500).json({ error: 'Erro' }); }
 });
 
+router.post('/reorder', authMiddleware, (req, res) => {
+  try {
+    const { updates } = req.body;
+    for (const update of updates) {
+      run('UPDATE faq SET sort_order = ? WHERE id = ?', [update.sort_order, update.id]);
+    }
+    res.json({ message: 'Ordem atualizada' });
+  } catch (err) { res.status(500).json({ error: 'Erro ao reordenar' }); }
+});
+
 router.post('/', authMiddleware, (req, res) => {
   try {
     const { question, answer, category, sort_order } = req.body;

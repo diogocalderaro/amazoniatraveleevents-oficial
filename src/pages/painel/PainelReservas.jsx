@@ -95,7 +95,12 @@ const PainelReservas = () => {
             </thead>
             <tbody>
               {reservations.map(r => (
-                <tr key={r.id} className={selected?.id === r.id ? 'row-selected' : ''}>
+                <tr 
+                  key={r.id} 
+                  className={selected?.id === r.id ? 'row-selected' : ''} 
+                  onClick={() => setSelected(r)}
+                  style={{ cursor: 'pointer' }}
+                >
                   <td>
                     <div className="cell-main">{r.customer_name}</div>
                     <div className="cell-sub">{r.customer_phone}</div>
@@ -109,7 +114,7 @@ const PainelReservas = () => {
                       {statusLabels[r.status] || r.status}
                     </span>
                   </td>
-                  <td>
+                  <td onClick={e => e.stopPropagation()}>
                     <div className="action-btns">
                       <button className="btn-icon" title="Ver detalhes" onClick={() => setSelected(r)}><Eye size={16} /></button>
                       {r.status === 'pendente' && (
@@ -129,40 +134,78 @@ const PainelReservas = () => {
         </div>
       </div>
 
-      {/* Detail Modal */}
+      {/* Detail Slideover/Modal */}
       {selected && (
         <div className="modal-overlay" onClick={() => setSelected(null)}>
-          <div className="modal-content" onClick={e => e.stopPropagation()}>
+          <div className="modal-content modal-lg" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>Detalhes da Reserva #{selected.id}</h2>
-              <button className="btn-icon" onClick={() => setSelected(null)}><X size={20} /></button>
-            </div>
-            <div className="modal-body">
-              <div className="detail-grid">
-                <div className="detail-item"><label>Cliente</label><span>{selected.customer_name}</span></div>
-                <div className="detail-item"><label>Telefone</label><span>{selected.customer_phone}</span></div>
-                <div className="detail-item"><label>Email</label><span>{selected.customer_email || '-'}</span></div>
-                <div className="detail-item"><label>Pacote</label><span>{selected.package_title || '-'}</span></div>
-                <div className="detail-item"><label>Data da Viagem</label><span>{selected.travel_date || '-'}</span></div>
-                <div className="detail-item"><label>Pessoas</label><span>{selected.guests}</span></div>
-                <div className="detail-item"><label>Valor Total</label><span className="cell-money">R$ {(selected.total_price || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span></div>
-                <div className="detail-item">
-                  <label>Status</label>
-                  <span className="status-badge" style={{ backgroundColor: statusColors[selected.status] + '20', color: statusColors[selected.status] }}>
-                    {statusLabels[selected.status]}
-                  </span>
-                </div>
-                {selected.notes && <div className="detail-item full-width"><label>Observações</label><span>{selected.notes}</span></div>}
-                <div className="detail-item"><label>Criada em</label><span>{new Date(selected.created_at).toLocaleString('pt-BR')}</span></div>
+              <div>
+                <h2 style={{ marginBottom: '0.25rem' }}>Reserva #{selected.id}</h2>
+                <div className="cell-sub"><Clock size={14} /> Recebida em {new Date(selected.created_at).toLocaleString('pt-BR')}</div>
               </div>
-              <div className="modal-footer">
+              <button className="btn-icon" onClick={() => setSelected(null)}><X size={24} /></button>
+            </div>
+            <div className="modal-body" style={{ padding: '2rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '2rem' }}>
+                <section>
+                  <h3 className="section-title" style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--admin-text-muted)', marginBottom: '1rem', letterSpacing: '1px' }}>Dados do Cliente</h3>
+                  <div className="detail-grid" style={{ gridTemplateColumns: '1fr' }}>
+                    <div className="detail-item"><label>Nome Completo</label><span>{selected.customer_name}</span></div>
+                    <div className="detail-item"><label>Telefone / WhatsApp</label><span>{selected.customer_phone}</span></div>
+                    <div className="detail-item"><label>E-mail</label><span>{selected.customer_email || '-'}</span></div>
+                  </div>
+                </section>
+
+                <section>
+                  <h3 className="section-title" style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--admin-text-muted)', marginBottom: '1rem', letterSpacing: '1px' }}>Detalhes do Pacote</h3>
+                  <div className="detail-grid" style={{ gridTemplateColumns: '1fr' }}>
+                    <div className="detail-item"><label>Pacote Selecionado</label><span style={{ fontWeight: 600 }}>{selected.package_title || '-'}</span></div>
+                    <div className="detail-item"><label>Data da Viagem</label><span>{selected.travel_date ? new Date(selected.travel_date).toLocaleDateString('pt-BR') : '-'}</span></div>
+                    <div className="detail-item"><label>Quantidade de Pessoas</label><span>{selected.guests} {selected.guests > 1 ? 'pessoas' : 'pessoa'}</span></div>
+                  </div>
+                </section>
+
+                <section className="full-width" style={{ gridColumn: '1 / -1', background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--admin-border)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                      <h3 style={{ margin: 0, fontSize: '0.9rem', color: 'var(--admin-text-secondary)' }}>Status da Reserva</h3>
+                      <div style={{ marginTop: '0.5rem' }}>
+                        <span className="status-badge" style={{ backgroundColor: statusColors[selected.status] + '20', color: statusColors[selected.status], fontSize: '0.9rem', padding: '0.4rem 1rem' }}>
+                          {statusLabels[selected.status]}
+                        </span>
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <h3 style={{ margin: 0, fontSize: '0.9rem', color: 'var(--admin-text-secondary)' }}>Valor Total</h3>
+                      <div className="cell-money" style={{ fontSize: '1.5rem', marginTop: '0.25rem' }}>
+                        R$ {(selected.total_price || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                {selected.notes && (
+                  <section style={{ gridColumn: '1 / -1' }}>
+                    <h3 className="section-title" style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--admin-text-muted)', marginBottom: '0.5rem' }}>Observações / Pedidos Especiais</h3>
+                    <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', fontSize: '0.9rem', lineHeight: '1.6' }}>
+                      {selected.notes}
+                    </div>
+                  </section>
+                )}
+              </div>
+
+              <div className="modal-footer" style={{ marginTop: '2.5rem', paddingTop: '1.5rem', borderTop: '1px solid var(--admin-border)' }}>
                 {selected.status === 'pendente' && (
                   <>
-                    <button className="admin-btn admin-btn-success" onClick={() => updateStatus(selected.id, 'confirmada')}><Check size={16} /> Confirmar</button>
-                    <button className="admin-btn admin-btn-danger" onClick={() => updateStatus(selected.id, 'cancelada')}><X size={16} /> Cancelar</button>
+                    <button className="admin-btn admin-btn-success" onClick={() => updateStatus(selected.id, 'confirmada')} style={{ paddingLeft: '1.5rem', paddingRight: '1.5rem' }}><Check size={18} /> Confirmar Reserva</button>
+                    <button className="admin-btn admin-btn-danger" onClick={() => updateStatus(selected.id, 'cancelada')}><X size={18} /> Cancelar</button>
                   </>
                 )}
-                <button className="admin-btn admin-btn-secondary" onClick={() => setSelected(null)}>Fechar</button>
+                {selected.status === 'confirmada' && (
+                    <button className="admin-btn admin-btn-secondary" onClick={() => updateStatus(selected.id, 'concluida')}><CheckCircle size={18} /> Marcar como Concluída</button>
+                )}
+                <div style={{ flex: 1 }}></div>
+                <button className="admin-btn admin-btn-secondary" onClick={() => setSelected(null)}>Voltar para a Lista</button>
               </div>
             </div>
           </div>

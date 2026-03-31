@@ -23,8 +23,13 @@ export function AuthProvider({ children }) {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
-        const data = await res.json();
-        setUser(data.user);
+        const contentType = res.headers.get("content-type");
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+          const data = await res.json();
+          setUser(data.user);
+        } else {
+          logout();
+        }
       } else {
         logout();
       }
@@ -41,7 +46,14 @@ export function AuthProvider({ children }) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
     });
-    const data = await res.json();
+    const contentType = res.headers.get("content-type");
+    let data;
+    if (contentType && contentType.indexOf("application/json") !== -1) {
+      data = await res.json();
+    } else {
+      throw new Error('Servidor não respondeu corretamente. Verifique se o backend está rodando na porta 3001.');
+    }
+    
     if (!res.ok) throw new Error(data.error || 'Erro ao fazer login');
     localStorage.setItem('admin_token', data.token);
     setToken(data.token);

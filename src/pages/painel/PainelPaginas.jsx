@@ -64,25 +64,47 @@ const PainelPaginas = () => {
         )}
       </div>
 
-      {/* Page Tabs */}
-      <div className="filter-tabs" style={{ marginBottom: '1.5rem' }}>
-        {pages.map(p => (
-          <button key={p.id} className={`filter-tab ${selected?.id === p.id ? 'active' : ''}`} onClick={() => selectPage(p)}>
-            <FileText size={16} /> {p.title}
-          </button>
-        ))}
+      {/* Page List Section */}
+      <div className="admin-card" style={{ marginBottom: '1.5rem' }}>
+        <div className="table-responsive">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Nome da Página</th>
+                <th>Slug</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {pages.map(p => (
+                <tr key={p.id} className={selected?.id === p.id ? 'row-selected' : ''}>
+                  <td className="cell-main">{p.title}</td>
+                  <td className="cell-sub">{p.slug}</td>
+                  <td>
+                    <button className="admin-btn admin-btn-secondary btn-sm" onClick={() => selectPage(p)}>
+                      <FileText size={14} /> {selected?.id === p.id ? 'Editando' : 'Editar'}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {selected ? (
         <div className="admin-card" style={{ padding: 0, overflow: 'hidden' }}>
+          <div className="card-header" style={{ padding: '0.75rem 1.25rem', borderBottom: '1px solid var(--admin-border)' }}>
+            <h3 style={{ margin: 0, fontSize: '0.9rem' }}>Editando: {selected.title}</h3>
+          </div>
           <RichTextEditor value={content} onChange={setContent} placeholder="Edite o conteúdo da página aqui..." />
         </div>
       ) : (
         <div className="admin-card">
           <div className="admin-placeholder">
             <FileText size={48} />
-            <h3>Selecione uma página</h3>
-            <p>Clique em uma das abas acima para editar o conteúdo.</p>
+            <h3>Selecione uma página acima</h3>
+            <p>Clique no botão editar de uma das páginas da lista para começar.</p>
           </div>
         </div>
       )}
