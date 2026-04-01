@@ -31,6 +31,7 @@ import PainelGaleria from './pages/painel/PainelGaleria';
 import PainelComentarios from './pages/painel/PainelComentarios';
 import PainelRelatorios from './pages/painel/PainelRelatorios';
 import PainelBlogCategorias from './pages/painel/PainelBlogCategorias';
+import PainelDestinoEditor from './pages/painel/PainelDestinoEditor';
 
 function App() {
   return (
@@ -66,14 +67,16 @@ function App() {
               <Route path="/how-to-buy" element={<Navigate to="/como-comprar" replace />} />
               <Route path="*" element={<NotFound />} />
             </Route>
-
+ 
             {/* Painel Login (outside layout) */}
             <Route path="/painel/login" element={<PainelLogin />} />
-
+ 
             {/* Painel Routes (protected by AdminLayout) */}
             <Route path="/painel" element={<AdminLayout />}>
               <Route index element={<PainelDashboard />} />
               <Route path="destinos" element={<PainelDestinos />} />
+              <Route path="destinos/novo" element={<PainelDestinoEditor />} />
+              <Route path="destinos/:id" element={<PainelDestinoEditor />} />
               <Route path="paginas" element={<PainelPaginas />} />
               <Route path="reservas" element={<PainelReservas />} />
               <Route path="blog" element={<PainelBlog />} />
