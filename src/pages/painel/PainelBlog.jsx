@@ -33,9 +33,12 @@ const PainelBlog = () => {
     }
   }
 
+  const [errMessage, setErrMessage] = useState(null);
+
   async function fetchPosts() {
     try {
       setLoading(true);
+      setErrMessage(null);
       const { data, error } = await supabase
         .from('blog_posts')
         .select('*')
@@ -45,6 +48,7 @@ const PainelBlog = () => {
       setPosts(data || []);
     } catch (err) { 
       console.error('Error fetching posts:', err); 
+      setErrMessage(err.message || JSON.stringify(err));
     } finally { 
       setLoading(false); 
     }
@@ -141,6 +145,7 @@ const PainelBlog = () => {
       </div>
 
       <div className="admin-card">
+        {errMessage && <div style={{color: 'red', margin: '1rem', padding: '1rem', background: '#ffebee'}}>{errMessage}</div>}
         <div className="table-responsive">
           <table className="admin-table">
             <thead>
