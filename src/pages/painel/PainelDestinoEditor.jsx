@@ -120,9 +120,10 @@ const PainelDestinoEditor = () => {
   };
 
   const formatBRL = (val) => {
-    if (!val) return '';
-    const number = parseFloat(val.replace(/[^\d]/g, '')) / 100;
-    return number.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+    if (!val && val !== 0) return '';
+    const valStr = String(val);
+    const number = parseFloat(valStr.replace(/[^\d]/g, '')) / 100;
+    return isNaN(number) ? '' : number.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
   };
 
   const handlePriceChange = (e) => {
@@ -225,11 +226,11 @@ const PainelDestinoEditor = () => {
 
       <div className="admin-tabs-container">
         <div className="admin-tabs">
-          <button className={`tab-btn ${activeTab === 'geral' ? 'active' : ''}`} onClick={() => setActiveTab('geral')}>Informações Gerais</button>
-          <button className={`tab-btn ${activeTab === 'precos' ? 'active' : ''}`} onClick={() => setActiveTab('precos')}>Planos e Preços</button>
-          <button className={`tab-btn ${activeTab === 'galeria' ? 'active' : ''}`} onClick={() => setActiveTab('galeria')}>Galeria</button>
-          <button className={`tab-btn ${activeTab === 'roteiro' ? 'active' : ''}`} onClick={() => setActiveTab('roteiro')}>Itinerário</button>
-          <button className={`tab-btn ${activeTab === 'politicas' ? 'active' : ''}`} onClick={() => setActiveTab('politicas')}>Políticas e Extras</button>
+          <button type="button" className={`tab-btn ${activeTab === 'geral' ? 'active' : ''}`} onClick={() => setActiveTab('geral')}>Informações Gerais</button>
+          <button type="button" className={`tab-btn ${activeTab === 'precos' ? 'active' : ''}`} onClick={() => setActiveTab('precos')}>Planos e Preços</button>
+          <button type="button" className={`tab-btn ${activeTab === 'galeria' ? 'active' : ''}`} onClick={() => setActiveTab('galeria')}>Galeria</button>
+          <button type="button" className={`tab-btn ${activeTab === 'roteiro' ? 'active' : ''}`} onClick={() => setActiveTab('roteiro')}>Itinerário</button>
+          <button type="button" className={`tab-btn ${activeTab === 'politicas' ? 'active' : ''}`} onClick={() => setActiveTab('politicas')}>Políticas e Extras</button>
         </div>
 
         <form onSubmit={handleSubmit} className="admin-tab-content">

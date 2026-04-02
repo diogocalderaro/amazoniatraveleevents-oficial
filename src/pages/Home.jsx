@@ -12,8 +12,6 @@ import pkgEurope from '../assets/pkg-europe.png';
 import pkgBeach from '../assets/pkg-beach.png';
 import heroBg from '../assets/galeria/013.jpg';
 
-import { packagesData } from '../data/toursData';
-
 // Import gallery images
 import gal001 from '../assets/galeria/001.jpg';
 import gal002 from '../assets/galeria/002.jpg';
@@ -38,6 +36,15 @@ const Home = () => {
   const [heroIdx3, setHeroIdx3] = useState(2);
 
   const heroImageList = [gal010, gal011, gal012, gal001, gal002, gal003, gal004, gal005, gal006, gal008, gal009, gal013];
+  
+  const [packagesData, setPackagesData] = useState([]);
+
+  useEffect(() => {
+    fetch('/api/packages')
+      .then(res => res.json())
+      .then(data => setPackagesData(data))
+      .catch(err => console.error(err));
+  }, []);
 
   useEffect(() => {
     const timer1 = setInterval(() => setHeroIdx1(prev => (prev + 1) % heroImageList.length), 5000);
@@ -483,13 +490,13 @@ const Home = () => {
                   margin: '0.5rem 0'
                 }}>
                   <div style={{ position: 'relative', height: '220px', overflow: 'hidden' }}>
-                    <Link to={`/passeio/${pkg.id}`}>
-                      <img src={pkg.image} alt={pkg.title} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s ease' }} className="pkg-img-hover" />
+                    <Link to={`/passeio/${pkg.slug || pkg.id}`}>
+                      <img src={pkg.image_url || pkg.image} alt={pkg.title} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s ease' }} className="pkg-img-hover" />
                     </Link>
                   </div>
                   
                   <div style={{ padding: '1.25rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <Link to={`/passeio/${pkg.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <Link to={`/passeio/${pkg.slug || pkg.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                       <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '0.75rem', lineHeight: 1.3, height: '2.8rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                         {pkg.title}
                       </h3>
@@ -507,12 +514,12 @@ const Home = () => {
                     
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '1rem', borderTop: '1px solid #f1f5f9', marginTop: 'auto' }}>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                        {pkg.installments && pkg.installmentPrice ? (
+                        {pkg.installments && (pkg.installment_price || pkg.installmentPrice) ? (
                           <>
                             <span style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 600 }}>
                               {pkg.installments}x no cartão de{' '}
                               <strong style={{ color: '#000' }}>
-                                R$ {Number(pkg.installmentPrice).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                R$ {Number(pkg.installment_price || pkg.installmentPrice).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                               </strong>
                             </span>
                             <span style={{ fontSize: '1.15rem', fontWeight: 800, color: '#000' }}>
@@ -520,10 +527,10 @@ const Home = () => {
                             </span>
                           </>
                         ) : (
-                          <span style={{ fontSize: '1.2rem', fontWeight: 800, color: '#000' }}>{pkg.priceDisplay || new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(pkg.price)}</span>
+                          <span style={{ fontSize: '1.2rem', fontWeight: 800, color: '#000' }}>{pkg.price_display || pkg.priceDisplay || new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(pkg.price)}</span>
                         )}
                       </div>
-                      <Link to={`/passeio/${pkg.id}`} className="nav-arrow-btn">
+                      <Link to={`/passeio/${pkg.slug || pkg.id}`} className="nav-arrow-btn">
                         <ArrowRight size={20} />
                       </Link>
                     </div>

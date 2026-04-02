@@ -10,8 +10,6 @@ import {
   ArrowRight
 } from 'lucide-react';
 
-import { packagesData } from '../data/toursData';
-
 // Import hero background image
 import imgSafari from '../assets/destinos/safari_amazonico.jpg';
 
@@ -288,7 +286,7 @@ const Packages = () => {
                             <span style={{ fontSize: '1.2rem', fontWeight: 800, color: '#000' }}>{pkg.price_display || new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(pkg.price)}</span>
                           )}
                         </div>
-                        <Link to={`/passeio/${pkg.id}`} className="nav-arrow-btn" style={{ 
+                        <Link to={`/passeio/${pkg.slug || pkg.id}`} className="nav-arrow-btn" style={{ 
                           width: '42px', 
                           height: '42px', 
                           borderRadius: '50%', 

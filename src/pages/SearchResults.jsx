@@ -10,8 +10,6 @@ import {
   ArrowRight
 } from 'lucide-react';
 
-import { packagesData } from '../data/toursData';
-
 // Import hero background image
 import imgSafari from '../assets/destinos/safari_amazonico.jpg';
 
@@ -35,6 +33,17 @@ const SearchResults = () => {
     setSearchQuery(initialQuery);
   }, [initialQuery]);
 
+  const [packages, setPackages] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch from API
+  useEffect(() => {
+    fetch('/api/packages')
+      .then(res => res.json())
+      .then(data => { setPackages(data); setLoading(false); })
+      .catch(err => { console.error(err); setLoading(false); });
+  }, []);
+
   const categories = ['Todos', 'Compras', 'Passeios', 'Natureza'];
 
   // Map original categories to the new reduced set for filtering
@@ -47,7 +56,7 @@ const SearchResults = () => {
     'Cultura': 'Passeios'
   };
 
-  let filteredPackages = packagesData.filter(pkg => {
+  let filteredPackages = packages.filter(pkg => {
     const displayCategory = categoryMap[pkg.category] || 'Passeios';
     const matchesCategory = activeCategory === 'Todos' || displayCategory === activeCategory;
     const matchesSearch = pkg.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -223,7 +232,9 @@ const SearchResults = () => {
               </div>
             </div>
 
-            {filteredPackages.length > 0 ? (
+            {loading ? (
+              <div style={{ textAlign: 'center', padding: '5rem 0' }}>Carregando destinos...</div>
+            ) : filteredPackages.length > 0 ? (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(330px, 1fr))', gap: '2rem' }}>
                 {filteredPackages.map(pkg => (
                   <div key={pkg.id} className="package-card-new package-item" style={{ 
@@ -236,9 +247,9 @@ const SearchResults = () => {
                     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
                   }}>
                     <div style={{ position: 'relative', height: '220px', overflow: 'hidden' }}>
-                      <Link to={`/passeio/${pkg.id}`}>
+                      <Link to={`/passeio/${pkg.slug || pkg.id}`}>
                         <img 
-                          src={pkg.image} 
+                          src={pkg.image_url || pkg.image} 
                           alt={pkg.title} 
                           loading="lazy" 
                           style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s ease' }} 
@@ -251,7 +262,7 @@ const SearchResults = () => {
                     </div>
                     
                     <div style={{ padding: '1.25rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                      <Link to={`/passeio/${pkg.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                      <Link to={`/passeio/${pkg.slug || pkg.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                         <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '0.75rem', lineHeight: 1.3, height: '2.8rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                           {pkg.title}
                         </h3>
@@ -262,18 +273,18 @@ const SearchResults = () => {
                           <Clock size={14} color="#7EB53F" /> {pkg.duration}
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <MapPin size={14} color="#7EB53F" /> {pkg.location.split(',')[0]}
+                          <MapPin size={14} color="#7EB53F" /> {pkg.location ? pkg.location.split(',')[0] : ''}
                         </div>
                       </div>
 
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '1rem', borderTop: '1px solid #f1f5f9', marginTop: 'auto' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                          {pkg.installments && pkg.installmentPrice ? (
+                          {pkg.installments && (pkg.installment_price || pkg.installmentPrice) ? (
                             <>
                               <span style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 600 }}>
                                 {pkg.installments}x no cartão de{' '}
                                 <strong style={{ color: '#000' }}>
-                                  R$ {Number(pkg.installmentPrice).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                  R$ {Number(pkg.installment_price || pkg.installmentPrice).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                 </strong>
                               </span>
                               <span style={{ fontSize: '1.15rem', fontWeight: 800, color: '#000' }}>
@@ -281,10 +292,10 @@ const SearchResults = () => {
                               </span>
                             </>
                           ) : (
-                            <span style={{ fontSize: '1.2rem', fontWeight: 800, color: '#000' }}>{pkg.priceDisplay || new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(pkg.price)}</span>
+                            <span style={{ fontSize: '1.2rem', fontWeight: 800, color: '#000' }}>{pkg.price_display || pkg.priceDisplay || new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(pkg.price)}</span>
                           )}
                         </div>
-                        <Link to={`/passeio/${pkg.id}`} className="nav-arrow-btn" style={{ 
+                        <Link to={`/passeio/${pkg.slug || pkg.id}`} className="nav-arrow-btn" style={{ 
                           width: '42px', 
                           height: '42px', 
                           borderRadius: '50%', 
