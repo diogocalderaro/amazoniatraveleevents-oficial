@@ -3,9 +3,11 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { 
   ChevronLeft, Save, Plus, Trash2, Image as ImageIcon, 
   MapPin, Clock, Calendar, DollarSign, Users, 
-  ListChecks, FileText, Star, ArrowRight, X, Info
+  ListChecks, FileText, Star, Info
 } from 'lucide-react';
 import RichTextEditor from '../../components/admin/RichTextEditor';
+
+import { supabase } from '../../lib/supabase';
 
 const PainelDestinoEditor = () => {
   const { id } = useParams();
@@ -43,6 +45,7 @@ const PainelDestinoEditor = () => {
   });
 
   const slugify = (text) => {
+    if (!text) return '';
     return text
       .toString()
       .toLowerCase()
@@ -53,9 +56,6 @@ const PainelDestinoEditor = () => {
       .replace(/^-+|-+$/g, '');
   };
 
-  const token = localStorage.getItem('admin_token');
-  const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
-
   useEffect(() => {
     if (isEditing) {
       fetchPackage();
@@ -64,18 +64,31 @@ const PainelDestinoEditor = () => {
 
   async function fetchPackage() {
     try {
-      const res = await fetch(`/api/packages/${id}`);
-      if (res.ok) {
-        const data = await res.json();
-        // Ensure all arrays exist
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('packages')
+        .select(`
+          *,
+          highlights:package_highlights(*),
+          itinerary:package_itinerary(*),
+          included:package_included(*),
+          excluded:package_excluded(*),
+          gallery:package_gallery(*),
+          features:package_features(*)
+        `)
+        .eq('id', id)
+        .single();
+      
+      if (error) throw error;
+      if (data) {
         setFormData({
           ...data,
           price: data.price ? (data.price * 100).toFixed(0) : '',
           price_vip: data.price_vip ? (data.price_vip * 100).toFixed(0) : '',
           price_exec: data.price_exec ? (data.price_exec * 100).toFixed(0) : '',
           price_child: data.price_child ? (data.price_child * 100).toFixed(0) : '',
-          highlights: data.highlights?.map(h => h.text) || [],
-          itinerary: data.itinerary?.map(it => ({ 
+          highlights: data.highlights?.sort((a, b) => a.sort_order - b.sort_order).map(h => h.text) || [],
+          itinerary: data.itinerary?.sort((a, b) => a.sort_order - b.sort_order).map(it => ({ 
             day: it.day, 
             title: it.title, 
             desc: it.description,
@@ -84,11 +97,11 @@ const PainelDestinoEditor = () => {
           included: data.included?.map(i => i.text) || [],
           excluded: data.excluded?.map(e => e.text) || [],
           features: data.features?.map(f => f.text) || [],
-          gallery: data.gallery?.map(g => g.image_url) || []
+          gallery: data.gallery?.sort((a, b) => a.sort_order - b.sort_order).map(g => g.image_url) || []
         });
       }
     } catch (err) {
-      console.error(err);
+      console.error('Error fetching package details:', err);
     } finally {
       setLoading(false);
     }
@@ -128,7 +141,6 @@ const PainelDestinoEditor = () => {
 
   const handlePriceChange = (e) => {
     const { name, value } = e.target;
-    // Remove formatting to store raw number or at least handle it better
     const numericValue = value.replace(/\D/g, '');
     setFormData(prev => ({ ...prev, [name]: numericValue }));
   };
@@ -138,65 +150,94 @@ const PainelDestinoEditor = () => {
     if (files.length === 0) return;
     
     for (const file of files) {
-      const uploadFormData = new FormData();
-      uploadFormData.append('file', file);
-      
       try {
-        const res = await fetch('/api/upload', {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${token}` },
-          body: uploadFormData
-        });
-        const data = await res.json();
-        if (data.url) {
-          if (isGallery) {
-            setFormData(prev => ({ ...prev, gallery: [...prev.gallery, data.url] }));
-          } else {
-            setFormData(prev => ({ ...prev, [field]: data.url }));
-          }
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
+        const filePath = `packages/${fileName}`;
+
+        let { error: uploadError } = await supabase.storage
+          .from('images')
+          .upload(filePath, file);
+
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('images')
+          .getPublicUrl(filePath);
+
+        if (isGallery) {
+          setFormData(prev => ({ ...prev, gallery: [...prev.gallery, publicUrl] }));
+        } else {
+          setFormData(prev => ({ ...prev, [field]: publicUrl }));
         }
       } catch (err) {
         console.error('Upload error:', err);
+        alert('Erro no upload: ' + err.message);
       }
     }
     e.target.value = '';
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     setSaving(true);
     
     try {
-      const body = {
-        ...formData,
+      const packageData = {
+        title: formData.title,
+        slug: formData.slug || slugify(formData.title),
+        location: formData.location,
+        category: formData.category,
         price: parseFloat(formData.price) / 100 || 0,
         price_vip: parseFloat(formData.price_vip) / 100 || null,
         price_exec: parseFloat(formData.price_exec) / 100 || null,
         price_child: parseFloat(formData.price_child) / 100 || null,
+        price_display: formData.price_display,
+        duration: formData.duration,
+        travel_date: formData.travel_date || null,
         max_adults: parseInt(formData.max_adults) || 10,
         max_children: parseInt(formData.max_children) || 10,
-        // Map itinerary to match backend structure if different
-        itinerary: formData.itinerary.map(it => ({ day: it.day, title: it.title, description: it.desc }))
+        description: formData.description,
+        image_url: formData.image_url,
+        featured_review: formData.featured_review,
+        featured_review_author: formData.featured_review_author,
+        is_active: formData.is_active ?? true,
+        installments: parseInt(formData.installments) || null,
+        installment_price: parseFloat(formData.installment_price) / 100 || null
       };
 
-      const method = isEditing ? 'PUT' : 'POST';
-      const url = isEditing ? `/api/packages/${id}` : '/api/packages';
-      
-      const res = await fetch(url, {
-        method,
-        headers,
-        body: JSON.stringify(body)
-      });
-      
-      if (res.ok) {
-        navigate('/painel/destinos');
+      let pkgId = id;
+      if (isEditing) {
+        const { error } = await supabase.from('packages').update(packageData).eq('id', id);
+        if (error) throw error;
       } else {
-        const error = await res.json();
-        alert(error.error || 'Erro ao salvar pacote');
+        const { data, error } = await supabase.from('packages').insert(packageData).select().single();
+        if (error) throw error;
+        pkgId = data.id;
       }
+
+      // Sync sub-tables
+      const subTables = [
+        { table: 'package_highlights', data: formData.highlights.map((text, i) => ({ package_id: pkgId, text, sort_order: i })) },
+        { table: 'package_itinerary', data: formData.itinerary.map((it, i) => ({ package_id: pkgId, day: it.day, title: it.title, description: it.desc, sort_order: i })) },
+        { table: 'package_included', data: formData.included.map((text, i) => ({ package_id: pkgId, text, sort_order: i })) },
+        { table: 'package_excluded', data: formData.excluded.map((text, i) => ({ package_id: pkgId, text, sort_order: i })) },
+        { table: 'package_features', data: formData.features.map((text, i) => ({ package_id: pkgId, text, sort_order: i })) },
+        { table: 'package_gallery', data: formData.gallery.map((url, i) => ({ package_id: pkgId, image_url: url, sort_order: i })) }
+      ];
+
+      for (const st of subTables) {
+        await supabase.from(st.table).delete().eq('package_id', pkgId);
+        if (st.data.length > 0) {
+          const { error } = await supabase.from(st.table).insert(st.data);
+          if (error) console.error(`Error updating ${st.table}:`, error);
+        }
+      }
+
+      navigate('/painel/destinos');
     } catch (err) {
       console.error(err);
-      alert('Erro na conexão com o servidor');
+      alert('Erro ao salvar: ' + err.message);
     } finally {
       setSaving(false);
     }
@@ -234,11 +275,9 @@ const PainelDestinoEditor = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="admin-tab-content">
-          {/* TAB: GERAL */}
           {activeTab === 'geral' && (
             <div className="tab-pane">
               <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '2rem' }}>
-                {/* Coluna Esquerda: Texto Principal */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                   <div className="admin-card">
                     <div className="form-group">
@@ -263,7 +302,6 @@ const PainelDestinoEditor = () => {
                   </div>
                 </div>
 
-                {/* Coluna Direita: Metadados e Imagem */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                   <div className="admin-card">
                     <div className="card-header"><h3><ImageIcon size={18} /> Imagem e Local</h3></div>
@@ -310,9 +348,6 @@ const PainelDestinoEditor = () => {
                           <option value="São Paulo, SP" />
                         </datalist>
                       </div>
-                      <small style={{ color: 'var(--admin-text-muted)', display: 'block', marginTop: '5px' }}>
-                        Você pode digitar qualquer cidade, não está limitado à lista acima.
-                      </small>
                     </div>
                   </div>
 
@@ -350,32 +385,35 @@ const PainelDestinoEditor = () => {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.5fr) minmax(0, 1fr)', gap: '2rem', marginTop: '2rem' }}>
+              <div style={{ marginTop: '1.5rem' }}>
                 <div className="admin-card">
-                   <label>Destaques (Bullet points curtos)</label>
-                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '10px' }}>
-                     {formData.highlights.map((h, i) => (
-                       <div key={i} style={{ display: 'flex', gap: '8px' }}>
-                         <input value={h} onChange={(e) => updateList('highlights', i, e.target.value)} placeholder="Ex: Café da manhã incluso" />
-                         <button type="button" className="btn-icon btn-danger" onClick={() => updateList('highlights', i, null)}><Trash2 size={16} /></button>
-                       </div>
-                     ))}
-                     <button type="button" className="admin-btn admin-btn-secondary btn-sm" onClick={() => addToList('highlights')} style={{ alignSelf: 'flex-start' }}>
-                       <Plus size={14} /> Adicionar Destaque
-                     </button>
-                   </div>
-                </div>
-
-                <div className="admin-card">
-                    <div className="card-header"><h3><Star size={18} /> Depoimento</h3></div>
-                    <textarea name="featured_review" value={formData.featured_review} onChange={handleInputChange} rows="3" placeholder="Principal elogio de um cliente..." />
-                    <input name="featured_review_author" value={formData.featured_review_author} onChange={handleInputChange} placeholder="Autor do Depoimento" style={{ marginTop: '10px' }} />
+                  <div className="card-header"><h3><Star size={18} /> Depoimento em Destaque</h3></div>
+                  <div className="form-group">
+                    <label>Texto do Depoimento</label>
+                    <textarea 
+                      name="featured_review" 
+                      value={formData.featured_review} 
+                      onChange={handleInputChange} 
+                      rows="3" 
+                      placeholder="Principal elogio de um cliente..." 
+                      style={{ background: '#fff', color: '#000' }}
+                    />
+                  </div>
+                  <div className="form-group" style={{ marginTop: '1rem' }}>
+                    <label>Autor</label>
+                    <input 
+                      name="featured_review_author" 
+                      value={formData.featured_review_author} 
+                      onChange={handleInputChange} 
+                      placeholder="Nome do cliente" 
+                      style={{ background: '#fff', color: '#000' }}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* TAB: PREÇOS */}
           {activeTab === 'precos' && (
             <div className="tab-pane">
               <div className="admin-card">
@@ -446,7 +484,6 @@ const PainelDestinoEditor = () => {
             </div>
           )}
 
-          {/* TAB: GALERIA */}
           {activeTab === 'galeria' && (
             <div className="tab-pane">
               <div className="admin-card">
@@ -468,7 +505,6 @@ const PainelDestinoEditor = () => {
             </div>
           )}
 
-          {/* TAB: ROTEIRO */}
           {activeTab === 'roteiro' && (
             <div className="tab-pane">
               <div className="admin-card" style={{ maxWidth: '900px', margin: '0 auto' }}>
@@ -517,7 +553,7 @@ const PainelDestinoEditor = () => {
                               setFormData(p => ({ ...p, itinerary: newList }));
                             }} 
                             placeholder={it.type === 'hora' ? "08:00" : "Dia 1"}
-                            style={{ textAlign: 'center', fontWeight: 700, height: '42px' }}
+                            style={{ textAlign: 'center', fontWeight: 700, height: '42px', background: '#fff', color: '#000', border: '1px solid #ced4da' }}
                           />
                         </div>
 
@@ -531,7 +567,7 @@ const PainelDestinoEditor = () => {
                               setFormData(p => ({ ...p, itinerary: newList }));
                             }} 
                             placeholder="Ex: Chegada ao Aeroporto e Transfer"
-                            style={{ height: '42px' }}
+                            style={{ height: '42px', background: '#fff', color: '#000', border: '1px solid #ced4da' }}
                           />
                         </div>
 
@@ -553,7 +589,7 @@ const PainelDestinoEditor = () => {
                           }} 
                           placeholder="Descreva o que acontecerá nesta etapa..."
                           rows="3"
-                          style={{ resize: 'vertical' }}
+                          style={{ resize: 'vertical', background: '#fff', color: '#000', border: '1px solid #ced4da' }}
                         />
                       </div>
                     </div>
@@ -574,7 +610,6 @@ const PainelDestinoEditor = () => {
             </div>
           )}
 
-          {/* TAB: POLÍTICAS */}
           {activeTab === 'politicas' && (
             <div className="tab-pane">
                <div className="admin-card">
@@ -604,19 +639,6 @@ const PainelDestinoEditor = () => {
                          <button type="button" className="admin-btn admin-btn-secondary btn-sm" onClick={() => addToList('excluded')}><Plus size={14} /> Adicionar Item</button>
                        </div>
                     </div>
-                  </div>
-               </div>
-
-               <div className="admin-card" style={{ marginTop: '1.5rem' }}>
-                  <div className="card-header"><h3>Outras Comodidades / Características</h3></div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                     {formData.features.map((f, i) => (
-                       <div key={i} style={{ display: 'flex', gap: '8px' }}>
-                         <input value={f} onChange={(e) => updateList('features', i, e.target.value)} />
-                         <button type="button" className="btn-icon btn-danger" onClick={() => updateList('features', i, null)}><Trash2 size={16} /></button>
-                       </div>
-                     ))}
-                     <button type="button" className="admin-btn admin-btn-secondary btn-sm" onClick={() => addToList('features')}><Plus size={14} /> Adicionar Característica</button>
                   </div>
                </div>
             </div>
@@ -691,26 +713,6 @@ const PainelDestinoEditor = () => {
         .add-gallery-img:hover { border-color: var(--admin-primary); color: var(--admin-text-primary); }
 
         .itinerary-list { display: flex; flex-direction: column; gap: 1.5rem; }
-        .itinerary-item-editor {
-          background: var(--admin-bg-base);
-          padding: 1rem;
-          border-radius: 12px;
-          border: 1px solid var(--admin-border);
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-        }
-        .itinerary-item-header { display: flex; gap: 10px; align-items: center; }
-        .day-badge {
-          background: var(--admin-primary);
-          color: var(--admin-primary-text);
-          padding: 4px 10px;
-          border-radius: 6px;
-          font-weight: 700;
-          font-size: 0.8rem;
-          white-space: nowrap;
-        }
-
         .mini-upload-zone {
           border: 2px dashed var(--admin-border);
           border-radius: 12px;
@@ -738,9 +740,9 @@ const PainelDestinoEditor = () => {
           padding: 8px;
           border-radius: 8px;
           border: 1px solid var(--admin-border);
-          background: var(--admin-bg-surface);
+          background: #fff;
           font-weight: 600;
-          color: var(--admin-text-primary);
+          color: #000;
           outline: none;
         }
 

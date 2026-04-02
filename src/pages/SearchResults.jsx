@@ -13,6 +13,8 @@ import {
 // Import hero background image
 import imgSafari from '../assets/destinos/safari_amazonico.jpg';
 
+import { supabase } from '../lib/supabase';
+
 const SearchResults = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -36,12 +38,25 @@ const SearchResults = () => {
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch from API
+  // Fetch from Supabase
   useEffect(() => {
-    fetch('/api/packages')
-      .then(res => res.json())
-      .then(data => { setPackages(data); setLoading(false); })
-      .catch(err => { console.error(err); setLoading(false); });
+    async function fetchPackages() {
+      try {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from('packages')
+          .select('*')
+          .eq('is_active', true);
+        
+        if (error) throw error;
+        setPackages(data || []);
+      } catch (err) {
+        console.error('Error searching:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchPackages();
   }, []);
 
   const categories = ['Todos', 'Compras', 'Passeios', 'Natureza'];

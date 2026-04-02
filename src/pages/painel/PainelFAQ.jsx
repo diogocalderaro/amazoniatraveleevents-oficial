@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, X, Save, ToggleLeft, ToggleRight, HelpCircle } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
 
 const PainelFAQ = () => {
   const [items, setItems] = useState([]);
@@ -14,10 +15,19 @@ const PainelFAQ = () => {
 
   async function fetchItems() {
     try {
-      const res = await fetch('/api/faq', { headers });
-      if (res.ok) setItems(await res.json());
-    } catch (err) { console.error(err); }
-    finally { setLoading(false); }
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('faqs')
+        .select('*')
+        .order('sort_order', { ascending: true });
+      
+      if (error) throw error;
+      setItems(data || []);
+    } catch (err) { 
+      console.error('Error fetching FAQ items:', err); 
+    } finally { 
+      setLoading(false); 
+    }
   }
 
   function openCreate() {
@@ -36,24 +46,50 @@ const PainelFAQ = () => {
     e.preventDefault();
     try {
       if (editing) {
-        await fetch(`/api/faq/${editing.id}`, { method: 'PUT', headers, body: JSON.stringify({ ...form, is_active: editing.is_active }) });
+        const { error } = await supabase
+          .from('faqs')
+          .update(form)
+          .eq('id', editing.id);
+        if (error) throw error;
       } else {
-        await fetch('/api/faq', { method: 'POST', headers, body: JSON.stringify(form) });
+        const { error } = await supabase
+          .from('faqs')
+          .insert(form);
+        if (error) throw error;
       }
       setShowModal(false);
       fetchItems();
-    } catch (err) { console.error(err); }
+    } catch (err) { 
+      console.error('Error saving FAQ:', err); 
+      alert('Erro ao salvar FAQ.');
+    }
   }
 
   async function handleDelete(id) {
     if (!confirm('Excluir esta pergunta?')) return;
-    await fetch(`/api/faq/${id}`, { method: 'DELETE', headers });
-    fetchItems();
+    try {
+      const { error } = await supabase
+        .from('faqs')
+        .delete()
+        .eq('id', id);
+      if (error) throw error;
+      fetchItems();
+    } catch (err) {
+      console.error('Error deleting FAQ:', err);
+    }
   }
 
   async function toggleActive(item) {
-    await fetch(`/api/faq/${item.id}`, { method: 'PUT', headers, body: JSON.stringify({ ...item, is_active: item.is_active ? 0 : 1 }) });
-    fetchItems();
+    try {
+      const { error } = await supabase
+        .from('faqs')
+        .update({ is_active: !item.is_active })
+        .eq('id', item.id);
+      if (error) throw error;
+      fetchItems();
+    } catch (err) {
+      console.error('Error toggling FAQ status:', err);
+    }
   }
 
   async function handleSort(draggedId, droppedId) {
@@ -69,14 +105,14 @@ const PainelFAQ = () => {
     setItems(list.map((it, idx) => ({ ...it, sort_order: idx + 1 })));
 
     // Send all updates to backend
-    const updates = list.map((it, idx) => ({ id: it.id, sort_order: idx + 1 }));
     try {
-      await fetch('/api/faq/reorder', {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({ updates })
-      });
-    } catch (err) { console.error('Error reordering:', err); }
+      const { error } = await supabase
+        .from('faqs')
+        .upsert(updates);
+      if (error) throw error;
+    } catch (err) { 
+      console.error('Error reordering FAQ:', err); 
+    }
   }
 
   const [draggedItemId, setDraggedItemId] = useState(null);

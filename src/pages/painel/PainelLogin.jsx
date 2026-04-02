@@ -49,7 +49,6 @@ const PainelLogin = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@amazoniatravel.com"
                 required
                 autoFocus
               />

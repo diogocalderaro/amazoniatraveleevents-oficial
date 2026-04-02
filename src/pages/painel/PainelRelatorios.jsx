@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TrendingUp, DollarSign, Package, Download, Calendar } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
 
 const PainelRelatorios = () => {
   const [data, setData] = useState(null);
@@ -11,22 +12,50 @@ const PainelRelatorios = () => {
   async function fetchData() {
     setLoading(true);
     try {
-      const token = localStorage.getItem('admin_token');
-      const headers = { Authorization: `Bearer ${token}` };
-
-      // Dashboard data
-      const dashRes = await fetch('/api/reports/dashboard', { headers });
-      const dashData = dashRes.ok ? await dashRes.json() : {};
-
-      // Sales with date filter
       const now = new Date();
-      const from = new Date(now - parseInt(period) * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-      const salesRes = await fetch(`/api/reports/sales?from=${from}`, { headers });
-      const salesData = salesRes.ok ? await salesRes.json() : {};
+      const fromDate = new Date(now - parseInt(period) * 24 * 60 * 60 * 1000).toISOString();
 
-      setData({ ...dashData, sales: salesData });
-    } catch (err) { console.error(err); }
-    finally { setLoading(false); }
+      // 1. Fetch sales in period (status confirmada/concluida)
+      const { data: salesData, error: salesErr } = await supabase
+        .from('reservations')
+        .select('*')
+        .in('status', ['confirmada', 'concluida'])
+        .gte('created_at', fromDate)
+        .order('created_at', { ascending: false });
+
+      if (salesErr) throw salesErr;
+
+      const totalRevenue = salesData?.reduce((acc, s) => acc + (s.total_price || 0), 0) || 0;
+      const count = salesData?.length || 0;
+
+      // 2. Calculate top packages locally from salesData
+      const packageCounts = {};
+      salesData?.forEach(s => {
+        if (s.package_title) {
+          if (!packageCounts[s.package_title]) packageCounts[s.package_title] = { reservations: 0, revenue: 0 };
+          packageCounts[s.package_title].reservations++;
+          packageCounts[s.package_title].revenue += s.total_price || 0;
+        }
+      });
+      
+      const topPackages = Object.entries(packageCounts)
+        .map(([title, val]) => ({ package_title: title, ...val }))
+        .sort((a, b) => b.reservations - a.reservations);
+
+      setData({
+        sales: {
+          sales: salesData || [],
+          totalRevenue,
+          count
+        },
+        topPackages,
+        monthlyRevenue: []
+      });
+    } catch (err) { 
+      console.error('Error fetching reports:', err); 
+    } finally { 
+      setLoading(false); 
+    }
   }
 
   function exportCSV() {

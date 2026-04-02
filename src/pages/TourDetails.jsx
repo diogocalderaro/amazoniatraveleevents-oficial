@@ -17,6 +17,8 @@ import gal001 from '../assets/galeria/001.jpg';
 import gal002 from '../assets/galeria/002.jpg';
 
 
+import { supabase } from '../lib/supabase';
+
 const TourDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -40,21 +42,38 @@ const TourDetails = () => {
   async function fetchTour() {
     try {
       setIsLoading(true);
-      const res = await fetch(`/api/packages/${id}`);
-      if (res.ok) {
-        const data = await res.json();
-        setTourData({
-          ...data,
-          highlights: data.highlights?.map(h => h.text) || [],
-          itinerary: data.itinerary?.map(it => ({ day: it.day, title: it.title, desc: it.description })) || [],
-          included: data.included?.map(i => i.text) || [],
-          excluded: data.excluded?.map(e => e.text) || [],
-          gallery: data.gallery?.map(g => g.image_url) || [data.image_url]
-        });
-        if (data.travel_date) setSelectedDate(data.travel_date);
-      } else {
+      const isUuid = id.length > 20; // Rough check for UUID vs Slug
+      const query = supabase
+        .from('packages')
+        .select(`
+          *,
+          highlights:package_highlights(*),
+          itinerary:package_itinerary(*),
+          included:package_included(*),
+          excluded:package_excluded(*),
+          gallery:package_gallery(*),
+          features:package_features(*)
+        `);
+      
+      const { data, error } = await (isUuid 
+        ? query.eq('id', id).single() 
+        : query.eq('slug', id).single());
+
+      if (error || !data) {
+        console.error('Error fetching tour:', error);
         navigate('/destinos');
+        return;
       }
+
+      setTourData({
+        ...data,
+        highlights: data.highlights?.sort((a, b) => a.sort_order - b.sort_order).map(h => h.text) || [],
+        itinerary: data.itinerary?.sort((a, b) => a.sort_order - b.sort_order).map(it => ({ day: it.day, title: it.title, desc: it.description })) || [],
+        included: data.included?.map(i => i.text) || [],
+        excluded: data.excluded?.map(e => e.text) || [],
+        gallery: data.gallery?.sort((a, b) => a.sort_order - b.sort_order).map(g => g.image_url) || [data.image_url]
+      });
+      if (data.travel_date) setSelectedDate(data.travel_date);
     } catch (err) {
       console.error(err);
     } finally {

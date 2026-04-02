@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, Eye, Check, X, Trash2, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { Search, Eye, Check, X, Trash2, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
 
 const PainelReservas = () => {
   const [reservations, setReservations] = useState([]);
@@ -14,29 +15,49 @@ const PainelReservas = () => {
 
   async function fetchReservations() {
     try {
-      const params = new URLSearchParams();
-      if (statusFilter !== 'todos') params.append('status', statusFilter);
-      if (search) params.append('search', search);
-      const res = await fetch(`/api/reservations?${params}`, { headers });
-      if (res.ok) {
-        const data = await res.json();
-        setReservations(data.reservations || []);
+      setLoading(true);
+      let query = supabase.from('reservations').select('*');
+      
+      if (statusFilter !== 'todos') {
+        query = query.eq('status', statusFilter);
       }
-    } catch (err) { console.error(err); }
-    finally { setLoading(false); }
+      
+      if (search) {
+        query = query.or(`customer_name.ilike.%${search}%,customer_email.ilike.%${search}%,package_title.ilike.%${search}%`);
+      }
+      
+      const { data, error } = await query.order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      setReservations(data || []);
+    } catch (err) { 
+      console.error('Error fetching reservations:', err); 
+    } finally { 
+      setLoading(false); 
+    }
   }
 
   async function updateStatus(id, status) {
-    await fetch(`/api/reservations/${id}/status`, { method: 'PUT', headers, body: JSON.stringify({ status }) });
-    fetchReservations();
-    if (selected?.id === id) setSelected({ ...selected, status });
+    try {
+      const { error } = await supabase.from('reservations').update({ status }).eq('id', id);
+      if (error) throw error;
+      fetchReservations();
+      if (selected?.id === id) setSelected({ ...selected, status });
+    } catch (err) {
+      console.error('Error updating reservation status:', err);
+    }
   }
 
   async function handleDelete(id) {
     if (!confirm('Remover esta reserva?')) return;
-    await fetch(`/api/reservations/${id}`, { method: 'DELETE', headers });
-    fetchReservations();
-    if (selected?.id === id) setSelected(null);
+    try {
+      const { error } = await supabase.from('reservations').delete().eq('id', id);
+      if (error) throw error;
+      fetchReservations();
+      if (selected?.id === id) setSelected(null);
+    } catch (err) {
+      console.error('Error deleting reservation:', err);
+    }
   }
 
   const statusColors = { pendente: '#f59e0b', confirmada: '#10b981', cancelada: '#ef4444', concluida: '#3b82f6' };

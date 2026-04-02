@@ -13,6 +13,8 @@ import {
 // Import hero background image
 import imgSafari from '../assets/destinos/safari_amazonico.jpg';
 
+import { supabase } from '../lib/supabase';
+
 const Packages = () => {
   const [activeCategory, setActiveCategory] = useState('Todos');
   const [searchQuery, setSearchQuery] = useState('');
@@ -29,10 +31,16 @@ const Packages = () => {
 
   async function fetchPackages() {
     try {
-      const res = await fetch('/api/packages');
-      if (res.ok) setPackages(await res.json());
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('packages')
+        .select('*')
+        .eq('is_active', true);
+      
+      if (error) throw error;
+      setPackages(data || []);
     } catch (err) {
-      console.error(err);
+      console.error('Error fetching packages:', err);
     } finally {
       setLoading(false);
     }

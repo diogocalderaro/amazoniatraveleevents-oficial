@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Upload, Trash2, X, Save, Image as ImageIcon, Edit } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
 
 const PainelGaleria = () => {
   const [items, setItems] = useState([]);
@@ -15,10 +16,19 @@ const PainelGaleria = () => {
 
   async function fetchItems() {
     try {
-      const res = await fetch('/api/gallery', { headers });
-      if (res.ok) setItems(await res.json());
-    } catch (err) { console.error(err); }
-    finally { setLoading(false); }
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('gallery')
+        .select('*')
+        .order('sort_order', { ascending: true });
+      
+      if (error) throw error;
+      setItems(data || []);
+    } catch (err) { 
+      console.error('Error fetching gallery items:', err); 
+    } finally { 
+      setLoading(false); 
+    }
   }
 
   async function handleUpload(e) {
@@ -27,17 +37,40 @@ const PainelGaleria = () => {
     setUploading(true);
     try {
       for (const file of files) {
-        const formData = new FormData();
-        formData.append('file', file);
-        const uploadRes = await fetch('/api/upload', { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: formData });
-        const uploadData = await uploadRes.json();
-        if (uploadData.url) {
-          await fetch('/api/gallery', { method: 'POST', headers, body: JSON.stringify({ image_url: uploadData.url, caption: file.name.split('.')[0], category: 'Geral' }) });
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
+        const filePath = `gallery/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('images')
+          .upload(filePath, file);
+
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('images')
+          .getPublicUrl(filePath);
+
+        if (publicUrl) {
+          const { error: insertError } = await supabase
+            .from('gallery')
+            .insert({
+              image_url: publicUrl,
+              caption: file.name.split('.')[0],
+              category: 'Geral',
+              sort_order: items.length + 1
+            });
+          if (insertError) throw insertError;
         }
       }
       fetchItems();
-    } catch (err) { console.error(err); }
-    finally { setUploading(false); e.target.value = ''; }
+    } catch (err) { 
+      console.error('Upload/Gallery error:', err);
+      alert('Erro no upload ou ao salvar na galeria.');
+    } finally { 
+      setUploading(false); 
+      e.target.value = ''; 
+    }
   }
 
   function openEdit(item) {
@@ -48,15 +81,31 @@ const PainelGaleria = () => {
 
   async function handleSave(e) {
     e.preventDefault();
-    await fetch(`/api/gallery/${editing.id}`, { method: 'PUT', headers, body: JSON.stringify(form) });
-    setShowModal(false);
-    fetchItems();
+    try {
+      const { error } = await supabase
+        .from('gallery')
+        .update(form)
+        .eq('id', editing.id);
+      if (error) throw error;
+      setShowModal(false);
+      fetchItems();
+    } catch (err) {
+      console.error('Error saving gallery item:', err);
+    }
   }
 
   async function handleDelete(id) {
     if (!confirm('Remover esta imagem?')) return;
-    await fetch(`/api/gallery/${id}`, { method: 'DELETE', headers });
-    fetchItems();
+    try {
+      const { error } = await supabase
+        .from('gallery')
+        .delete()
+        .eq('id', id);
+      if (error) throw error;
+      fetchItems();
+    } catch (err) {
+      console.error('Error deleting gallery item:', err);
+    }
   }
 
   if (loading) return <div className="admin-page"><div className="admin-loading">Carregando...</div></div>;

@@ -10,6 +10,8 @@ import {
 
 import { useCart } from '../context/CartContext';
 
+import { supabase } from '../lib/supabase';
+
 const BookingFlow = () => {
   const { cartItems, removeFromCart, clearCart, cartTotal } = useCart();
   const [step, setStep] = useState(1);
@@ -17,7 +19,19 @@ const BookingFlow = () => {
   const [itemToRemove, setItemToRemove] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
- 
+  
+  const [customerForm, setCustomerForm] = useState({
+    firstName: '',
+    lastName: '',
+    phone: '',
+    email: ''
+  });
+
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    setCustomerForm(prev => ({ ...prev, [name]: value }));
+  };
+
   const formatPrice = (price) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -40,14 +54,39 @@ const BookingFlow = () => {
     }
   };
 
-  const handleFinalizeBooking = () => {
+  const handleFinalizeBooking = async () => {
+    if (!customerForm.firstName || !customerForm.lastName || !customerForm.phone || !customerForm.email) {
+      alert('Por favor, preencha todos os campos obrigatórios.');
+      return;
+    }
+
     setIsLoading(true);
-    // Simulate processing payment
-    setTimeout(() => {
-      setIsLoading(false);
-      clearCart(); // Clear cart after success
+    try {
+      // Create a reservation record for each item in the cart
+      const reservations = cartItems.map(item => ({
+        customer_name: `${customerForm.firstName} ${customerForm.lastName}`,
+        customer_phone: customerForm.phone,
+        customer_email: customerForm.email,
+        package_id: item.packageId || (typeof item.id === 'string' && item.id.length > 30 ? item.id : null),
+        package_title: item.title,
+        travel_date: item.date,
+        guests: item.guests,
+        total_price: item.price,
+        status: 'pendente',
+        notes: `Método de pagamento: ${paymentMethod}`
+      }));
+
+      const { error } = await supabase.from('reservations').insert(reservations);
+      if (error) throw error;
+
+      clearCart();
       setStep(3);
-    }, 2500);
+    } catch (err) {
+      console.error('Error creating reservation:', err);
+      alert('Erro ao processar sua reserva. Por favor, tente novamente.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const renderStepHeader = (smallText, mainTitle) => (
@@ -370,19 +409,19 @@ const BookingFlow = () => {
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '3rem' }}>
                   <div className="input-field">
                     <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#444', marginBottom: '0.5rem' }}>Primeiro nome<span style={{ color: '#ef4444' }}>*</span></label>
-                    <input type="text" style={{ width: '100%', padding: '0.85rem', borderRadius: '8px', border: '1px solid #ddd', outline: 'none' }} placeholder="Ex: João" />
+                    <input type="text" name="firstName" value={customerForm.firstName} onChange={handleFormChange} required style={{ width: '100%', padding: '0.85rem', borderRadius: '8px', border: '1px solid #ddd', outline: 'none' }} placeholder="Ex: João" />
                   </div>
                   <div className="input-field">
                     <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#444', marginBottom: '0.5rem' }}>Sobrenome<span style={{ color: '#ef4444' }}>*</span></label>
-                    <input type="text" style={{ width: '100%', padding: '0.85rem', borderRadius: '8px', border: '1px solid #ddd', outline: 'none' }} placeholder="Ex: Silva" />
+                    <input type="text" name="lastName" value={customerForm.lastName} onChange={handleFormChange} required style={{ width: '100%', padding: '0.85rem', borderRadius: '8px', border: '1px solid #ddd', outline: 'none' }} placeholder="Ex: Silva" />
                   </div>
                   <div className="input-field">
                     <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#444', marginBottom: '0.5rem' }}>Telefone (WhatsApp)<span style={{ color: '#ef4444' }}>*</span></label>
-                    <input type="tel" style={{ width: '100%', padding: '0.85rem', borderRadius: '8px', border: '1px solid #ddd', outline: 'none' }} placeholder="(92) 9XXXX-XXXX" />
+                    <input type="tel" name="phone" value={customerForm.phone} onChange={handleFormChange} required style={{ width: '100%', padding: '0.85rem', borderRadius: '8px', border: '1px solid #ddd', outline: 'none' }} placeholder="(92) 9XXXX-XXXX" />
                   </div>
                   <div className="input-field">
                     <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#444', marginBottom: '0.5rem' }}>E-mail<span style={{ color: '#ef4444' }}>*</span></label>
-                    <input type="email" style={{ width: '100%', padding: '0.85rem', borderRadius: '8px', border: '1px solid #ddd', outline: 'none' }} placeholder="email@exemplo.com" />
+                    <input type="email" name="email" value={customerForm.email} onChange={handleFormChange} required style={{ width: '100%', padding: '0.85rem', borderRadius: '8px', border: '1px solid #ddd', outline: 'none' }} placeholder="email@exemplo.com" />
                   </div>
                 </div>
 

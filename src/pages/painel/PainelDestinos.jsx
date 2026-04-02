@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, ToggleLeft, ToggleRight, MapPin, Eye, ExternalLink } from 'lucide-react';
+import { Plus, Edit, Trash2, ToggleLeft, ToggleRight, MapPin, ExternalLink } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
 
 const PainelDestinos = () => {
   const [packages, setPackages] = useState([]);
@@ -13,10 +14,19 @@ const PainelDestinos = () => {
 
   async function fetchPackages() {
     try {
-      const res = await fetch('/api/packages');
-      if (res.ok) setPackages(await res.json());
-    } catch (err) { console.error(err); }
-    finally { setLoading(false); }
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('packages')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      setPackages(data || []);
+    } catch (err) { 
+      console.error('Error fetching packages:', err); 
+    } finally { 
+      setLoading(false); 
+    }
   }
 
   function openCreate() {
@@ -29,13 +39,30 @@ const PainelDestinos = () => {
 
   async function handleDelete(id) {
     if (!confirm('Tem certeza que deseja excluir este pacote?')) return;
-    await fetch(`/api/packages/${id}`, { method: 'DELETE', headers });
-    fetchPackages();
+    try {
+      const { error } = await supabase.from('packages').delete().eq('id', id);
+      if (error) throw error;
+      fetchPackages();
+    } catch (err) {
+      console.error('Error deleting package:', err);
+      alert('Erro ao excluir pacote.');
+    }
   }
 
   async function handleToggle(id) {
-    await fetch(`/api/packages/${id}/toggle`, { method: 'PATCH', headers });
-    fetchPackages();
+    const pkg = packages.find(p => p.id === id);
+    if (!pkg) return;
+    try {
+      const { error } = await supabase
+        .from('packages')
+        .update({ is_active: !pkg.is_active })
+        .eq('id', id);
+      
+      if (error) throw error;
+      fetchPackages();
+    } catch (err) {
+      console.error('Error toggling status:', err);
+    }
   }
 
   if (loading) return <div className="admin-page"><div className="admin-loading">Carregando...</div></div>;

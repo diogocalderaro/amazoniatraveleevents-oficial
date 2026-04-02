@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Eye, EyeOff, X, Save, FileText } from 'lucide-react';
+import { Plus, Edit, Trash2, X, Save } from 'lucide-react';
 import RichTextEditor from '../../components/admin/RichTextEditor';
+import { supabase } from '../../lib/supabase';
 
 const PainelBlog = () => {
   const [posts, setPosts] = useState([]);
@@ -20,20 +21,33 @@ const PainelBlog = () => {
 
   async function fetchCategories() {
     try {
-      const res = await fetch('/api/blog-categories', { headers });
-      if (res.ok) setCategories(await res.json());
-    } catch (err) { console.error(err); }
+      const { data, error } = await supabase
+        .from('blog_categories')
+        .select('*')
+        .order('name');
+      
+      if (error) throw error;
+      setCategories(data || []);
+    } catch (err) { 
+      console.error('Error fetching categories:', err); 
+    }
   }
 
   async function fetchPosts() {
     try {
-      const res = await fetch('/api/blog', { headers });
-      if (res.ok) {
-        const data = await res.json();
-        setPosts(data.posts || []);
-      }
-    } catch (err) { console.error(err); }
-    finally { setLoading(false); }
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('blog_posts')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      setPosts(data || []);
+    } catch (err) { 
+      console.error('Error fetching posts:', err); 
+    } finally { 
+      setLoading(false); 
+    }
   }
 
   function openCreate() {
@@ -44,13 +58,17 @@ const PainelBlog = () => {
 
   async function openEdit(post) {
     try {
-      const res = await fetch(`/api/blog/${post.id}`, { headers });
-      if (res.ok) {
-        const data = await res.json();
-        setEditing(data);
-        setForm({ title: data.title, excerpt: data.excerpt || '', content: data.content || '', image_url: data.image_url || '', author: data.author || 'Admin', category: data.category || '', is_published: !!data.is_published });
-        setShowModal(true);
-      }
+      setEditing(post);
+      setForm({
+        title: post.title,
+        excerpt: post.excerpt || '',
+        content: post.content || '',
+        image_url: post.image_url || '',
+        author: post.author || 'Admin',
+        category: post.category || '',
+        is_published: !!post.is_published
+      });
+      setShowModal(true);
     } catch (err) { console.error(err); }
   }
 
@@ -60,31 +78,54 @@ const PainelBlog = () => {
     const body = { ...form, slug };
     try {
       if (editing) {
-        await fetch(`/api/blog/${editing.id}`, { method: 'PUT', headers, body: JSON.stringify(body) });
+        const { error } = await supabase.from('blog_posts').update(body).eq('id', editing.id);
+        if (error) throw error;
       } else {
-        await fetch('/api/blog', { method: 'POST', headers, body: JSON.stringify(body) });
+        const { error } = await supabase.from('blog_posts').insert(body);
+        if (error) throw error;
       }
       setShowModal(false);
       fetchPosts();
-    } catch (err) { console.error(err); }
+    } catch (err) { 
+      console.error('Error saving post:', err); 
+      alert('Erro ao salvar post: ' + err.message);
+    }
   }
 
   async function handleDelete(id) {
     if (!confirm('Excluir este post?')) return;
-    await fetch(`/api/blog/${id}`, { method: 'DELETE', headers });
-    fetchPosts();
+    try {
+      const { error } = await supabase.from('blog_posts').delete().eq('id', id);
+      if (error) throw error;
+      fetchPosts();
+    } catch (err) {
+      console.error('Error deleting post:', err);
+    }
   }
 
   async function handleImageUpload(e) {
     const file = e.target.files[0];
     if (!file) return;
-    const formData = new FormData();
-    formData.append('file', file);
     try {
-      const res = await fetch('/api/upload', { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: formData });
-      const data = await res.json();
-      if (data.url) setForm(f => ({ ...f, image_url: data.url }));
-    } catch (err) { console.error(err); }
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const filePath = `blog/${fileName}`;
+
+      let { error: uploadError } = await supabase.storage
+        .from('images')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('images')
+        .getPublicUrl(filePath);
+
+      if (publicUrl) setForm(f => ({ ...f, image_url: publicUrl }));
+    } catch (err) { 
+      console.error('Upload error:', err);
+      alert('Erro no upload: ' + err.message);
+    }
   }
 
   if (loading) return <div className="admin-page"><div className="admin-loading">Carregando...</div></div>;

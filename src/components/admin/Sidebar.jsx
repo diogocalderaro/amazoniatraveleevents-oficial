@@ -13,7 +13,8 @@ import {
   BarChart3,
   LogOut,
   ChevronLeft,
-  X
+  X,
+  Users
 } from 'lucide-react';
 
 const menuItems = [
@@ -29,6 +30,7 @@ const menuItems = [
       { to: '/painel/blog/categorias', label: 'Categorias' }
     ]
   },
+  { to: '/painel/clientes', icon: Users, label: 'Clientes' },
   { to: '/painel/faq', icon: HelpCircle, label: 'FAQ' },
   { to: '/painel/galeria', icon: ImageIcon, label: 'Galeria' },
   { to: '/painel/comentarios', icon: MessageCircle, label: 'Comentários' },

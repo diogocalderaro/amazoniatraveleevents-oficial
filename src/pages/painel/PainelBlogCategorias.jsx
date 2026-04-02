@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, X, Save, Folder } from 'lucide-react';
+import { Plus, Edit, Trash2, X, Save } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
 
 const PainelBlogCategorias = () => {
   const [categories, setCategories] = useState([]);
@@ -14,10 +15,19 @@ const PainelBlogCategorias = () => {
 
   async function fetchCategories() {
     try {
-      const res = await fetch('/api/blog-categories', { headers });
-      if (res.ok) setCategories(await res.json());
-    } catch (err) { console.error(err); }
-    finally { setLoading(false); }
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('blog_categories')
+        .select('*')
+        .order('name');
+      
+      if (error) throw error;
+      setCategories(data || []);
+    } catch (err) { 
+      console.error('Error fetching categories:', err); 
+    } finally { 
+      setLoading(false); 
+    }
   }
 
   function openCreate() {
@@ -38,19 +48,37 @@ const PainelBlogCategorias = () => {
     const body = { ...form, slug };
     try {
       if (editing) {
-        await fetch(`/api/blog-categories/${editing.id}`, { method: 'PUT', headers, body: JSON.stringify(body) });
+        const { error } = await supabase
+          .from('blog_categories')
+          .update(body)
+          .eq('id', editing.id);
+        if (error) throw error;
       } else {
-        await fetch('/api/blog-categories', { method: 'POST', headers, body: JSON.stringify(body) });
+        const { error } = await supabase
+          .from('blog_categories')
+          .insert(body);
+        if (error) throw error;
       }
       setShowModal(false);
       fetchCategories();
-    } catch (err) { console.error(err); }
+    } catch (err) { 
+      console.error('Error saving category:', err); 
+      alert('Erro ao salvar categoria.');
+    }
   }
 
   async function handleDelete(id) {
     if (!confirm('Excluir esta categoria?')) return;
-    await fetch(`/api/blog-categories/${id}`, { method: 'DELETE', headers });
-    fetchCategories();
+    try {
+      const { error } = await supabase
+        .from('blog_categories')
+        .delete()
+        .eq('id', id);
+      if (error) throw error;
+      fetchCategories();
+    } catch (err) {
+      console.error('Error deleting category:', err);
+    }
   }
 
   if (loading) return <div className="admin-page"><div className="admin-loading">Carregando...</div></div>;

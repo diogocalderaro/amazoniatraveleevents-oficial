@@ -26,6 +26,8 @@ import gal011 from '../assets/galeria/011.jpg';
 import gal012 from '../assets/galeria/012.jpg';
 import gal013 from '../assets/galeria/013.jpg';
 
+import { supabase } from '../lib/supabase';
+
 const Home = () => {
   const navigate = useNavigate();
   const [selectedImage, setSelectedImage] = useState(null);
@@ -38,12 +40,33 @@ const Home = () => {
   const heroImageList = [gal010, gal011, gal012, gal001, gal002, gal003, gal004, gal005, gal006, gal008, gal009, gal013];
   
   const [packagesData, setPackagesData] = useState([]);
+  const [blogPosts, setBlogPosts] = useState([]);
 
   useEffect(() => {
-    fetch('/api/packages')
-      .then(res => res.json())
-      .then(data => setPackagesData(data))
-      .catch(err => console.error(err));
+    async function fetchPackages() {
+      const { data, error } = await supabase
+        .from('packages')
+        .select('*')
+        .eq('is_active', true);
+      
+      if (error) console.error('Error fetching packages:', error);
+      else setPackagesData(data || []);
+    }
+
+    async function fetchBlog() {
+      const { data, error } = await supabase
+        .from('blog_posts')
+        .select('*')
+        .eq('is_published', true)
+        .order('created_at', { ascending: false })
+        .limit(3);
+      
+      if (error) console.error('Error fetching blog:', error);
+      else setBlogPosts(data || []);
+    }
+
+    fetchPackages();
+    fetchBlog();
   }, []);
 
   useEffect(() => {
@@ -590,6 +613,40 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* Blog Section */}
+      {blogPosts.length > 0 && (
+        <section style={{ padding: '6rem 0', backgroundColor: '#fff' }}>
+          <div className="container">
+            <div className="section-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '3rem', flexWrap: 'wrap', gap: '1rem' }}>
+              <div style={{ textAlign: 'left' }}>
+                <h2 style={{ fontSize: '2.5rem', fontWeight: 900, marginBottom: '0.5rem' }}>Blog & Notícias</h2>
+                <p style={{ color: '#64748b' }}>Fique por dentro das novidades da região amazônica</p>
+              </div>
+              <Link to="/blog" style={{ color: '#000', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
+                Ver Todo o Blog <ArrowRight size={20} color="#FFD700" />
+              </Link>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
+              {blogPosts.map(post => (
+                <Link to={`/blog/${post.slug || post.id}`} key={post.id} style={{ textDecoration: 'none', color: 'inherit' }}>
+                  <div className="package-card-new" style={{ borderRadius: '20px', overflow: 'hidden', backgroundColor: '#f8fafc', height: '100%' }}>
+                    <div style={{ height: '200px', overflow: 'hidden' }}>
+                      <img src={post.image_url} alt={post.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                    <div style={{ padding: '1.5rem' }}>
+                      <div style={{ color: '#FFD700', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', marginBottom: '0.5rem' }}>{post.category}</div>
+                      <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '1rem', lineHeight: 1.3 }}>{post.title}</h3>
+                      <p style={{ color: '#64748b', fontSize: '0.9rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{post.excerpt}</p>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* FAQ Section */}
       <section style={{ backgroundColor: '#fff', padding: '6rem 0', position: 'relative', overflow: 'hidden' }}>

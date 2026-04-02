@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { DollarSign, Package, ClipboardList, TrendingUp, Clock, AlertCircle, Eye } from 'lucide-react';
+import { DollarSign, Package, ClipboardList, TrendingUp, Clock, AlertCircle } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
 
 const PainelDashboard = () => {
   const [data, setData] = useState(null);
@@ -11,15 +12,52 @@ const PainelDashboard = () => {
 
   async function fetchDashboard() {
     try {
-      const token = localStorage.getItem('admin_token');
-      const res = await fetch('/api/reports/dashboard', {
-        headers: { Authorization: `Bearer ${token}` }
+      setLoading(true);
+      
+      // 1. Total Revenue (sum of total_price for confirmada and concluida)
+      const { data: revData } = await supabase
+        .from('reservations')
+        .select('total_price')
+        .in('status', ['confirmada', 'concluida']);
+      
+      const totalRevenue = revData?.reduce((acc, r) => acc + (r.total_price || 0), 0) || 0;
+
+      // 2. Total Reservations
+      const { count: totalReservations } = await supabase
+        .from('reservations')
+        .select('*', { count: 'exact', head: true });
+
+      // 3. Pending Reservations
+      const { count: pendingReservations } = await supabase
+        .from('reservations')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'pendente');
+
+      // 4. Total Packages (active)
+      const { count: totalPackages } = await supabase
+        .from('packages')
+        .select('*', { count: 'exact', head: true })
+        .eq('is_active', true);
+
+      // 5. Recent Reservations
+      const { data: recentReservations } = await supabase
+        .from('reservations')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      setData({
+        stats: {
+          totalRevenue,
+          totalReservations: totalReservations || 0,
+          pendingReservations: pendingReservations || 0,
+          totalPackages: totalPackages || 0
+        },
+        recentReservations: recentReservations || [],
+        monthlyRevenue: [] 
       });
-      if (res.ok) {
-        setData(await res.json());
-      }
     } catch (err) {
-      console.error(err);
+      console.error('Error fetching dashboard data:', err);
     } finally {
       setLoading(false);
     }
