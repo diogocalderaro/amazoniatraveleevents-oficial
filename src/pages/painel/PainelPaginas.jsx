@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Save, FileText } from 'lucide-react';
 import RichTextEditor from '../../components/admin/RichTextEditor';
+import { supabase } from '../../lib/supabase';
 
 const PainelPaginas = () => {
   const [pages, setPages] = useState([]);
@@ -9,24 +10,32 @@ const PainelPaginas = () => {
   const [content, setContent] = useState('');
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const token = localStorage.getItem('admin_token');
-  const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
 
   useEffect(() => { fetchPages(); }, []);
 
   async function fetchPages() {
     try {
-      const res = await fetch('/api/pages', { headers });
-      if (res.ok) setPages(await res.json());
-    } catch (err) { console.error(err); }
-    finally { setLoading(false); }
+      const { data, error } = await supabase
+        .from('pages')
+        .select('*')
+        .order('title');
+      
+      if (error) throw error;
+      setPages(data || []);
+    } catch (err) {
+      console.error('Error fetching pages:', err);
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function selectPage(page) {
     setSelected(page);
     try {
-      const data = JSON.parse(page.content_json || '{}');
-      setContent(data.html || '');
+      const parsed = typeof page.content_json === 'string' 
+        ? JSON.parse(page.content_json || '{}') 
+        : (page.content_json || {});
+      setContent(parsed.html || '');
     } catch {
       setContent('');
     }
@@ -37,15 +46,23 @@ const PainelPaginas = () => {
     if (!selected) return;
     setSaving(true);
     try {
-      await fetch(`/api/pages/${selected.slug}`, {
-        method: 'PUT',
-        headers,
-        body: JSON.stringify({ title: selected.title, content_json: JSON.stringify({ html: content }) })
-      });
+      const { error } = await supabase
+        .from('pages')
+        .update({ 
+          content_json: JSON.stringify({ html: content }),
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', selected.id);
+      
+      if (error) throw error;
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
-    } catch (err) { console.error(err); }
-    finally { setSaving(false); }
+    } catch (err) {
+      console.error('Error saving page:', err);
+      alert('Erro ao salvar: ' + err.message);
+    } finally {
+      setSaving(false);
+    }
   }
 
   if (loading) return <div className="admin-page"><div className="admin-loading">Carregando...</div></div>;
@@ -87,6 +104,13 @@ const PainelPaginas = () => {
                   </td>
                 </tr>
               ))}
+              {pages.length === 0 && (
+                <tr>
+                  <td colSpan="3" style={{ textAlign: 'center', padding: '2rem', color: 'var(--admin-text-muted)' }}>
+                    Nenhuma página cadastrada.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

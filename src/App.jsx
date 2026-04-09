@@ -11,6 +11,7 @@ import Contact from './pages/Contact';
 import HowToBuy from './pages/HowToBuy';
 import SearchResults from './pages/SearchResults';
 import NotFound from './pages/NotFound';
+import PageContent from './pages/PageContent';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
 import ScrollToTop from './components/ScrollToTop';
@@ -32,6 +33,7 @@ import PainelComentarios from './pages/painel/PainelComentarios';
 import PainelRelatorios from './pages/painel/PainelRelatorios';
 import PainelBlogCategorias from './pages/painel/PainelBlogCategorias';
 import PainelDestinoEditor from './pages/painel/PainelDestinoEditor';
+import PainelClientes from './pages/painel/PainelClientes';
 
 function App() {
   return (
@@ -54,6 +56,9 @@ function App() {
               <Route path="/buscar" element={<SearchResults />} />
               <Route path="/reservar/:id" element={<BookingFlow />} />
               <Route path="/como-comprar" element={<HowToBuy />} />
+              <Route path="/politica-de-privacidade" element={<PageContent />} />
+              <Route path="/termos-de-uso" element={<PageContent />} />
+              <Route path="/pagina/:slug" element={<PageContent />} />
               
               {/* Redirects for old English paths */}
               <Route path="/tour/:id" element={<Navigate to="/passeio/:id" replace />} />
@@ -79,6 +84,7 @@ function App() {
               <Route path="destinos/:id" element={<PainelDestinoEditor />} />
               <Route path="paginas" element={<PainelPaginas />} />
               <Route path="reservas" element={<PainelReservas />} />
+              <Route path="clientes" element={<PainelClientes />} />
               <Route path="blog" element={<PainelBlog />} />
               <Route path="blog/categorias" element={<PainelBlogCategorias />} />
               <Route path="faq" element={<PainelFAQ />} />

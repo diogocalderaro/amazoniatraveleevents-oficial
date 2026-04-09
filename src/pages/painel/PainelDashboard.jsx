@@ -17,10 +17,31 @@ const PainelDashboard = () => {
       // 1. Total Revenue (sum of total_price for confirmada and concluida)
       const { data: revData } = await supabase
         .from('reservations')
-        .select('total_price')
+        .select('total_price, created_at')
         .in('status', ['confirmada', 'concluida']);
       
       const totalRevenue = revData?.reduce((acc, r) => acc + (r.total_price || 0), 0) || 0;
+
+      // Calculate monthly revenue (Last 6 months)
+      const monthlyData = {};
+      const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+      const today = new Date();
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+        const key = `${monthNames[d.getMonth()]} ${d.getFullYear()}`;
+        monthlyData[key] = 0;
+      }
+
+      if (revData) {
+        revData.forEach(r => {
+          const d = new Date(r.created_at);
+          const key = `${monthNames[d.getMonth()]} ${d.getFullYear()}`;
+          if (monthlyData[key] !== undefined) {
+            monthlyData[key] += (r.total_price || 0);
+          }
+        });
+      }
+      const monthlyRevenue = Object.entries(monthlyData).map(([month, revenue]) => ({ month, revenue }));
 
       // 2. Total Reservations
       const { count: totalReservations } = await supabase
@@ -54,7 +75,7 @@ const PainelDashboard = () => {
           totalPackages: totalPackages || 0
         },
         recentReservations: recentReservations || [],
-        monthlyRevenue: [] 
+        monthlyRevenue
       });
     } catch (err) {
       console.error('Error fetching dashboard data:', err);

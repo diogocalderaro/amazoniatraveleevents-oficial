@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Calendar, User, ArrowLeft, Share2, MessageSquare } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { supabasePublic as supabase } from '../lib/supabase';
 
 // Fallback image
 import gal008 from '../assets/galeria/008.jpg';

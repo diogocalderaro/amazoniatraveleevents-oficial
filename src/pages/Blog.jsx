@@ -10,7 +10,7 @@ import gal004 from '../assets/galeria/004.jpg';
 import gal005 from '../assets/galeria/005.jpg';
 import gal006 from '../assets/galeria/006.jpg';
 
-import { supabase } from '../lib/supabase';
+import { supabasePublic as supabase } from '../lib/supabase';
 
 const Blog = () => {
   const [posts, setPosts] = useState([]);

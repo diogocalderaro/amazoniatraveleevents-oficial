@@ -17,7 +17,7 @@ import gal001 from '../assets/galeria/001.jpg';
 import gal002 from '../assets/galeria/002.jpg';
 
 
-import { supabase } from '../lib/supabase';
+import { supabasePublic as supabase } from '../lib/supabase';
 
 const TourDetails = () => {
   const { id } = useParams();
@@ -31,13 +31,52 @@ const TourDetails = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showToast, setShowToast] = useState(false);
-  const [planType, setPlanType] = useState('regional');
+  const [plans, setPlans] = useState([]);
+  const [selectedPlan, setSelectedPlan] = useState(null);
   const [extras, setExtras] = useState([]);
+  const [selectedExtras, setSelectedExtras] = useState([]);
+  const [comments, setComments] = useState([]);
 
   useEffect(() => {
     fetchTour();
     window.scrollTo(0, 0);
   }, [id]);
+
+  useEffect(() => {
+    async function fetchComments(pkgId) {
+      if (!pkgId) return;
+      const { data, error } = await supabase
+        .from('comments')
+        .select('*')
+        .eq('package_id', pkgId)
+        .eq('is_approved', true)
+        .order('created_at', { ascending: false });
+      
+      if (!error) setComments(data || []);
+    }
+
+    if (tourData?.id) {
+      fetchComments(tourData.id);
+    }
+  }, [tourData?.id]);
+
+  // Update SEO Meta Tags
+  useEffect(() => {
+    if (tourData) {
+      document.title = `${tourData.title} | Amazônia Travel e Events`;
+      
+      let metaDescription = document.querySelector('meta[name="description"]');
+      if (!metaDescription) {
+        metaDescription = document.createElement('meta');
+        metaDescription.name = 'description';
+        document.head.appendChild(metaDescription);
+      }
+      // Removendo HTML e pegando primeiros 150 caracteres para descrição SEO
+      const cleanDesc = (tourData.description || '').replace(/<[^>]+>/g, '');
+      const shortDesc = cleanDesc.substring(0, 150) + (cleanDesc.length > 150 ? '...' : '');
+      metaDescription.content = `Reserve o pacote ${tourData.title}. ${shortDesc}`;
+    }
+  }, [tourData]);
 
   async function fetchTour() {
     try {
@@ -52,7 +91,8 @@ const TourDetails = () => {
           included:package_included(*),
           excluded:package_excluded(*),
           gallery:package_gallery(*),
-          features:package_features(*)
+          features:package_features(*),
+          plans:package_plans(*)
         `);
       
       const { data, error } = await (isUuid 
@@ -65,14 +105,22 @@ const TourDetails = () => {
         return;
       }
 
+      const sortedPlans = (data.plans || []).sort((a, b) => a.sort_order - b.sort_order);
+      setPlans(sortedPlans);
+      const defaultPlan = sortedPlans.find(p => p.is_default) || sortedPlans[0] || null;
+      setSelectedPlan(defaultPlan);
+
       setTourData({
         ...data,
         highlights: data.highlights?.sort((a, b) => a.sort_order - b.sort_order).map(h => h.text) || [],
-        itinerary: data.itinerary?.sort((a, b) => a.sort_order - b.sort_order).map(it => ({ day: it.day, title: it.title, desc: it.description })) || [],
+        itinerary: data.itinerary?.sort((a, b) => a.sort_order - b.sort_order).map(it => ({ day: it.day, title: it.title, desc: it.desc || it.description })) || [],
         included: data.included?.map(i => i.text) || [],
         excluded: data.excluded?.map(e => e.text) || [],
-        gallery: data.gallery?.sort((a, b) => a.sort_order - b.sort_order).map(g => g.image_url) || [data.image_url]
+        gallery: data.gallery?.sort((a, b) => a.sort_order - b.sort_order).map(g => g.image_url) || [data.image_url],
+        extras: data.extras?.sort((a, b) => a.sort_order - b.sort_order) || []
       });
+      setExtras(data.extras || []);
+      fetchComments(data.id);
       if (data.travel_date) setSelectedDate(data.travel_date);
     } catch (err) {
       console.error(err);
@@ -83,21 +131,20 @@ const TourDetails = () => {
 
   const getPlanPrice = () => {
     if (!tourData) return 0;
-    let basePrice = tourData.price || 0;
-    if (planType === 'vip') basePrice = tourData.price_vip || tourData.price * 1.35;
-    if (planType === 'executivo') basePrice = tourData.price_exec || tourData.price * 1.5;
+    const basePrice = selectedPlan ? Number(selectedPlan.price) : (tourData.price || 0);
     
     const adultTotal = basePrice * adults;
     const childTotal = (tourData.price_child || basePrice * 0.7) * children;
     
-    return adultTotal + childTotal;
+    const extrasTotal = selectedExtras.reduce((acc, extraId) => {
+      const extra = extras.find(e => e.id === extraId);
+      return acc + Number(extra?.price || 0);
+    }, 0);
+    
+    return adultTotal + childTotal + extrasTotal;
   };
 
-  const getExtrasPrice = () => {
-    return extras.reduce((sum, extra) => sum + extra.price, 0) * (adults + children);
-  };
-
-  const totalPrice = getPlanPrice() + getExtrasPrice();
+  const totalPrice = getPlanPrice();
   const perPersonPrice = (adults + children) > 0 ? totalPrice / (adults + children) : 0;
 
   const handleAddToCart = () => {
@@ -111,7 +158,8 @@ const TourDetails = () => {
       date: selectedDate,
       guests: `${adults} adultos - ${children} crianças`,
       price: totalPrice,
-      plan: planType.charAt(0).toUpperCase() + planType.slice(1),
+      plan: selectedPlan?.name || 'Padrão',
+      extras: selectedExtras.map(id => extras.find(e => e.id === id)?.name).join(', '),
       image: tourData.image_url
     };
     addToCart(cartData);
@@ -326,6 +374,41 @@ const TourDetails = () => {
                   </div>
                 </section>
                )}
+
+               {/* Comments Section */}
+               <section id="comentarios" style={{ marginBottom: '4rem' }}>
+                  <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                     <MessageSquare size={32} className="text-primary" /> Avaliações ({comments.length})
+                  </h2>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                    {comments.map((comment, i) => (
+                      <div key={i} style={{ backgroundColor: '#fff', padding: '2rem', borderRadius: '20px', border: '1px solid #f1f5f9' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                            <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#334155' }}>
+                              {comment.author_name?.charAt(0)}
+                            </div>
+                            <div>
+                              <div style={{ fontWeight: 800 }}>{comment.author_name}</div>
+                              <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>{new Date(comment.created_at).toLocaleDateString('pt-BR')}</div>
+                            </div>
+                          </div>
+                          <div style={{ display: 'flex', gap: '2px', color: '#FFD700' }}>
+                            {[...Array(5)].map((_, starIdx) => (
+                              <Star key={starIdx} size={14} fill={starIdx < comment.rating ? "#FFD700" : "none"} strokeWidth={ starIdx < comment.rating ? 0 : 2} />
+                            ))}
+                          </div>
+                        </div>
+                        <p style={{ color: '#64748b', lineHeight: 1.6 }}>{comment.content}</p>
+                      </div>
+                    ))}
+                    {comments.length === 0 && (
+                      <div style={{ textAlign: 'center', padding: '3rem', backgroundColor: '#fff', borderRadius: '20px', border: '1.5px dashed #e2e8f0', color: '#94a3b8' }}>
+                         Nenhuma avaliação ainda. Seja o primeiro a avaliar!
+                      </div>
+                    )}
+                  </div>
+                </section>
             </div>
 
              {/* Sticky Sidebar Booking Widget */}
@@ -371,105 +454,84 @@ const TourDetails = () => {
                     </div>
                   </div>
 
-                  {/* Pricing Options (License/License Style) */}
-                  <div style={{ backgroundColor: '#f8fafc', padding: '1.1rem', borderRadius: '15px', border: '1.5px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                    <div 
-                      onClick={() => setPlanType('regional')}
-                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', padding: '0.2rem 0' }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
-                        <div style={{ 
-                          width: '18px', height: '18px', borderRadius: '50%', flexShrink: 0,
-                          border: `2px solid ${planType === 'regional' ? '#7EB53F' : '#cbd5e1'}`,
-                          display: 'flex', alignItems: 'center', justifyContent: 'center'
-                        }}>
-                          {planType === 'regional' && <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#7EB53F' }} />}
-                        </div>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#334155', whiteSpace: 'nowrap' }}>Plano Regional</span>
-                      </div>
-                      <span style={{ fontWeight: 800, fontSize: '0.9rem', marginLeft: '10px', whiteSpace: 'nowrap' }}>R$ {tourData.price?.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                    </div>
-
-                    {(tourData.price_vip || tourData.price_exec) && (
-                      <div style={{ height: '1px', backgroundColor: '#e2e8f0', margin: '4px 0' }} />
-                    )}
-
-                    {tourData.price_vip && (
-                      <div 
-                        onClick={() => setPlanType('vip')}
-                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', padding: '0.2rem 0' }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
-                          <div style={{ 
-                            width: '18px', height: '18px', borderRadius: '50%', flexShrink: 0,
-                            border: `2px solid ${planType === 'vip' ? '#7EB53F' : '#cbd5e1'}`,
-                            display: 'flex', alignItems: 'center', justifyContent: 'center'
-                          }}>
-                            {planType === 'vip' && <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#7EB53F' }} />}
-                          </div>
-                          <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#000', whiteSpace: 'nowrap' }}>Plano VIP</span>
-                        </div>
-                        <span style={{ fontWeight: 800, fontSize: '0.9rem', marginLeft: '10px', whiteSpace: 'nowrap' }}>R$ {tourData.price_vip.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                      </div>
-                    )}
-
-                    {tourData.price_exec && (
-                      <div 
-                        onClick={() => setPlanType('executivo')}
-                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', padding: '0.2rem 0' }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
-                          <div style={{ 
-                            width: '18px', height: '18px', borderRadius: '50%', flexShrink: 0,
-                            border: `2px solid ${planType === 'executivo' ? '#7EB53F' : '#cbd5e1'}`,
-                            display: 'flex', alignItems: 'center', justifyContent: 'center'
-                          }}>
-                            {planType === 'executivo' && <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#7EB53F' }} />}
-                          </div>
-                          <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#000', whiteSpace: 'nowrap' }}>Plano Executivo</span>
-                        </div>
-                        <span style={{ fontWeight: 800, fontSize: '0.9rem', marginLeft: '10px', whiteSpace: 'nowrap' }}>R$ {tourData.price_exec.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                      </div>
-                    )}
-
-                    <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '1rem', marginTop: '0.25rem' }}>
-                      <p style={{ fontSize: '0.7rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '1rem', letterSpacing: '0.5px' }}>Serviços Populares Adicionais</p>
-                      
-                      {[
-                        { id: 'support', label: 'Seguro Viagem estendido', price: 45.00 },
-                        { id: 'pack', label: 'Pacote Lanche Regional', price: 85.00 },
-                        { id: 'transfer', label: 'Transfer Porta a Porta VIP', price: 120.00 }
-                      ].map(extra => (
-                        <div 
-                          key={extra.id} 
-                          onClick={() => {
-                            if (extras.find(e => e.id === extra.id)) {
-                              setExtras(extras.filter(e => e.id !== extra.id));
-                            } else {
-                              setExtras([...extras, extra]);
-                            }
-                          }}
-                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem', cursor: 'pointer' }}
-                        >
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1 }}>
-                            <div style={{ 
-                              width: '18px', height: '18px', borderRadius: '4px', flexShrink: 0,
-                              backgroundColor: extras.find(e => e.id === extra.id) ? '#7EB53F' : '#fff',
-                              border: `1.5px solid ${extras.find(e => e.id === extra.id) ? '#7EB53F' : '#cbd5e1'}`,
-                              display: 'flex', alignItems: 'center', justifyContent: 'center',
-                              color: '#fff'
-                            }}>
-                              {extras.find(e => e.id === extra.id) && <Check size={12} strokeWidth={4} />}
+                  {/* Dynamic Pricing Plans */}
+                  {plans.length > 0 && (
+                    <div style={{ backgroundColor: '#f8fafc', padding: '1.1rem', borderRadius: '15px', border: '1.5px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                      {plans.map((plan, idx) => (
+                        <React.Fragment key={plan.id}>
+                          {idx > 0 && <div style={{ height: '1px', backgroundColor: '#e2e8f0', margin: '2px 0' }} />}
+                          <div 
+                            onClick={() => setSelectedPlan(plan)}
+                            style={{ cursor: 'pointer', padding: '0.2rem 0' }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: plan.description ? '4px' : '0' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
+                                <div style={{ 
+                                  width: '18px', height: '18px', borderRadius: '50%', flexShrink: 0,
+                                  border: `2px solid ${selectedPlan?.id === plan.id ? '#7EB53F' : '#cbd5e1'}`,
+                                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                  marginTop: '2px'
+                                }}>
+                                  {selectedPlan?.id === plan.id && <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#7EB53F' }} />}
+                                </div>
+                                <span style={{ fontSize: '0.9rem', fontWeight: selectedPlan?.id === plan.id ? 800 : 600, color: selectedPlan?.id === plan.id ? '#000' : '#334155' }}>
+                                  {plan.name}
+                                </span>
+                              </div>
+                              <span style={{ fontWeight: 800, fontSize: '0.9rem', marginLeft: '10px', whiteSpace: 'nowrap' }}>
+                                R$ {Number(plan.price).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                              </span>
                             </div>
-                            <span style={{ fontSize: '0.78rem', fontWeight: 600, color: extras.find(e => e.id === extra.id) ? '#16a34a' : '#64748b' }}>{extra.label}</span>
+                            {plan.description && (
+                              <p style={{ marginLeft: '26px', fontSize: '0.75rem', color: '#64748b', lineHeight: 1.4 }}>
+                                {plan.description}
+                              </p>
+                            )}
                           </div>
-                          <span style={{ fontWeight: 700, fontSize: '0.8rem', color: extras.find(e => e.id === extra.id) ? '#ef4444' : 'inherit', marginLeft: '10px', whiteSpace: 'nowrap' }}>
-                            R$ {extra.price.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                          </span>
-                        </div>
+                        </React.Fragment>
                       ))}
                     </div>
-                  </div>
+                  )}
+
+                  {/* Extras Selection */}
+                  {extras.length > 0 && (
+                    <div style={{ marginTop: '0.5rem' }}>
+                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.75rem', color: '#334155' }}>SERVIÇOS ADICIONAIS</label>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                        {extras.map((extra) => (
+                          <div key={extra.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#f8fafc', padding: '0.85rem 1rem', borderRadius: '12px', border: '1.5px solid #e2e8f0', cursor: 'pointer' }} onClick={() => {
+                            if (selectedExtras.includes(extra.id)) {
+                              setSelectedExtras(selectedExtras.filter(id => id !== extra.id));
+                            } else {
+                              setSelectedExtras([...selectedExtras, extra.id]);
+                            }
+                          }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                              <div style={{ 
+                                width: '18px', height: '18px', borderRadius: '4px', border: `2px solid ${selectedExtras.includes(extra.id) ? '#7EB53F' : '#cbd5e1'}`,
+                                backgroundColor: selectedExtras.includes(extra.id) ? '#7EB53F' : 'transparent',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center'
+                              }}>
+                                {selectedExtras.includes(extra.id) && <Check size={14} color="#fff" strokeWidth={3} />}
+                              </div>
+                              <div>
+                                <div style={{ fontSize: '0.85rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                  {extra.name}
+                                  {extra.description && (
+                                    <div className="tooltip-container" style={{ position: 'relative', display: 'inline-block' }}>
+                                      <Info size={14} className="text-primary" />
+                                      <div className="tooltip-text">{extra.description}</div>
+                                    </div>
+                                  )}
+                                </div>
+                                <div style={{ fontSize: '0.75rem', color: '#7EB53F', fontWeight: 700 }}>+ R$ {Number(extra.price).toLocaleString('pt-BR')}</div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                     <div>
@@ -696,6 +758,47 @@ const TourDetails = () => {
             border-radius: 50px !important;
           }
           .hide-mobile { display: none !important; }
+        }
+        
+        .tooltip-container {
+          position: relative;
+          display: inline-flex;
+          align-items: center;
+        }
+        .tooltip-text {
+          visibility: hidden;
+          width: 200px;
+          background-color: #333;
+          color: #fff;
+          text-align: center;
+          border-radius: 8px;
+          padding: 8px;
+          position: absolute;
+          z-index: 1000;
+          bottom: 125%;
+          left: 50%;
+          margin-left: -100px;
+          opacity: 0;
+          transition: opacity 0.3s;
+          font-size: 0.75rem;
+          font-weight: 400;
+          line-height: 1.4;
+          pointer-events: none;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .tooltip-text::after {
+          content: "";
+          position: absolute;
+          top: 100%;
+          left: 50%;
+          margin-left: -5px;
+          border-width: 5px;
+          border-style: solid;
+          border-color: #333 transparent transparent transparent;
+        }
+        .tooltip-container:hover .tooltip-text {
+          visibility: visible;
+          opacity: 1;
         }
       `}</style>
     </div>

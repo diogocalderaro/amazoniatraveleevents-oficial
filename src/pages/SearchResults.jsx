@@ -13,7 +13,7 @@ import {
 // Import hero background image
 import imgSafari from '../assets/destinos/safari_amazonico.jpg';
 
-import { supabase } from '../lib/supabase';
+import { supabasePublic as supabase } from '../lib/supabase';
 
 const SearchResults = () => {
   const location = useLocation();

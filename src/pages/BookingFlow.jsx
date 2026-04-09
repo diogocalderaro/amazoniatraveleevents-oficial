@@ -10,7 +10,7 @@ import {
 
 import { useCart } from '../context/CartContext';
 
-import { supabase } from '../lib/supabase';
+import { supabasePublic as supabase } from '../lib/supabase';
 
 const BookingFlow = () => {
   const { cartItems, removeFromCart, clearCart, cartTotal } = useCart();
@@ -54,6 +54,17 @@ const BookingFlow = () => {
     }
   };
 
+  const [bookingToken, setBookingToken] = useState('');
+
+  const generateToken = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let token = '';
+    for (let i = 0; i < 6; i++) {
+      token += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return `AMZ-${token}`;
+  };
+
   const handleFinalizeBooking = async () => {
     if (!customerForm.firstName || !customerForm.lastName || !customerForm.phone || !customerForm.email) {
       alert('Por favor, preencha todos os campos obrigatórios.');
@@ -62,28 +73,76 @@ const BookingFlow = () => {
 
     setIsLoading(true);
     try {
-      // Create a reservation record for each item in the cart
-      const reservations = cartItems.map(item => ({
-        customer_name: `${customerForm.firstName} ${customerForm.lastName}`,
-        customer_phone: customerForm.phone,
-        customer_email: customerForm.email,
-        package_id: item.packageId || (typeof item.id === 'string' && item.id.length > 30 ? item.id : null),
-        package_title: item.title,
-        travel_date: item.date,
-        guests: item.guests,
-        total_price: item.price,
-        status: 'pendente',
-        notes: `Método de pagamento: ${paymentMethod}`
-      }));
+      const newToken = generateToken();
+      setBookingToken(newToken);
 
-      const { error } = await supabase.from('reservations').insert(reservations);
-      if (error) throw error;
+      // 1. Manage Customer in Database
+      const fullName = `${customerForm.firstName} ${customerForm.lastName}`;
+      
+      // Upsert customer based on email
+      const { data: customerData, error: customerError } = await supabase
+        .from('customers')
+        .upsert({ 
+          name: fullName, 
+          email: customerForm.email, 
+          phone: customerForm.phone 
+        }, { onConflict: 'email' })
+        .select()
+        .single();
+      
+      if (customerError) {
+        console.warn('Note: Customer upsert error (non-blocking):', customerError);
+      }
+
+      // 2. Prepare Reservations Data
+      const reservationsData = cartItems.map(item => {
+        // Try to get a valid UUID for package_id
+        let pkgId = item.packageId;
+        if (!pkgId && typeof item.id === 'string' && item.id.length > 30) {
+          pkgId = item.id;
+        }
+
+        return {
+          customer_name: fullName,
+          customer_phone: customerForm.phone,
+          customer_email: customerForm.email,
+          package_id: pkgId || null,
+          package_title: item.title,
+          travel_date: item.date,
+          guests: item.guests,
+          total_price: item.price,
+          status: 'pendente',
+          token: newToken,
+          notes: `Método de pagamento: ${paymentMethod}`
+        };
+      });
+
+      // 3. Save Reservations to Supabase
+      const { error: dbError } = await supabase.from('reservations').insert(reservationsData);
+      if (dbError) {
+        console.error('Database Error (Reservations):', dbError);
+        throw dbError;
+      }
+
+      // 4. Send confirmation email via Edge Function
+      try {
+        await supabase.functions.invoke('send-booking-confirmation', {
+          body: {
+            customer: customerForm,
+            reservations: reservationsData,
+            total: cartTotal,
+            token: newToken
+          }
+        });
+      } catch (emailErr) {
+        console.error('Non-critical: Error sending confirmation email:', emailErr);
+      }
 
       clearCart();
       setStep(3);
     } catch (err) {
-      console.error('Error creating reservation:', err);
-      alert('Erro ao processar sua reserva. Por favor, tente novamente.');
+      console.error('Critical Error in handleFinalizeBooking:', err);
+      alert(`Erro ao processar sua reserva: ${err.message || 'Erro desconhecido'}. Por favor, tente novamente.`);
     } finally {
       setIsLoading(false);
     }
@@ -530,7 +589,20 @@ const BookingFlow = () => {
               
               <div style={{ fontSize: '1.25rem', color: '#666', lineHeight: 1.8, marginBottom: '3rem', maxWidth: '600px', margin: '0 auto 3rem auto' }}>
                 <p>Recebemos seu pedido. Um consultor da <strong>Amazonia Travel</strong> entrará em contato em breve para confirmar todos os detalhes da sua aventura.</p>
-                <p style={{ marginTop: '1rem' }}>Verifique seu e-mail para mais detalhes e os vouchers da viagem.</p>
+                
+                <div style={{ 
+                  marginTop: '2rem', 
+                  backgroundColor: '#f8fafc', 
+                  padding: '1.5rem', 
+                  borderRadius: '16px', 
+                  border: '1px dashed #7EB53F',
+                  display: 'inline-block'
+                }}>
+                  <p style={{ fontSize: '0.9rem', color: '#64748b', marginBottom: '0.5rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px' }}>Código da Sua Reserva</p>
+                  <p style={{ fontSize: '2.5rem', fontWeight: 900, color: '#000', letterSpacing: '2px', fontFamily: 'monospace' }}>{bookingToken}</p>
+                </div>
+
+                <p style={{ marginTop: '2rem' }}>Verifique seu e-mail para mais detalhes e os vouchers da viagem.</p>
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem' }}>

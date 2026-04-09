@@ -23,7 +23,7 @@ const PainelReservas = () => {
       }
       
       if (search) {
-        query = query.or(`customer_name.ilike.%${search}%,customer_email.ilike.%${search}%,package_title.ilike.%${search}%`);
+        query = query.or(`customer_name.ilike.%${search}%,customer_email.ilike.%${search}%,package_title.ilike.%${search}%,token.ilike.%${search}%`);
       }
       
       const { data, error } = await query.order('created_at', { ascending: false });
@@ -96,7 +96,7 @@ const PainelReservas = () => {
       <div className="admin-card" style={{ marginBottom: '1rem', padding: '0.75rem 1rem' }}>
         <div className="search-input-wrapper" style={{ width: '100%' }}>
           <Search size={18} className="search-icon" />
-          <input className="search-input" style={{ width: '100%', borderRadius: '8px' }} placeholder="Buscar por nome, email, telefone ou pacote..." value={search} onChange={e => setSearch(e.target.value)} />
+          <input className="search-input" style={{ width: '100%', borderRadius: '8px' }} placeholder="Buscar por código (AMZ-...), nome, email ou pacote..." value={search} onChange={e => setSearch(e.target.value)} />
         </div>
       </div>
 
@@ -108,6 +108,7 @@ const PainelReservas = () => {
                 <th>Cliente</th>
                 <th>Pacote</th>
                 <th>Data Viagem</th>
+                <th>Token</th>
                 <th>Pessoas</th>
                 <th>Valor</th>
                 <th>Status</th>
@@ -128,6 +129,7 @@ const PainelReservas = () => {
                   </td>
                   <td className="cell-main">{r.package_title || '-'}</td>
                   <td className="cell-sub">{r.travel_date ? new Date(r.travel_date).toLocaleDateString('pt-BR') : '-'}</td>
+                  <td><strong style={{ letterSpacing: '1px', fontFamily: 'monospace' }}>{r.token || '-'}</strong></td>
                   <td>{r.guests}</td>
                   <td className="cell-money">R$ {(r.total_price || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
                   <td>
@@ -187,18 +189,27 @@ const PainelReservas = () => {
                 </section>
 
                 <section className="full-width" style={{ gridColumn: '1 / -1', background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--admin-border)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', alignItems: 'center' }}>
+                    
                     <div>
-                      <h3 style={{ margin: 0, fontSize: '0.9rem', color: 'var(--admin-text-secondary)' }}>Status da Reserva</h3>
+                      <h3 style={{ margin: 0, fontSize: '0.9rem', color: 'var(--admin-text-secondary)', textTransform: 'uppercase', letterSpacing: '1px' }}>Status da Reserva</h3>
                       <div style={{ marginTop: '0.5rem' }}>
                         <span className="status-badge" style={{ backgroundColor: statusColors[selected.status] + '20', color: statusColors[selected.status], fontSize: '0.9rem', padding: '0.4rem 1rem' }}>
                           {statusLabels[selected.status]}
                         </span>
                       </div>
                     </div>
+
+                    <div>
+                      <h3 style={{ margin: 0, fontSize: '0.9rem', color: 'var(--admin-text-secondary)', textTransform: 'uppercase', letterSpacing: '1px' }}>Token (Check-in)</h3>
+                      <div style={{ marginTop: '0.5rem', fontSize: '1.5rem', fontWeight: 900, letterSpacing: '2px', fontFamily: 'monospace', color: 'var(--admin-text)' }}>
+                        {selected.token || 'N/A'}
+                      </div>
+                    </div>
+
                     <div style={{ textAlign: 'right' }}>
-                      <h3 style={{ margin: 0, fontSize: '0.9rem', color: 'var(--admin-text-secondary)' }}>Valor Total</h3>
-                      <div className="cell-money" style={{ fontSize: '1.5rem', marginTop: '0.25rem' }}>
+                      <h3 style={{ margin: 0, fontSize: '0.9rem', color: 'var(--admin-text-secondary)', textTransform: 'uppercase', letterSpacing: '1px' }}>Valor Total</h3>
+                      <div className="cell-money" style={{ fontSize: '1.5rem', marginTop: '0.5rem' }}>
                         R$ {(selected.total_price || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </div>
                     </div>

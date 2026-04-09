@@ -10,7 +10,7 @@ import {
 import pkgHimalaya from '../assets/pkg-himalaya.png';
 import pkgEurope from '../assets/pkg-europe.png';
 import pkgBeach from '../assets/pkg-beach.png';
-import heroBg from '../assets/galeria/013.jpg';
+import heroBg from '../assets/bg-hero.jpg';
 
 // Import gallery images
 import gal001 from '../assets/galeria/001.jpg';
@@ -26,7 +26,7 @@ import gal011 from '../assets/galeria/011.jpg';
 import gal012 from '../assets/galeria/012.jpg';
 import gal013 from '../assets/galeria/013.jpg';
 
-import { supabase } from '../lib/supabase';
+import { supabasePublic as supabase } from '../lib/supabase';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -41,6 +41,9 @@ const Home = () => {
   
   const [packagesData, setPackagesData] = useState([]);
   const [blogPosts, setBlogPosts] = useState([]);
+  const [galleryItems, setGalleryItems] = useState([]);
+  const [faqsData, setFaqsData] = useState([]);
+  const [testimonials, setTestimonials] = useState([]);
 
   useEffect(() => {
     async function fetchPackages() {
@@ -65,8 +68,45 @@ const Home = () => {
       else setBlogPosts(data || []);
     }
 
+    async function fetchGallery() {
+      const { data, error } = await supabase
+        .from('gallery')
+        .select('*')
+        .eq('is_active', true)
+        .order('sort_order', { ascending: true });
+      
+      if (error) console.error('Error fetching gallery:', error);
+      else setGalleryItems(data || []);
+    }
+
+    async function fetchFaqs() {
+      const { data, error } = await supabase
+        .from('faq')
+        .select('*')
+        .eq('is_active', true)
+        .order('sort_order', { ascending: true });
+      
+      if (error) console.error('Error fetching faqs:', error);
+      else if (data && data.length > 0) setFaqsData(data);
+    }
+
+    async function fetchTestimonials() {
+      const { data, error } = await supabase
+        .from('comments')
+        .select('*')
+        .is('package_id', null)
+        .eq('is_approved', true)
+        .order('created_at', { ascending: false });
+      
+      if (error) console.error('Error fetching testimonials:', error);
+      else setTestimonials(data || []);
+    }
+
     fetchPackages();
     fetchBlog();
+    fetchGallery();
+    fetchFaqs();
+    fetchTestimonials();
   }, []);
 
   useEffect(() => {
@@ -131,7 +171,7 @@ const Home = () => {
     setActiveFaq(activeFaq === index ? null : index);
   };
 
-  const faqs = [
+  const faqs = faqsData.length > 0 ? faqsData : [
     { 
       question: "Quais serviços sua agência de viagens oferece?", 
       answer: "Oferecemos uma ampla gama de serviços, incluindo reserva de hotéis, passagens aéreas, passeios guiados personalizados, expedições pela selva, transporte fluvial e suporte local completo em Manaus e região." 
@@ -158,15 +198,15 @@ const Home = () => {
     }
   ];
 
-  const galleryImages = [
-    { src: gal001, title: "Encontro das Águas" },
-    { src: gal002, title: "Floresta Amazônica" },
-    { src: gal003, title: "Pôr do sol no Rio" },
-    { src: gal004, title: "Reflexos na Água" },
-    { src: gal005, title: "Rio Negro" },
-    { src: gal006, title: "Cachoeiras de Figueiredo" },
-    { src: gal008, title: "Cultura Local" },
-    { src: gal009, title: "Fauna Regional" }
+  const galleryImages = galleryItems.length > 0 ? galleryItems : [
+    { image_url: gal001, caption: "Encontro das Águas" },
+    { image_url: gal002, caption: "Floresta Amazônica" },
+    { image_url: gal003, caption: "Pôr do sol no Rio" },
+    { image_url: gal004, caption: "Reflexos na Água" },
+    { image_url: gal005, caption: "Rio Negro" },
+    { image_url: gal006, caption: "Cachoeiras de Figueiredo" },
+    { image_url: gal008, caption: "Cultura Local" },
+    { image_url: gal009, caption: "Fauna Regional" }
   ];
 
   return (
@@ -192,8 +232,8 @@ const Home = () => {
         >
           <div style={{ position: 'relative', maxWidth: '90%', maxHeight: '90%' }}>
             <img 
-              src={selectedImage.src} 
-              alt={selectedImage.title} 
+              src={selectedImage.image_url || selectedImage.src} 
+              alt={selectedImage.caption || selectedImage.title} 
               style={{ 
                 maxWidth: '100%',
                 maxHeight: '80vh',
@@ -215,7 +255,7 @@ const Home = () => {
               fontSize: '1.25rem',
               fontWeight: 600
             }}>
-              {selectedImage.title}
+              {selectedImage.caption || selectedImage.title}
             </div>
             <button style={{
               position: 'absolute',
@@ -614,40 +654,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Blog Section */}
-      {blogPosts.length > 0 && (
-        <section style={{ padding: '6rem 0', backgroundColor: '#fff' }}>
-          <div className="container">
-            <div className="section-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '3rem', flexWrap: 'wrap', gap: '1rem' }}>
-              <div style={{ textAlign: 'left' }}>
-                <h2 style={{ fontSize: '2.5rem', fontWeight: 900, marginBottom: '0.5rem' }}>Blog & Notícias</h2>
-                <p style={{ color: '#64748b' }}>Fique por dentro das novidades da região amazônica</p>
-              </div>
-              <Link to="/blog" style={{ color: '#000', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
-                Ver Todo o Blog <ArrowRight size={20} color="#FFD700" />
-              </Link>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
-              {blogPosts.map(post => (
-                <Link to={`/blog/${post.slug || post.id}`} key={post.id} style={{ textDecoration: 'none', color: 'inherit' }}>
-                  <div className="package-card-new" style={{ borderRadius: '20px', overflow: 'hidden', backgroundColor: '#f8fafc', height: '100%' }}>
-                    <div style={{ height: '200px', overflow: 'hidden' }}>
-                      <img src={post.image_url} alt={post.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    </div>
-                    <div style={{ padding: '1.5rem' }}>
-                      <div style={{ color: '#FFD700', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', marginBottom: '0.5rem' }}>{post.category}</div>
-                      <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '1rem', lineHeight: 1.3 }}>{post.title}</h3>
-                      <p style={{ color: '#64748b', fontSize: '0.9rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{post.excerpt}</p>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* FAQ Section */}
       <section style={{ backgroundColor: '#fff', padding: '6rem 0', position: 'relative', overflow: 'hidden' }}>
         <div className="container">
@@ -719,7 +725,7 @@ const Home = () => {
                 }}
                 className="gallery-item"
               >
-                <img src={img.src} alt={img.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <img src={img.image_url || img.src} alt={img.caption || img.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 <div style={{
                   position: 'absolute',
                   top: 0,
@@ -740,13 +746,47 @@ const Home = () => {
                 className="gallery-overlay"
                 >
                    <Search size={32} style={{ marginBottom: '1rem', color: '#fff' }} />
-                   <h4 style={{ fontWeight: 700, fontSize: '1.1rem', color: '#fff' }}>{img.title}</h4>
+                   <h4 style={{ fontWeight: 700, fontSize: '1.1rem', color: '#fff' }}>{img.caption || img.title}</h4>
                 </div>
               </div>
             ))}
           </div>
         </div>
       </section>
+
+      {/* Blog Section */}
+      {blogPosts.length > 0 && (
+        <section style={{ padding: '6rem 0', backgroundColor: '#f8fafc' }}>
+          <div className="container">
+            <div className="section-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '3rem', flexWrap: 'wrap', gap: '1rem' }}>
+              <div style={{ textAlign: 'left' }}>
+                <h2 style={{ fontSize: '2.5rem', fontWeight: 900, marginBottom: '0.5rem' }}>Blog & Notícias</h2>
+                <p style={{ color: '#64748b' }}>Fique por dentro das novidades da região amazônica</p>
+              </div>
+              <Link to="/blog" style={{ color: '#000', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
+                Ver Todo o Blog <ArrowRight size={20} color="#FFD700" />
+              </Link>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
+              {blogPosts.map(post => (
+                <Link to={`/blog/${post.slug || post.id}`} key={post.id} style={{ textDecoration: 'none', color: 'inherit' }}>
+                  <div className="package-card-new" style={{ borderRadius: '20px', overflow: 'hidden', backgroundColor: '#fff', height: '100%' }}>
+                    <div style={{ height: '200px', overflow: 'hidden' }}>
+                      <img src={post.image_url} alt={post.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                    <div style={{ padding: '1.5rem' }}>
+                      <div style={{ color: '#FFD700', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', marginBottom: '0.5rem' }}>{post.category}</div>
+                      <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '1rem', lineHeight: 1.3 }}>{post.title}</h3>
+                      <p style={{ color: '#64748b', fontSize: '0.9rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{post.excerpt}</p>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Testimonials Section */}
       <section style={{ padding: '5rem 0', backgroundColor: '#fff' }}>
@@ -761,56 +801,46 @@ const Home = () => {
             gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
             gap: '2.5rem'
           }}>
-             {/* Review 1 */}
-             <div style={{ backgroundColor: '#f8fafc', padding: '2.5rem', borderRadius: '20px', display: 'flex', flexDirection: 'column' }}>
-              <div style={{ display: 'flex', gap: '4px', color: '#fbbf24', marginBottom: '1.5rem' }}>
-                <Star size={18} fill="#fbbf24" /><Star size={18} fill="#fbbf24" /><Star size={18} fill="#fbbf24" /><Star size={18} fill="#fbbf24" /><Star size={18} fill="#fbbf24" />
-              </div>
-              <p style={{ color: '#475569', fontStyle: 'italic', marginBottom: '2rem', lineHeight: 1.8, fontSize: '1.1rem' }}>
-                "O passeio foi muito bem organizado e aproveitamos cada minuto. A equipe foi impecável e nos sentimos muito seguros o tempo todo. Recomendo muito!"
-              </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: 'auto' }}>
-                <div style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: '#FFD700', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#000' }}>RM</div>
-                <div>
-                  <div style={{ fontWeight: 800 }}>Ricardo Mendes</div>
-                  <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Viajante Solo</div>
+             {testimonials.length > 0 ? testimonials.map((review, idx) => (
+              <div key={idx} style={{ backgroundColor: '#f8fafc', padding: '2.5rem', borderRadius: '20px', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', gap: '4px', color: '#fbbf24', marginBottom: '1.5rem' }}>
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} size={18} fill={i < review.rating ? "#fbbf24" : "none"} strokeWidth={i < review.rating ? 0 : 2} />
+                  ))}
+                </div>
+                <p style={{ color: '#475569', fontStyle: 'italic', marginBottom: '2rem', lineHeight: 1.8, fontSize: '1.1rem' }}>
+                  "{review.content}"
+                </p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: 'auto' }}>
+                  <div style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: '#FFD700', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#000' }}>
+                    {review.author_name?.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 800 }}>{review.author_name}</div>
+                    <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{review.author_email?.includes('family') ? 'Viagem em Família' : 'Viajante'}</div>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            {/* Review 2 */}
-            <div style={{ backgroundColor: '#f8fafc', padding: '2.5rem', borderRadius: '20px', display: 'flex', flexDirection: 'column' }}>
-              <div style={{ display: 'flex', gap: '4px', color: '#fbbf24', marginBottom: '1.5rem' }}>
-                <Star size={18} fill="#fbbf24" /><Star size={18} fill="#fbbf24" /><Star size={18} fill="#fbbf24" /><Star size={18} fill="#fbbf24" /><Star size={18} fill="#fbbf24" />
-              </div>
-              <p style={{ color: '#475569', fontStyle: 'italic', marginBottom: '2rem', lineHeight: 1.8, fontSize: '1.1rem' }}>
-                "A Amazônia é mágica, mas com o guia certo tudo fica ainda melhor. O roteiro foi perfeito para conhecer a cultura local e as belezas naturais."
-              </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: 'auto' }}>
-                <div style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: '#FFD700', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#000' }}>AL</div>
-                <div>
-                  <div style={{ fontWeight: 800 }}>André Lima</div>
-                  <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Viajante Solo</div>
+             )) : (
+              <>
+                {/* Fallback to static if empty */}
+                <div style={{ backgroundColor: '#f8fafc', padding: '2.5rem', borderRadius: '20px', display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ display: 'flex', gap: '4px', color: '#fbbf24', marginBottom: '1.5rem' }}>
+                    <Star size={18} fill="#fbbf24" /><Star size={18} fill="#fbbf24" /><Star size={18} fill="#fbbf24" /><Star size={18} fill="#fbbf24" /><Star size={18} fill="#fbbf24" />
+                  </div>
+                  <p style={{ color: '#475569', fontStyle: 'italic', marginBottom: '2rem', lineHeight: 1.8, fontSize: '1.1rem' }}>
+                    "O passeio foi muito bem organizado e aproveitamos cada minuto. A equipe foi impecável e nos sentimos muito seguros o tempo todo. Recomendo muito!"
+                  </p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: 'auto' }}>
+                    <div style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: '#FFD700', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#000' }}>RM</div>
+                    <div>
+                      <div style={{ fontWeight: 800 }}>Ricardo Mendes</div>
+                      <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Viajante Solo</div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-
-            {/* Review 3 */}
-            <div style={{ backgroundColor: '#f8fafc', padding: '2.5rem', borderRadius: '20px', display: 'flex', flexDirection: 'column' }}>
-              <div style={{ display: 'flex', gap: '4px', color: '#fbbf24', marginBottom: '1.5rem' }}>
-                <Star size={18} fill="#fbbf24" /><Star size={18} fill="#fbbf24" /><Star size={18} fill="#fbbf24" /><Star size={18} fill="#fbbf24" /><Star size={18} fill="#fbbf24" />
-              </div>
-              <p style={{ color: '#475569', fontStyle: 'italic', marginBottom: '2rem', lineHeight: 1.8, fontSize: '1.1rem' }}>
-                "Viagem maravilhosa em família. Tudo pensado nos mínimos detalhes. Com certeza voltaremos para conhecer mais desse paraíso brasileiro."
-              </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: 'auto' }}>
-                <div style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: '#FFD700', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#000' }}>MS</div>
-                <div>
-                  <div style={{ fontWeight: 800 }}>Maria Santos</div>
-                  <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Viagem em Família</div>
-                </div>
-              </div>
-            </div>
+              </>
+             )}
           </div>
         </div>
       </section>

@@ -44,6 +44,9 @@ const PainelDestinoEditor = () => {
     gallery: []
   });
 
+  const [plans, setPlans] = useState([]);
+  const [extras, setExtras] = useState([]);
+
   const slugify = (text) => {
     if (!text) return '';
     return text
@@ -74,7 +77,9 @@ const PainelDestinoEditor = () => {
           included:package_included(*),
           excluded:package_excluded(*),
           gallery:package_gallery(*),
-          features:package_features(*)
+          features:package_features(*),
+          plans:package_plans(*),
+          extras:package_extras(*)
         `)
         .eq('id', id)
         .single();
@@ -99,6 +104,17 @@ const PainelDestinoEditor = () => {
           features: data.features?.map(f => f.text) || [],
           gallery: data.gallery?.sort((a, b) => a.sort_order - b.sort_order).map(g => g.image_url) || []
         });
+
+        const loadedPlans = (data.plans || []).sort((a, b) => a.sort_order - b.sort_order).map(p => ({
+          id: p.id,
+          name: p.name,
+          description: p.description || '',
+          price: (p.price * 100).toFixed(0)
+        }));
+        setPlans(loadedPlans.length > 0 ? loadedPlans : [{ name: 'Plano Regional', description: '', price: data.price ? (data.price * 100).toFixed(0) : '' }]);
+        
+        // Remove extras loading as it's being removed
+        setExtras([]);
       }
     } catch (err) {
       console.error('Error fetching package details:', err);
@@ -234,6 +250,23 @@ const PainelDestinoEditor = () => {
         }
       }
 
+      // Sync plans
+      await supabase.from('package_plans').delete().eq('package_id', pkgId);
+      if (plans.length > 0) {
+        const plansData = plans.map((p, i) => ({
+          package_id: pkgId,
+          name: p.name,
+          description: p.description,
+          price: parseFloat(p.price) / 100 || 0,
+          sort_order: i
+        }));
+        const { error: plansError } = await supabase.from('package_plans').insert(plansData);
+        if (plansError) console.error('Error updating plans:', plansError);
+      }
+
+      // Extras removed from editor
+      await supabase.from('package_extras').delete().eq('package_id', pkgId);
+
       navigate('/painel/destinos');
     } catch (err) {
       console.error(err);
@@ -271,7 +304,7 @@ const PainelDestinoEditor = () => {
           <button type="button" className={`tab-btn ${activeTab === 'precos' ? 'active' : ''}`} onClick={() => setActiveTab('precos')}>Planos e Preços</button>
           <button type="button" className={`tab-btn ${activeTab === 'galeria' ? 'active' : ''}`} onClick={() => setActiveTab('galeria')}>Galeria</button>
           <button type="button" className={`tab-btn ${activeTab === 'roteiro' ? 'active' : ''}`} onClick={() => setActiveTab('roteiro')}>Itinerário</button>
-          <button type="button" className={`tab-btn ${activeTab === 'politicas' ? 'active' : ''}`} onClick={() => setActiveTab('politicas')}>Políticas e Extras</button>
+          <button type="button" className={`tab-btn ${activeTab === 'politicas' ? 'active' : ''}`} onClick={() => setActiveTab('politicas')}>Políticas</button>
         </div>
 
         <form onSubmit={handleSubmit} className="admin-tab-content">
@@ -396,7 +429,13 @@ const PainelDestinoEditor = () => {
                       onChange={handleInputChange} 
                       rows="3" 
                       placeholder="Principal elogio de um cliente..." 
-                      style={{ background: '#fff', color: '#000' }}
+                      style={{ 
+                        background: 'var(--admin-bg-base)', 
+                        color: 'var(--admin-text-primary)',
+                        border: '1px solid var(--admin-border)',
+                        borderRadius: '8px',
+                        padding: '0.75rem'
+                      }}
                     />
                   </div>
                   <div className="form-group" style={{ marginTop: '1rem' }}>
@@ -406,7 +445,12 @@ const PainelDestinoEditor = () => {
                       value={formData.featured_review_author} 
                       onChange={handleInputChange} 
                       placeholder="Nome do cliente" 
-                      style={{ background: '#fff', color: '#000' }}
+                      style={{ 
+                        background: 'var(--admin-bg-base)', 
+                        color: 'var(--admin-text-primary)',
+                        border: '1px solid var(--admin-border)',
+                        borderRadius: '8px'
+                      }}
                     />
                   </div>
                 </div>
@@ -417,28 +461,12 @@ const PainelDestinoEditor = () => {
           {activeTab === 'precos' && (
             <div className="tab-pane">
               <div className="admin-card">
-                <div className="card-header"><h3><DollarSign size={18} /> Configuração de Planos</h3></div>
+                <div className="card-header"><h3><DollarSign size={18} /> Configuração de Preço</h3></div>
+                
                 <div className="form-row">
-                  <div className="form-group">
-                    <label>Preço Base (Plano Regional) *</label>
-                    <div style={{ position: 'relative' }}>
-                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--admin-text-muted)', fontWeight: 600 }}>R$</span>
-                      <input name="price" value={formatBRL(formData.price)} onChange={handlePriceChange} required style={{ paddingLeft: '2.5rem' }} placeholder="0,00" />
-                    </div>
-                  </div>
-                  <div className="form-group">
-                    <label>Preço Plano VIP</label>
-                    <div style={{ position: 'relative' }}>
-                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--admin-text-muted)', fontWeight: 600 }}>R$</span>
-                      <input name="price_vip" value={formatBRL(formData.price_vip)} onChange={handlePriceChange} style={{ paddingLeft: '2.5rem' }} placeholder="0,00" />
-                    </div>
-                  </div>
-                  <div className="form-group">
-                    <label>Preço Plano Executivo</label>
-                    <div style={{ position: 'relative' }}>
-                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--admin-text-muted)', fontWeight: 600 }}>R$</span>
-                      <input name="price_exec" value={formatBRL(formData.price_exec)} onChange={handlePriceChange} style={{ paddingLeft: '2.5rem' }} placeholder="0,00" />
-                    </div>
+                  <div className="form-group" style={{ flex: 1.5 }}>
+                    <label>Preço para Exibição (Texto Livre)</label>
+                    <input name="price_display" value={formData.price_display} onChange={handleInputChange} placeholder="Sob Consulta / A partir de R$ 350" />
                   </div>
                   <div className="form-group">
                     <label>Preço Especial (Crianças)</label>
@@ -447,24 +475,93 @@ const PainelDestinoEditor = () => {
                       <input name="price_child" value={formatBRL(formData.price_child)} onChange={handlePriceChange} style={{ paddingLeft: '2.5rem' }} placeholder="0,00" />
                     </div>
                   </div>
-                </div>
-
-                <div className="form-row" style={{ marginTop: '1rem' }}>
-                  <div className="form-group">
-                    <label>Preço para Exibição (Texto Livre)</label>
-                    <input name="price_display" value={formData.price_display} onChange={handleInputChange} placeholder="Sob Consulta / A partir de R$ 350" />
-                  </div>
-                  <div className="form-group">
-                    <label>Parcelamento (Máx Vezes)</label>
+                  <div className="form-group" style={{ width: '120px' }}>
+                    <label>Parcelamento</label>
                     <input name="installments" type="number" value={formData.installments} onChange={handleInputChange} placeholder="Ex: 10" />
                   </div>
                   <div className="form-group">
-                    <label>Valor da Parcela</label>
+                    <label>Valor Parcela</label>
                     <div style={{ position: 'relative' }}>
                       <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--admin-text-muted)', fontWeight: 600 }}>R$</span>
                       <input name="installment_price" value={formatBRL(formData.installment_price)} onChange={handlePriceChange} style={{ paddingLeft: '2.5rem' }} placeholder="0,00" />
                     </div>
                   </div>
+                </div>
+
+                <div className="card-header" style={{ marginTop: '1.5rem', borderTop: '1px solid var(--admin-border)', paddingTop: '1.5rem' }}><h3><DollarSign size={18} /> PLANOS DE PREÇO</h3></div>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  {plans.map((plan, idx) => (
+                    <div key={idx} style={{ padding: '1.25rem', borderRadius: '12px', border: '1px solid var(--admin-border)', backgroundColor: 'var(--admin-bg-secondary)' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 200px auto', gap: '1rem', marginBottom: '0.75rem', alignItems: 'flex-start' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                          {idx === 0 && <label style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--admin-text-muted)', fontWeight: 700 }}>Plano Padrão (Visível por Defeito)</label>}
+                          <input 
+                            value={plan.name} 
+                            onChange={(e) => { const updated = [...plans]; updated[idx].name = e.target.value; setPlans(updated); }}
+                            placeholder={idx === 0 ? "Ex: Plano Econômico" : "Ex: Premium / VIP"} 
+                            style={{ 
+                              fontWeight: 600,
+                              background: 'var(--admin-bg-base)',
+                              border: '1px solid var(--admin-border)',
+                              color: 'var(--admin-text-primary)',
+                              padding: '0.6rem 0.75rem',
+                              borderRadius: '8px'
+                            }}
+                          />
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                          {idx === 0 && <label style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--admin-text-muted)', fontWeight: 700 }}>Valor</label>}
+                          <div style={{ position: 'relative' }}>
+                            <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--admin-text-muted)', fontWeight: 600 }}>R$</span>
+                            <input 
+                              value={formatBRL(plan.price)} 
+                              onChange={(e) => { const raw = e.target.value.replace(/\D/g, ''); const updated = [...plans]; updated[idx].price = raw; setPlans(updated); }}
+                              style={{ 
+                                paddingLeft: '2.5rem',
+                                background: 'var(--admin-bg-base)',
+                                border: '1px solid var(--admin-border)',
+                                color: 'var(--admin-text-primary)',
+                                height: '38px',
+                                borderRadius: '8px',
+                                width: '100%'
+                              }}
+                              placeholder="0,00"
+                            />
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'center' }}>
+                          {idx === 0 && <label style={{ fontSize: '0.75rem', opacity: 0 }}>Ação</label>}
+                          {idx !== 0 ? (
+                            <button type="button" className="btn-icon btn-danger" onClick={() => setPlans(plans.filter((_, i) => i !== idx))} style={{ marginTop: '0.2rem' }}>
+                              <Trash2 size={16} />
+                            </button>
+                          ) : (
+                            <div style={{ width: '36px' }}></div>
+                          )}
+                        </div>
+                      </div>
+                      <textarea 
+                        value={plan.description || ''}
+                        onChange={(e) => { const updated = [...plans]; updated[idx].description = e.target.value; setPlans(updated); }}
+                        placeholder="O que este plano inclui? (Ex: Almoço e Transfer inclusos)"
+                        rows="2"
+                        style={{ 
+                          fontSize: '0.85rem', 
+                          width: '100%', 
+                          resize: 'vertical',
+                          background: 'var(--admin-bg-base)',
+                          border: '1px solid var(--admin-border)',
+                          color: 'var(--admin-text-primary)',
+                          padding: '0.75rem',
+                          borderRadius: '8px'
+                        }}
+                      />
+                    </div>
+                  ))}
+                  <button type="button" className="admin-btn admin-btn-secondary btn-sm" style={{ width: 'fit-content' }} onClick={() => setPlans([...plans, { name: '', description: '', price: '' }])}>
+                    <Plus size={14} /> Adicionar Plano
+                  </button>
                 </div>
               </div>
 
@@ -481,8 +578,10 @@ const PainelDestinoEditor = () => {
                   </div>
                 </div>
               </div>
+
+
             </div>
-          )}
+          ) }
 
           {activeTab === 'galeria' && (
             <div className="tab-pane">
@@ -536,7 +635,13 @@ const PainelDestinoEditor = () => {
                               }
                               setFormData(p => ({ ...p, itinerary: newList }));
                             }}
-                            style={{ height: '42px', minWidth: '100px' }}
+                            style={{ 
+                              height: '42px', 
+                              minWidth: '100px',
+                              background: 'var(--admin-bg-base)',
+                              border: '1px solid var(--admin-border)',
+                              color: 'var(--admin-text-primary)'
+                            }}
                           >
                             <option value="dia">📅 Dia</option>
                             <option value="hora">⏰ Hora</option>
@@ -553,7 +658,15 @@ const PainelDestinoEditor = () => {
                               setFormData(p => ({ ...p, itinerary: newList }));
                             }} 
                             placeholder={it.type === 'hora' ? "08:00" : "Dia 1"}
-                            style={{ textAlign: 'center', fontWeight: 700, height: '42px', background: '#fff', color: '#000', border: '1px solid #ced4da' }}
+                            style={{ 
+                              textAlign: 'center', 
+                              fontWeight: 700, 
+                              height: '42px', 
+                              background: 'var(--admin-bg-base)', 
+                              color: 'var(--admin-text-primary)', 
+                              border: '1px solid var(--admin-border)',
+                              borderRadius: '8px'
+                            }}
                           />
                         </div>
 
@@ -566,20 +679,24 @@ const PainelDestinoEditor = () => {
                               newList[i].title = e.target.value;
                               setFormData(p => ({ ...p, itinerary: newList }));
                             }} 
-                            placeholder="Ex: Chegada ao Aeroporto e Transfer"
-                            style={{ height: '42px', background: '#fff', color: '#000', border: '1px solid #ced4da' }}
+                            placeholder="Ex: Chegada em Manaus / Visita ao Encontro das Águas"
+                            style={{ 
+                              height: '42px',
+                              background: 'var(--admin-bg-base)', 
+                              color: 'var(--admin-text-primary)', 
+                              border: '1px solid var(--admin-border)',
+                              borderRadius: '8px'
+                            }}
                           />
                         </div>
 
-                        <div style={{ display: 'flex', alignItems: 'flex-end' }}>
-                          <button type="button" className="btn-icon btn-danger" onClick={() => updateList('itinerary', i, null)} style={{ height: '42px', width: '42px' }}>
-                            <Trash2 size={18} />
-                          </button>
-                        </div>
+                        <button type="button" className="btn-icon btn-danger" onClick={() => updateList('itinerary', i, null)} style={{ alignSelf: 'flex-end', height: '42px' }}>
+                          <Trash2 size={16} />
+                        </button>
                       </div>
 
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                        <label style={{ fontSize: '0.7rem', textTransform: 'uppercase', color: 'var(--admin-text-muted)' }}>Descrição detalhada</label>
+                        <label style={{ fontSize: '0.7rem', textTransform: 'uppercase', color: 'var(--admin-text-muted)' }}>Descrição Detalhada</label>
                         <textarea 
                           value={it.desc} 
                           onChange={(e) => {
@@ -587,9 +704,16 @@ const PainelDestinoEditor = () => {
                             newList[i].desc = e.target.value;
                             setFormData(p => ({ ...p, itinerary: newList }));
                           }} 
-                          placeholder="Descreva o que acontecerá nesta etapa..."
                           rows="3"
-                          style={{ resize: 'vertical', background: '#fff', color: '#000', border: '1px solid #ced4da' }}
+                          placeholder="Descreva as atividades deste dia ou hora..." 
+                          style={{ 
+                            width: '100%', 
+                            background: 'var(--admin-bg-base)', 
+                            color: 'var(--admin-text-primary)', 
+                            border: '1px solid var(--admin-border)',
+                            borderRadius: '8px',
+                            padding: '10px'
+                          }}
                         />
                       </div>
                     </div>

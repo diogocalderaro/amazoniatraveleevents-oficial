@@ -7,8 +7,6 @@ const PainelDestinos = () => {
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const token = localStorage.getItem('admin_token');
-  const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
 
   useEffect(() => { fetchPackages(); }, []);
 
@@ -20,7 +18,10 @@ const PainelDestinos = () => {
         .select('*')
         .order('created_at', { ascending: false });
       
-      if (error) throw error;
+      console.log('Fetched packages counts:', data?.length);
+      if (error) {
+        console.error('Supabase error fetching packages:', error);
+      }
       setPackages(data || []);
     } catch (err) { 
       console.error('Error fetching packages:', err); 

@@ -9,9 +9,6 @@ const PainelBlog = () => {
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState({ title: '', excerpt: '', content: '', image_url: '', author: 'Admin', category: '', is_published: false });
-  const token = localStorage.getItem('admin_token');
-  const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
-
   const [categories, setCategories] = useState([]);
 
   useEffect(() => { 
@@ -26,7 +23,14 @@ const PainelBlog = () => {
         .select('*')
         .order('name');
       
-      if (error) throw error;
+      if (error) {
+        if (error.message?.includes('JWT') || error.code === 'PGRST301') {
+          await supabase.auth.signOut();
+          window.location.href = '/login';
+          return;
+        }
+        throw error;
+      }
       setCategories(data || []);
     } catch (err) { 
       console.error('Error fetching categories:', err); 
@@ -44,7 +48,14 @@ const PainelBlog = () => {
         .select('*')
         .order('created_at', { ascending: false });
       
-      if (error) throw error;
+      if (error) {
+        if (error.message?.includes('JWT') || error.code === 'PGRST301') {
+          await supabase.auth.signOut();
+          window.location.href = '/login';
+          return;
+        }
+        throw error;
+      }
       setPosts(data || []);
     } catch (err) { 
       console.error('Error fetching posts:', err); 

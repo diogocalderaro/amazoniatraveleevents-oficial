@@ -7,4 +7,15 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Supabase URL and Anon Key are required in environment variables');
 }
 
+// Admin client: manages auth sessions for the admin panel
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+// Public client: never stores sessions, always uses anon key directly.
+// Used for all public-facing pages so they never fail during admin token refresh.
+export const supabasePublic = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: false,
+    autoRefreshToken: false,
+    detectSessionInUrl: false,
+  },
+});

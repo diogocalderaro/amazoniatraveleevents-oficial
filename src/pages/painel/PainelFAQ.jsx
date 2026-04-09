@@ -17,7 +17,7 @@ const PainelFAQ = () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('faqs')
+        .from('faq')
         .select('*')
         .order('sort_order', { ascending: true });
       
@@ -32,7 +32,7 @@ const PainelFAQ = () => {
 
   function openCreate() {
     setEditing(null);
-    setForm({ question: '', answer: '', category: 'Geral', sort_order: 0 });
+    setForm({ question: '', answer: '', category: 'Geral', sort_order: items.length });
     setShowModal(true);
   }
 
@@ -47,13 +47,13 @@ const PainelFAQ = () => {
     try {
       if (editing) {
         const { error } = await supabase
-          .from('faqs')
+          .from('faq')
           .update(form)
           .eq('id', editing.id);
         if (error) throw error;
       } else {
         const { error } = await supabase
-          .from('faqs')
+          .from('faq')
           .insert(form);
         if (error) throw error;
       }
@@ -69,7 +69,7 @@ const PainelFAQ = () => {
     if (!confirm('Excluir esta pergunta?')) return;
     try {
       const { error } = await supabase
-        .from('faqs')
+        .from('faq')
         .delete()
         .eq('id', id);
       if (error) throw error;
@@ -82,7 +82,7 @@ const PainelFAQ = () => {
   async function toggleActive(item) {
     try {
       const { error } = await supabase
-        .from('faqs')
+        .from('faq')
         .update({ is_active: !item.is_active })
         .eq('id', item.id);
       if (error) throw error;
@@ -101,13 +101,17 @@ const PainelFAQ = () => {
     const item = list.splice(draggedIndex, 1)[0];
     list.splice(droppedIndex, 0, item);
 
-    // Update locally for instant feedback
-    setItems(list.map((it, idx) => ({ ...it, sort_order: idx + 1 })));
+    const updatedList = list.map((it, idx) => ({ ...it, sort_order: idx }));
+    setItems(updatedList);
 
-    // Send all updates to backend
     try {
+      const updates = updatedList.map(it => ({
+        id: it.id,
+        sort_order: it.sort_order
+      }));
+
       const { error } = await supabase
-        .from('faqs')
+        .from('faq')
         .upsert(updates);
       if (error) throw error;
     } catch (err) { 

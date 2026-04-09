@@ -184,8 +184,8 @@ const Footer = () => {
             © Amazônia Travel e Events 2026. Todos os direitos reservados.
           </p>
           <div style={{ display: 'flex', gap: '2rem' }}>
-            <Link to="#" style={{ color: 'rgba(255,255,255,0.5)', textDecoration: 'none', fontSize: '0.9rem' }}>Política de Privacidade</Link>
-            <Link to="#" style={{ color: 'rgba(255,255,255,0.5)', textDecoration: 'none', fontSize: '0.9rem' }}>Termos de Uso</Link>
+            <Link to="/politica-de-privacidade" style={{ color: 'rgba(255,255,255,0.5)', textDecoration: 'none', fontSize: '0.9rem' }}>Política de Privacidade</Link>
+            <Link to="/termos-de-uso" style={{ color: 'rgba(255,255,255,0.5)', textDecoration: 'none', fontSize: '0.9rem' }}>Termos de Uso</Link>
           </div>
         </div>
       </div>

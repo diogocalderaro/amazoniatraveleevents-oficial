@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import {
   LayoutDashboard,
@@ -41,6 +42,17 @@ const Sidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }) => {
   const { logout } = useAuth();
   const location = useLocation();
   const [openSubmenus, setOpenSubmenus] = useState([]);
+  const [pendingCount, setPendingCount] = useState(0);
+
+  const fetchPendingCount = async () => {
+    try {
+      const { count } = await supabase
+        .from('reservations')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'pendente');
+      setPendingCount(count || 0);
+    } catch (err) {}
+  };
 
   const toggleSubmenu = (label) => {
     setOpenSubmenus(prev => 
@@ -54,6 +66,18 @@ const Sidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }) => {
         setOpenSubmenus(prev => prev.includes(item.label) ? prev : [...prev, item.label]);
       }
     });
+
+    fetchPendingCount();
+    
+    const sub = supabase.channel('sidebar-reservations')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'reservations' }, () => {
+        fetchPendingCount();
+      })
+      .subscribe();
+      
+    return () => {
+      supabase.removeChannel(sub);
+    };
   }, [location.pathname]);
 
   return (
@@ -119,9 +143,23 @@ const Sidebar = ({ collapsed, onToggle, mobileOpen, onMobileClose }) => {
                     className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
                     onClick={onMobileClose}
                     title={collapsed ? item.label : ''}
+                    style={{ position: 'relative' }}
                   >
                     <item.icon size={20} />
                     {!collapsed && <span>{item.label}</span>}
+                    {item.label === 'Reservas' && pendingCount > 0 && (
+                      <span style={{
+                        position: 'absolute',
+                        right: collapsed ? '8px' : '12px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        width: '8px',
+                        height: '8px',
+                        backgroundColor: 'var(--admin-success)',
+                        borderRadius: '50%',
+                        boxShadow: '0 0 0 2px var(--admin-bg-base)'
+                      }} />
+                    )}
                   </NavLink>
                 )}
               </li>

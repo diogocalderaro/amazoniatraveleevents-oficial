@@ -1,46 +1,74 @@
 import React, { useState, useEffect } from 'react';
 import { Check, X, Trash2, MessageCircle, Star, Filter, Plus, Edit, Save } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
 
 const PainelComentarios = () => {
   const [comments, setComments] = useState([]);
+  const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState(null);
-  const [form, setForm] = useState({ author_name: '', author_email: '', content: '', rating: 5, is_approved: true });
+  const [form, setForm] = useState({ author_name: '', author_email: '', content: '', rating: 5, is_approved: true, package_id: null });
   const token = localStorage.getItem('admin_token');
-  const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
 
-  useEffect(() => { fetchComments(); }, [filter]);
+  useEffect(() => { 
+    fetchComments(); 
+    fetchPackages();
+  }, [filter]);
+
+  async function fetchPackages() {
+    const { data } = await supabase.from('packages').select('id, title');
+    setPackages(data || []);
+  }
 
   async function fetchComments() {
     try {
-      const params = filter !== 'all' ? `?approved=${filter === 'approved' ? 1 : 0}` : '';
-      const res = await fetch(`/api/comments${params}`, { headers });
-      if (res.ok) setComments(await res.json());
+      setLoading(true);
+      let query = supabase.from('comments').select('*').order('created_at', { ascending: false });
+      
+      if (filter === 'approved') query = query.eq('is_approved', true);
+      if (filter === 'pending') query = query.eq('is_approved', false);
+
+      const { data, error } = await query;
+      if (error) throw error;
+      setComments(data || []);
     } catch (err) { console.error(err); }
     finally { setLoading(false); }
   }
 
   function openCreate() {
     setEditing(null);
-    setForm({ author_name: '', author_email: '', content: '', rating: 5, is_approved: true });
+    setForm({ author_name: '', author_email: '', content: '', rating: 5, is_approved: true, package_id: null });
     setShowModal(true);
   }
 
   function openEdit(c) {
     setEditing(c);
-    setForm({ author_name: c.author_name, author_email: c.author_email || '', content: c.content, rating: c.rating, is_approved: !!c.is_approved });
+    setForm({ 
+      author_name: c.author_name, 
+      author_email: c.author_email || '', 
+      content: c.content, 
+      rating: c.rating, 
+      is_approved: !!c.is_approved,
+      package_id: c.package_id || null
+    });
     setShowModal(true);
   }
 
   async function handleSave(e) {
     e.preventDefault();
     try {
+      // Find package title if package_id set
+      const pkgTitle = form.package_id ? packages.find(p => p.id === form.package_id)?.title : 'Testemunho Geral';
+      const payload = { ...form, package_title: pkgTitle };
+
       if (editing) {
-        await fetch(`/api/comments/${editing.id}`, { method: 'PUT', headers, body: JSON.stringify(form) });
+        const { error } = await supabase.from('comments').update(payload).eq('id', editing.id);
+        if (error) throw error;
       } else {
-        await fetch('/api/comments', { method: 'POST', headers, body: JSON.stringify(form) });
+        const { error } = await supabase.from('comments').insert(payload);
+        if (error) throw error;
       }
       setShowModal(false);
       fetchComments();
@@ -48,18 +76,18 @@ const PainelComentarios = () => {
   }
 
   async function approve(id) {
-    await fetch(`/api/comments/${id}/approve`, { method: 'PUT', headers });
+    await supabase.from('comments').update({ is_approved: true }).eq('id', id);
     fetchComments();
   }
 
   async function reject(id) {
-    await fetch(`/api/comments/${id}/reject`, { method: 'PUT', headers });
+    await supabase.from('comments').update({ is_approved: false }).eq('id', id);
     fetchComments();
   }
 
   async function handleDelete(id) {
     if (!confirm('Excluir este comentário?')) return;
-    await fetch(`/api/comments/${id}`, { method: 'DELETE', headers });
+    await supabase.from('comments').delete().eq('id', id);
     fetchComments();
   }
 
@@ -146,6 +174,15 @@ const PainelComentarios = () => {
               <div className="form-group">
                 <label>E-mail</label>
                 <input type="email" value={form.author_email} onChange={e => setForm({...form, author_email: e.target.value})} placeholder="cliente@email.com" />
+              </div>
+              <div className="form-group">
+                <label>Vincular a um Passeio (opcional)</label>
+                <select value={form.package_id || ''} onChange={e => setForm({...form, package_id: e.target.value || null})}>
+                  <option value="">-- Testemunho Geral (Home) --</option>
+                  {packages.map(p => (
+                    <option key={p.id} value={p.id}>{p.title}</option>
+                  ))}
+                </select>
               </div>
               <div className="form-group">
                 <label>Avaliação (1-5)</label>
