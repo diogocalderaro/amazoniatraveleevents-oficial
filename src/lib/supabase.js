@@ -8,7 +8,13 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 // Admin client: manages auth sessions for the admin panel
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    storageKey: 'admin_panel_auth_token',
+    persistSession: true,
+    autoRefreshToken: true
+  }
+});
 
 // Public client: never stores sessions, always uses anon key directly.
 // Used for all public-facing pages so they never fail during admin token refresh.

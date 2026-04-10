@@ -13,16 +13,20 @@ const PainelDashboard = () => {
   async function fetchDashboard() {
     try {
       setLoading(true);
+      let fetchErrors = [];
       
-      // 1. Total Revenue (sum of total_price for confirmada and concluida)
-      const { data: revData } = await supabase
+      const { data: revData, error: revError } = await supabase
         .from('reservations')
         .select('total_price, created_at')
         .in('status', ['confirmada', 'concluida']);
       
+      if (revError) {
+        console.error("Rev Error:", revError);
+        fetchErrors.push(revError.message);
+      }
+      
       const totalRevenue = revData?.reduce((acc, r) => acc + (r.total_price || 0), 0) || 0;
 
-      // Calculate monthly revenue (Last 6 months)
       const monthlyData = {};
       const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
       const today = new Date();
@@ -43,29 +47,38 @@ const PainelDashboard = () => {
       }
       const monthlyRevenue = Object.entries(monthlyData).map(([month, revenue]) => ({ month, revenue }));
 
-      // 2. Total Reservations
-      const { count: totalReservations } = await supabase
+      const { count: totalReservations, error: err1 } = await supabase
         .from('reservations')
         .select('*', { count: 'exact', head: true });
+        
+      if (err1) fetchErrors.push("Total Reservas: " + err1.message);
 
-      // 3. Pending Reservations
-      const { count: pendingReservations } = await supabase
+      const { count: pendingReservations, error: err2 } = await supabase
         .from('reservations')
         .select('*', { count: 'exact', head: true })
         .eq('status', 'pendente');
+        
+      if (err2) fetchErrors.push("Pendentes: " + err2.message);
 
-      // 4. Total Packages (active)
-      const { count: totalPackages } = await supabase
+      const { count: totalPackages, error: err3 } = await supabase
         .from('packages')
         .select('*', { count: 'exact', head: true })
         .eq('is_active', true);
+        
+      if (err3) fetchErrors.push("Pacotes: " + err3.message);
 
-      // 5. Recent Reservations
-      const { data: recentReservations } = await supabase
+      const { data: recentReservations, error: err4 } = await supabase
         .from('reservations')
         .select('*')
         .order('created_at', { ascending: false })
         .limit(5);
+        
+      if (err4) fetchErrors.push("Recentes: " + err4.message);
+        
+      if (fetchErrors.length > 0) {
+        console.error('Erros no fetch do dashboard:', fetchErrors);
+        alert('Erro ao carregar os dados do banco: ' + fetchErrors.join(' | '));
+      }
 
       setData({
         stats: {

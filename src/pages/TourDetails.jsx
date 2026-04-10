@@ -4,7 +4,7 @@ import {
   MapPin, Star, Clock, Calendar, Check, Users, Navigation, 
   ChevronRight, Share2, Heart, ShieldCheck, Info, FileText, 
   Image as ImageIcon, ListChecks, Map, MessageSquare, Plus, ShoppingCart,
-  CheckCircle2, X, ArrowRight
+  CheckCircle2, X, ArrowRight, Minus
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
@@ -148,14 +148,15 @@ const TourDetails = () => {
   const perPersonPrice = (adults + children) > 0 ? totalPrice / (adults + children) : 0;
 
   const handleAddToCart = () => {
-    if (!selectedDate) return;
-    
+    // Prepare final date for cart
+    const finalDate = selectedDate || tourData.travel_date || 'A combinar';
+
     // Simulate cart add animation
     const cartData = {
       id: tourData.id,
       title: tourData.title,
       duration: tourData.duration,
-      date: selectedDate,
+      date: finalDate,
       guests: `${adults} adultos - ${children} crianças`,
       price: totalPrice,
       plan: selectedPlan?.name || 'Padrão',
@@ -193,34 +194,7 @@ const TourDetails = () => {
 
   return (
     <div className="tour-details-page" style={{ backgroundColor: '#f8fafc' }}>
-      {/* Hero Section */}
-      <section style={{
-        position: 'relative',
-        height: '60vh',
-        minHeight: '400px',
-        backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5)), url(${tourData.gallery[0] || tourData.image_url})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        display: 'flex',
-        alignItems: 'center',
-        color: '#fff'
-      }}>
-        <div className="container">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1.5rem', backgroundColor: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(10px)', width: 'fit-content', padding: '0.5rem 1.25rem', borderRadius: '50px', fontSize: '0.9rem', fontWeight: 600 }}>
-             <MapPin size={16} /> {tourData.location}
-          </div>
-          <h1 style={{ 
-            fontSize: 'clamp(2.5rem, 6vw, 4rem)', 
-            fontWeight: 800, 
-            lineHeight: 1.1,
-            textShadow: '0 4px 20px rgba(0,0,0,0.6)',
-            maxWidth: '800px',
-            color: '#fff'
-          }}>
-            {tourData.title}
-          </h1>
-        </div>
-      </section>
+
 
       {/* Internal Navigation Tabs */}
       <div style={{ backgroundColor: '#fff', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: '70px', zIndex: 100 }}>
@@ -266,8 +240,47 @@ const TourDetails = () => {
 
       <div className="container" style={{ padding: '4rem 0' }}>
          <div className="tour-details-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 420px', gap: '4rem', alignItems: 'start' }}>
-            {/* Left Column Content */}
             <div>
+               {/* Title, Location and Main Image Block */}
+               <div style={{ marginBottom: '4rem' }}>
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '8px', 
+                    marginBottom: '1rem', 
+                    color: '#7EB53F', 
+                    fontWeight: 800, 
+                    fontSize: '0.9rem', 
+                    textTransform: 'uppercase', 
+                    letterSpacing: '1px' 
+                  }}>
+                    <MapPin size={18} /> {tourData.location}
+                  </div>
+                  <h1 style={{ 
+                    fontSize: 'clamp(2.5rem, 5vw, 3.5rem)', 
+                    fontWeight: 900, 
+                    color: '#000', 
+                    lineHeight: 1.1, 
+                    marginBottom: '2.5rem' 
+                  }}>
+                    {tourData.title}
+                  </h1>
+                  
+                  <div style={{ 
+                    width: '100%', 
+                    height: '500px', 
+                    borderRadius: '30px', 
+                    overflow: 'hidden', 
+                    marginBottom: '2rem',
+                    boxShadow: '0 25px 50px -12px rgba(0,0,0,0.15)'
+                  }}>
+                    <img 
+                      src={tourData.gallery[0] || tourData.image_url} 
+                      alt={tourData.title} 
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                    />
+                  </div>
+               </div>
                {/* Sobre Section */}
                <section id="sobre" style={{ marginBottom: '2rem' }}>
                 <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
@@ -411,52 +424,35 @@ const TourDetails = () => {
                 </section>
             </div>
 
-             {/* Sticky Sidebar Booking Widget */}
+             {/* Sidebar Sidebar Booking Widget */}
              <div style={{ position: 'sticky', top: '160px' }}>
               <div style={{ 
                 backgroundColor: '#fff', 
-                padding: '2.5rem', 
+                padding: '1.5rem 1.75rem', 
                 borderRadius: '25px', 
-                boxShadow: '0 15px 40px rgba(0,0,0,0.08)',
+                boxShadow: '0 15px 40px rgba(0,0,0,0.06)',
                 border: '1px solid #f1f5f9'
               }}>
-                <div style={{ marginBottom: '2rem' }}>
-                  <p style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px' }}>Preço Total</p>
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
-                    <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#000' }}>R$ {totalPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                <div style={{ marginBottom: '1.25rem' }}>
+                  <p style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px' }}>Preço Total</p>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem' }}>
+                    <span style={{ fontSize: '2.2rem', fontWeight: 900, color: '#000' }}>R$ {totalPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', marginBottom: '2rem' }}>
-                  <div 
-                    onClick={() => document.getElementById('tour-date-input').showPicker()} 
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.5rem', color: '#334155', cursor: 'pointer' }}>SELECIONE A DATA</label>
-                    <div style={{ position: 'relative' }}>
-                      <input 
-                        id="tour-date-input"
-                        type="date" 
-                        value={selectedDate}
-                        onChange={(e) => setSelectedDate(e.target.value)}
-                        required
-                        style={{ 
-                          width: '100%', 
-                          padding: '1rem', 
-                          borderRadius: '12px', 
-                          border: `1.5px solid ${selectedDate ? '#7EB53F' : '#e2e8f0'}`, 
-                          outline: 'none', 
-                          fontWeight: 600,
-                          cursor: 'pointer',
-                          backgroundColor: '#fff'
-                        }} 
-                      />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.25rem' }}>
+                  {/* Static Date Display */}
+                  <div style={{ padding: '0.75rem 0', borderTop: '1px solid #f1f5f9', borderBottom: '1px solid #f1f5f9' }}>
+                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, marginBottom: '0.25rem', color: '#64748b', textTransform: 'uppercase' }}>Data do Passeio</label>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#000', fontWeight: 800, fontSize: '1.1rem' }}>
+                       <Calendar size={18} className="text-primary" /> 
+                       {tourData.travel_date ? new Date(tourData.travel_date + 'T12:00:00').toLocaleDateString('pt-BR') : 'Data a definir'}
                     </div>
                   </div>
 
                   {/* Dynamic Pricing Plans */}
                   {plans.length > 0 && (
-                    <div style={{ backgroundColor: '#f8fafc', padding: '1.1rem', borderRadius: '15px', border: '1.5px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <div style={{ backgroundColor: '#f8fafc', padding: '0.85rem', borderRadius: '15px', border: '1.5px solid #f1f5f9', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
                       {plans.map((plan, idx) => (
                         <React.Fragment key={plan.id}>
                           {idx > 0 && <div style={{ height: '1px', backgroundColor: '#e2e8f0', margin: '2px 0' }} />}
@@ -495,11 +491,11 @@ const TourDetails = () => {
 
                   {/* Extras Selection */}
                   {extras.length > 0 && (
-                    <div style={{ marginTop: '0.5rem' }}>
-                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.75rem', color: '#334155' }}>SERVIÇOS ADICIONAIS</label>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    <div style={{ marginTop: '0.1rem' }}>
+                      <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, marginBottom: '0.4rem', color: '#64748b', textTransform: 'uppercase' }}>SERVIÇOS ADICIONAIS</label>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                         {extras.map((extra) => (
-                          <div key={extra.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#f8fafc', padding: '0.85rem 1rem', borderRadius: '12px', border: '1.5px solid #e2e8f0', cursor: 'pointer' }} onClick={() => {
+                          <div key={extra.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#f8fafc', padding: '0.65rem 0.85rem', borderRadius: '12px', border: '1px solid #f1f5f9', cursor: 'pointer' }} onClick={() => {
                             if (selectedExtras.includes(extra.id)) {
                               setSelectedExtras(selectedExtras.filter(id => id !== extra.id));
                             } else {
@@ -517,12 +513,6 @@ const TourDetails = () => {
                               <div>
                                 <div style={{ fontSize: '0.85rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
                                   {extra.name}
-                                  {extra.description && (
-                                    <div className="tooltip-container" style={{ position: 'relative', display: 'inline-block' }}>
-                                      <Info size={14} className="text-primary" />
-                                      <div className="tooltip-text">{extra.description}</div>
-                                    </div>
-                                  )}
                                 </div>
                                 <div style={{ fontSize: '0.75rem', color: '#7EB53F', fontWeight: 700 }}>+ R$ {Number(extra.price).toLocaleString('pt-BR')}</div>
                               </div>
@@ -533,69 +523,84 @@ const TourDetails = () => {
                     </div>
                   )}
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                     <div>
-                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.5rem', color: '#334155' }}>ADULTOS</label>
-                      <select 
-                        value={adults}
-                        onChange={(e) => setAdults(parseInt(e.target.value))}
-                        style={{ width: '100%', padding: '1rem', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', fontWeight: 600 }}
-                      >
-                        {[1,2,3,4,5,6].map(n => <option key={n} value={n}>{n}</option>)}
-                      </select>
+                      <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, marginBottom: '0.4rem', color: '#64748b', textTransform: 'uppercase' }}>ADULTOS</label>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#fff', border: '1.5px solid #e2e8f0', padding: '0.4rem 0.6rem', borderRadius: '12px' }}>
+                        <button 
+                          onClick={() => setAdults(Math.max(1, adults - 1))}
+                          style={{ border: 'none', backgroundColor: '#f1f5f9', width: '30px', height: '30px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#334155' }}
+                        >
+                          <Minus size={14} />
+                        </button>
+                        <span style={{ fontWeight: 800, fontSize: '1rem', color: '#000' }}>{adults}</span>
+                        <button 
+                          onClick={() => setAdults(adults + 1)}
+                          style={{ border: 'none', backgroundColor: '#f1f5f9', width: '30px', height: '30px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#334155' }}
+                        >
+                          <Plus size={14} />
+                        </button>
+                      </div>
                     </div>
                     <div>
-                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.5rem', color: '#334155' }}>CRIANÇAS</label>
-                      <select 
-                        value={children}
-                        onChange={(e) => setChildren(parseInt(e.target.value))}
-                        style={{ width: '100%', padding: '1rem', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', fontWeight: 600 }}
-                      >
-                        {[0,1,2,3,4].map(n => <option key={n} value={n}>{n}</option>)}
-                      </select>
+                      <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, marginBottom: '0.4rem', color: '#64748b', textTransform: 'uppercase' }}>CRIANÇAS</label>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#fff', border: '1.5px solid #e2e8f0', padding: '0.4rem 0.6rem', borderRadius: '12px' }}>
+                        <button 
+                          onClick={() => setChildren(Math.max(0, children - 1))}
+                          style={{ border: 'none', backgroundColor: '#f1f5f9', width: '30px', height: '30px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#334155' }}
+                        >
+                          <Minus size={14} />
+                        </button>
+                        <span style={{ fontWeight: 800, fontSize: '1rem', color: '#000' }}>{children}</span>
+                        <button 
+                          onClick={() => setChildren(children + 1)}
+                          style={{ border: 'none', backgroundColor: '#f1f5f9', width: '30px', height: '30px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#334155' }}
+                        >
+                          <Plus size={14} />
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-
                 <button 
                   onClick={handleAddToCart}
-                  disabled={!selectedDate || isLoading}
+                  disabled={isLoading}
                   style={{
-                  width: '100%',
-                  padding: '1.25rem',
-                  borderRadius: '15px',
-                  backgroundColor: !selectedDate ? '#cbd5e1' : '#7EB53F',
-                  color: '#fff',
-                  border: 'none',
-                  fontSize: '1.1rem',
-                  fontWeight: 800,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '1rem',
-                  cursor: !selectedDate ? 'not-allowed' : 'pointer',
-                  transition: 'all 0.3s ease',
-                  boxShadow: !selectedDate ? 'none' : '0 10px 20px rgba(126, 181, 63, 0.2)',
-                  opacity: isLoading ? 0.8 : 1
-                }}
-                onMouseEnter={(e) => { if(selectedDate) e.target.style.transform = 'translateY(-3px)'; }}
-                onMouseLeave={(e) => { if(selectedDate) e.target.style.transform = 'translateY(0)'; }}
+                    width: '100%',
+                    padding: '1.05rem',
+                    borderRadius: '15px',
+                    backgroundColor: '#7EB53F',
+                    color: '#fff',
+                    border: 'none',
+                    fontSize: '0.95rem',
+                    fontWeight: 800,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.75rem',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 10px 20px rgba(126, 181, 63, 0.2)',
+                    opacity: isLoading ? 0.8 : 1
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-3px)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; }}
                 >
                   {isLoading ? (
                     <div className="spinner"></div>
                   ) : (
                     <>
-                      <ShoppingCart size={22} /> ADICIONAR AO CARRINHO
+                      <ShoppingCart size={20} /> ADICIONAR AO CARRINHO
                     </>
                   )}
                 </button>
 
-                <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.85rem', color: '#94a3b8', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                   <ShieldCheck size={16} /> Pagamento 100% Seguro
+                <div style={{ marginTop: '1.25rem', textAlign: 'center', fontSize: '0.8rem', color: '#94a3b8', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
+                   <ShieldCheck size={14} /> Pagamento 100% Seguro
                 </div>
               </div>
-            </div>
-          </div>
+             </div>
+           </div>
+       </div>
       </div>
 
       {tourData.featured_review && (

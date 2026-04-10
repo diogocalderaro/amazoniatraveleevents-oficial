@@ -304,19 +304,6 @@ const Contact = () => {
         </div>
       </section>
 
-      {/* Map */}
-      <section style={{ height: '400px', backgroundColor: '#e2e8f0', overflow: 'hidden' }}>
-        <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d127420.92742490456!2d-60.72889295!3d2.8194389!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8d931456dff43e05%3A0x2e20e072b1c3b7ef!2sBoa%20Vista%2C%20RR!5e0!3m2!1spt-BR!2sbr!4v1&maptype=roadmap"
-          width="100%"
-          height="100%"
-          style={{ border: 0 }}
-          allowFullScreen=""
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-          title="Localização - Amazônia Travel e Events"
-        ></iframe>
-      </section>
       <style>{`
         @keyframes slideUp {
           from { opacity: 0; transform: translateY(30px); }
