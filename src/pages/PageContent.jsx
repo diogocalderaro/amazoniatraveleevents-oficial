@@ -52,8 +52,31 @@ const PageContent = () => {
 
   if (loading) {
     return (
-      <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        Carregando...
+      <div className="page-content" style={{ backgroundColor: '#fff' }}>
+        <div style={{ backgroundColor: '#000', padding: '5rem 0', textAlign: 'center' }}>
+          <div className="container">
+            <div className="skeleton" style={{ height: '40px', width: '300px', margin: '0 auto 1.5rem', borderRadius: '8px' }}></div>
+            <div className="skeleton" style={{ height: '20px', width: '150px', margin: '0 auto', borderRadius: '4px' }}></div>
+          </div>
+        </div>
+        <div className="container" style={{ padding: '5rem 0', maxWidth: '900px' }}>
+          <div className="skeleton" style={{ height: '25px', width: '100%', marginBottom: '1rem', borderRadius: '4px' }}></div>
+          <div className="skeleton" style={{ height: '25px', width: '90%', marginBottom: '1rem', borderRadius: '4px' }}></div>
+          <div className="skeleton" style={{ height: '25px', width: '95%', marginBottom: '2.5rem', borderRadius: '4px' }}></div>
+          <div className="skeleton" style={{ height: '25px', width: '85%', marginBottom: '1rem', borderRadius: '4px' }}></div>
+          <div className="skeleton" style={{ height: '25px', width: '100%', marginBottom: '1rem', borderRadius: '4px' }}></div>
+        </div>
+        <style>{`
+          .skeleton {
+            background: linear-gradient(90deg, #f0f4f8 25%, #e2e8f0 50%, #f0f4f8 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+          }
+          @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+          }
+        `}</style>
       </div>
     );
   }

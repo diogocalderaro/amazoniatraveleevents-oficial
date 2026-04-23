@@ -152,7 +152,7 @@ const Header = () => {
             flexDirection: 'column',
             gap: '1rem'
           }}>
-            {navLinks.map((link) => (
+            {menuItems.map((link) => (
               <li key={link.name}>
                 <Link 
                   to={link.path}

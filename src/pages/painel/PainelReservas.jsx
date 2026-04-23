@@ -157,92 +157,226 @@ const PainelReservas = () => {
         </div>
       </div>
 
-      {/* Detail Slideover/Modal */}
+      {/* Detail Slideover */}
       {selected && (
-        <div className="modal-overlay" onClick={() => setSelected(null)}>
-          <div className="modal-content modal-lg" onClick={e => e.stopPropagation()}>
-            <div className="modal-header">
+        <div className="side-panel-overlay" onClick={() => setSelected(null)}>
+          <div className="side-panel" onClick={e => e.stopPropagation()}>
+            <div className="side-panel-header">
               <div>
-                <h2 style={{ marginBottom: '0.25rem' }}>Reserva #{selected.id}</h2>
-                <div className="cell-sub"><Clock size={14} /> Recebida em {new Date(selected.created_at).toLocaleString('pt-BR')}</div>
+                <span className="side-panel-tag">RESERVA #{selected.id.toString().slice(-6).toUpperCase()}</span>
+                <h2 className="side-panel-title">{selected.customer_name}</h2>
               </div>
-              <button className="btn-icon" onClick={() => setSelected(null)}><X size={24} /></button>
+              <button className="btn-close" onClick={() => setSelected(null)}><X size={24} /></button>
             </div>
-            <div className="modal-body" style={{ padding: '2rem' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '2rem' }}>
-                <section>
-                  <h3 className="section-title" style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--admin-text-muted)', marginBottom: '1rem', letterSpacing: '1px' }}>Dados do Cliente</h3>
-                  <div className="detail-grid" style={{ gridTemplateColumns: '1fr' }}>
-                    <div className="detail-item"><label>Nome Completo</label><span>{selected.customer_name}</span></div>
-                    <div className="detail-item"><label>Telefone / WhatsApp</label><span>{selected.customer_phone}</span></div>
-                    <div className="detail-item"><label>E-mail</label><span>{selected.customer_email || '-'}</span></div>
+            
+            <div className="side-panel-body">
+              <div className="info-section">
+                <div className="status-container" style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span className="status-badge-large" style={{ backgroundColor: statusColors[selected.status] + '20', color: statusColors[selected.status] }}>
+                    {statusLabels[selected.status]}
+                  </span>
+                  <div style={{ textAlign: 'right' }}>
+                    <div className="cell-sub" style={{ fontSize: '0.75rem' }}>Token de Check-in</div>
+                    <div style={{ fontWeight: 900, fontSize: '1.25rem', fontFamily: 'monospace', letterSpacing: '1px' }}>{selected.token || '---'}</div>
                   </div>
-                </section>
+                </div>
 
-                <section>
-                  <h3 className="section-title" style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--admin-text-muted)', marginBottom: '1rem', letterSpacing: '1px' }}>Detalhes do Pacote</h3>
-                  <div className="detail-grid" style={{ gridTemplateColumns: '1fr' }}>
-                    <div className="detail-item"><label>Pacote Selecionado</label><span style={{ fontWeight: 600 }}>{selected.package_title || '-'}</span></div>
-                    <div className="detail-item"><label>Data da Viagem</label><span>{selected.travel_date ? new Date(selected.travel_date).toLocaleDateString('pt-BR') : '-'}</span></div>
-                    <div className="detail-item"><label>Quantidade de Pessoas</label><span>{selected.guests} {selected.guests > 1 ? 'pessoas' : 'pessoa'}</span></div>
+                <div className="info-group">
+                  <label>Pacote</label>
+                  <div className="info-value-highlight">{selected.package_title || '-'}</div>
+                </div>
+
+                <div className="info-grid">
+                  <div className="info-group">
+                    <label>Data da Viagem</label>
+                    <div className="info-value">{selected.travel_date ? new Date(selected.travel_date).toLocaleDateString('pt-BR') : '-'}</div>
                   </div>
-                </section>
-
-                <section className="full-width" style={{ gridColumn: '1 / -1', background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--admin-border)' }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', alignItems: 'center' }}>
-                    
-                    <div>
-                      <h3 style={{ margin: 0, fontSize: '0.9rem', color: 'var(--admin-text-secondary)', textTransform: 'uppercase', letterSpacing: '1px' }}>Status da Reserva</h3>
-                      <div style={{ marginTop: '0.5rem' }}>
-                        <span className="status-badge" style={{ backgroundColor: statusColors[selected.status] + '20', color: statusColors[selected.status], fontSize: '0.9rem', padding: '0.4rem 1rem' }}>
-                          {statusLabels[selected.status]}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div>
-                      <h3 style={{ margin: 0, fontSize: '0.9rem', color: 'var(--admin-text-secondary)', textTransform: 'uppercase', letterSpacing: '1px' }}>Token (Check-in)</h3>
-                      <div style={{ marginTop: '0.5rem', fontSize: '1.5rem', fontWeight: 900, letterSpacing: '2px', fontFamily: 'monospace', color: 'var(--admin-text)' }}>
-                        {selected.token || 'N/A'}
-                      </div>
-                    </div>
-
-                    <div style={{ textAlign: 'right' }}>
-                      <h3 style={{ margin: 0, fontSize: '0.9rem', color: 'var(--admin-text-secondary)', textTransform: 'uppercase', letterSpacing: '1px' }}>Valor Total</h3>
-                      <div className="cell-money" style={{ fontSize: '1.5rem', marginTop: '0.5rem' }}>
-                        R$ {(selected.total_price || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                      </div>
-                    </div>
+                  <div className="info-group">
+                    <label>Quantidade de Pessoas</label>
+                    <div className="info-value">{selected.guests} {selected.guests > 1 ? 'Pessoas' : 'Pessoa'}</div>
                   </div>
-                </section>
+                </div>
+
+                <div className="divider"></div>
+
+                <h3 className="sub-title">Dados do Cliente</h3>
+                <div className="info-group">
+                  <label>WhatsApp / Telefone</label>
+                  <div className="info-value" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    {selected.customer_phone}
+                    <a href={`https://wa.me/${selected.customer_phone?.replace(/\D/g, '')}`} target="_blank" rel="noreferrer" className="wa-link">Abrir Conversa</a>
+                  </div>
+                </div>
+                <div className="info-group">
+                  <label>E-mail</label>
+                  <div className="info-value">{selected.customer_email || 'Não informado'}</div>
+                </div>
+
+                <div className="divider"></div>
+
+                <div className="total-box">
+                  <label>Valor Total da Reserva</label>
+                  <div className="total-value">R$ {(selected.total_price || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+                </div>
 
                 {selected.notes && (
-                  <section style={{ gridColumn: '1 / -1' }}>
-                    <h3 className="section-title" style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--admin-text-muted)', marginBottom: '0.5rem' }}>Observações / Pedidos Especiais</h3>
-                    <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', fontSize: '0.9rem', lineHeight: '1.6' }}>
-                      {selected.notes}
+                  <>
+                    <div className="divider"></div>
+                    <div className="info-group">
+                      <label>Observações</label>
+                      <div className="info-notes">{selected.notes}</div>
                     </div>
-                  </section>
+                  </>
                 )}
               </div>
+            </div>
 
-              <div className="modal-footer" style={{ marginTop: '2.5rem', paddingTop: '1.5rem', borderTop: '1px solid var(--admin-border)' }}>
+            <div className="side-panel-footer">
+              <div className="footer-actions">
                 {selected.status === 'pendente' && (
                   <>
-                    <button className="admin-btn admin-btn-success" onClick={() => updateStatus(selected.id, 'confirmada')} style={{ paddingLeft: '1.5rem', paddingRight: '1.5rem' }}><Check size={18} /> Confirmar Reserva</button>
-                    <button className="admin-btn admin-btn-danger" onClick={() => updateStatus(selected.id, 'cancelada')}><X size={18} /> Cancelar</button>
+                    <button className="admin-btn admin-btn-success w-full" onClick={() => updateStatus(selected.id, 'confirmada')}><CheckCircle size={18} /> Confirmar Reserva</button>
+                    <button className="admin-btn admin-btn-danger w-full" onClick={() => updateStatus(selected.id, 'cancelada')}><XCircle size={18} /> Cancelar Reserva</button>
                   </>
                 )}
                 {selected.status === 'confirmada' && (
-                    <button className="admin-btn admin-btn-secondary" onClick={() => updateStatus(selected.id, 'concluida')}><CheckCircle size={18} /> Marcar como Concluída</button>
+                  <button className="admin-btn admin-btn-primary w-full" onClick={() => updateStatus(selected.id, 'concluida')}><Check size={18} /> Marcar como Concluída</button>
                 )}
-                <div style={{ flex: 1 }}></div>
-                <button className="admin-btn admin-btn-secondary" onClick={() => setSelected(null)}>Voltar para a Lista</button>
+                <button className="admin-btn admin-btn-secondary w-full" onClick={() => handleDelete(selected.id)}><Trash2 size={16} /> Excluir Registro</button>
               </div>
             </div>
           </div>
         </div>
       )}
+
+      <style>{`
+        .side-panel-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0,0,0,0.4);
+          backdrop-filter: blur(4px);
+          z-index: 1000;
+          display: flex;
+          justify-content: flex-end;
+          animation: fade-in 0.2s ease;
+        }
+        .side-panel {
+          width: 100%;
+          max-width: 450px;
+          background: #fff;
+          height: 100%;
+          box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+          display: flex;
+          flex-direction: column;
+          animation: slide-in 0.3s cubic-bezier(0, 0, 0.2, 1);
+        }
+        .side-panel-header {
+          padding: 2rem;
+          border-bottom: 1px solid #f1f5f9;
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+        }
+        .side-panel-tag {
+          font-size: 0.7rem;
+          font-weight: 800;
+          color: #64748b;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          display: block;
+          margin-bottom: 0.5rem;
+        }
+        .side-panel-title {
+          margin: 0;
+          font-size: 1.5rem;
+          font-weight: 900;
+          color: #0f172a;
+        }
+        .btn-close {
+          background: none;
+          border: none;
+          color: #94a3b8;
+          cursor: pointer;
+          padding: 0.25rem;
+          transition: color 0.2s;
+        }
+        .btn-close:hover { color: #0f172a; }
+        
+        .side-panel-body {
+          flex: 1;
+          overflow-y: auto;
+          padding: 2rem;
+        }
+        .sub-title {
+          font-size: 0.85rem;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          color: #0f172a;
+          font-weight: 800;
+          margin-bottom: 1.25rem;
+        }
+        .info-group { margin-bottom: 1.5rem; }
+        .info-group label {
+          display: block;
+          font-size: 0.75rem;
+          font-weight: 700;
+          color: #64748b;
+          text-transform: uppercase;
+          margin-bottom: 0.4rem;
+        }
+        .info-value { font-size: 1rem; color: #334155; font-weight: 500; }
+        .info-value-highlight { font-size: 1.1rem; color: #0f172a; font-weight: 800; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .divider { height: 1px; background: #f1f5f9; margin: 2rem 0; }
+        
+        .total-box {
+          background: #f8fafc;
+          padding: 1.5rem;
+          border-radius: 12px;
+          border: 1px solid #e2e8f0;
+        }
+        .total-value { font-size: 1.75rem; font-weight: 900; color: #0f172a; margin-top: 0.25rem; }
+        
+        .info-notes {
+          background: #fffbeb;
+          color: #92400e;
+          padding: 1rem;
+          border-radius: 8px;
+          font-size: 0.9rem;
+          line-height: 1.6;
+          border: 1px solid #fef3c7;
+        }
+        
+        .wa-link {
+          font-size: 0.75rem;
+          color: #10b981;
+          font-weight: 700;
+          text-decoration: none;
+          background: #ecfdf5;
+          padding: 2px 8px;
+          border-radius: 4px;
+        }
+
+        .side-panel-footer {
+          padding: 2rem;
+          border-top: 1px solid #f1f5f9;
+          background: #f8fafc;
+        }
+        .footer-actions { display: flex; flex-direction: column; gap: 0.75rem; }
+        .w-full { width: 100%; justify-content: center; }
+
+        @keyframes slide-in {
+          from { transform: translateX(100%); }
+          to { transform: translateX(0); }
+        }
+        @keyframes fade-in {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+      `}</style>
     </div>
   );
 };

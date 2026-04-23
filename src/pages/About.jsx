@@ -4,6 +4,50 @@ import gal011 from '../assets/galeria/011.jpg';
 import tourHero from '../assets/tour-hero.png';
 
 const About = () => {
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="about-page">
+        <section style={{ backgroundColor: '#000', padding: '5rem 0', textAlign: 'center' }}>
+          <div className="container">
+            <div className="skeleton" style={{ height: '20px', width: '180px', margin: '0 auto 1rem', borderRadius: '4px' }}></div>
+            <div className="skeleton" style={{ height: '60px', width: '400px', margin: '0 auto', borderRadius: '8px' }}></div>
+          </div>
+        </section>
+        <div className="container" style={{ padding: '6rem 0' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.2fr) minmax(0, 1fr)', gap: '4rem' }}>
+            <div className="skeleton" style={{ height: '500px', width: '100%', borderRadius: '24px' }}></div>
+            <div>
+              <div className="skeleton" style={{ height: '40px', width: '80%', marginBottom: '2rem', borderRadius: '4px' }}></div>
+              <div className="skeleton" style={{ height: '20px', width: '100%', marginBottom: '1rem', borderRadius: '4px' }}></div>
+              <div className="skeleton" style={{ height: '20px', width: '95%', marginBottom: '1rem', borderRadius: '4px' }}></div>
+              <div className="skeleton" style={{ height: '20px', width: '90%', marginBottom: '2rem', borderRadius: '4px' }}></div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+                 {[...Array(4)].map((_, i) => <div key={i} className="skeleton" style={{ height: '30px', width: '100%', borderRadius: '4px' }}></div>)}
+              </div>
+            </div>
+          </div>
+        </div>
+        <style>{`
+          .skeleton {
+            background: linear-gradient(90deg, #f0f4f8 25%, #e2e8f0 50%, #f0f4f8 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+          }
+          @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+          }
+        `}</style>
+      </div>
+    );
+  }
   return (
     <div className="about-page">
       {/* Page Header */}

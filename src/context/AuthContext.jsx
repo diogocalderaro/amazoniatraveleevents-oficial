@@ -11,16 +11,45 @@ export function AuthProvider({ children }) {
     // Initial check
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
+      if (session) checkInactivity();
       setLoading(false);
     });
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
+      if (session) {
+        localStorage.setItem('last_activity', Date.now().toString());
+      }
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    // Inactivity check
+    const checkInactivity = () => {
+      const lastActivity = localStorage.getItem('last_activity');
+      const timeout = 2 * 60 * 60 * 1000; // 2 hours
+      if (lastActivity && Date.now() - parseInt(lastActivity) > timeout) {
+        logout();
+      } else {
+        localStorage.setItem('last_activity', Date.now().toString());
+      }
+    };
+
+    const interval = setInterval(checkInactivity, 60000); // Check every minute
+
+    const handleUserActivity = () => {
+      localStorage.setItem('last_activity', Date.now().toString());
+    };
+
+    window.addEventListener('mousemove', handleUserActivity);
+    window.addEventListener('keydown', handleUserActivity);
+
+    return () => {
+      subscription.unsubscribe();
+      clearInterval(interval);
+      window.removeEventListener('mousemove', handleUserActivity);
+      window.removeEventListener('keydown', handleUserActivity);
+    };
   }, []);
 
   async function login(email, password) {

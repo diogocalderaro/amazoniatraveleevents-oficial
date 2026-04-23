@@ -120,7 +120,6 @@ const TourDetails = () => {
         extras: data.extras?.sort((a, b) => a.sort_order - b.sort_order) || []
       });
       setExtras(data.extras || []);
-      fetchComments(data.id);
       if (data.travel_date) setSelectedDate(data.travel_date);
     } catch (err) {
       console.error(err);
@@ -190,7 +189,34 @@ const TourDetails = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  if (isLoading || !tourData) return <div className="loading-screen" style={{ height: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Carregando destino...</div>;
+  if (isLoading || !tourData) {
+    return (
+      <div className="tour-details-page" style={{ backgroundColor: '#f8fafc' }}>
+        <div className="container" style={{ padding: '4rem 0' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 420px', gap: '4rem' }}>
+            <div>
+              <div className="skeleton" style={{ height: '40px', width: '200px', marginBottom: '1rem', borderRadius: '8px' }}></div>
+              <div className="skeleton" style={{ height: '80px', width: '80%', marginBottom: '2.5rem', borderRadius: '8px' }}></div>
+              <div className="skeleton" style={{ height: '500px', width: '100%', borderRadius: '30px', marginBottom: '2rem' }}></div>
+              <div className="skeleton" style={{ height: '300px', width: '100%', borderRadius: '20px' }}></div>
+            </div>
+            <div className="skeleton" style={{ height: '600px', width: '100%', borderRadius: '25px' }}></div>
+          </div>
+        </div>
+        <style>{`
+          .skeleton {
+            background: linear-gradient(90deg, #f0f4f8 25%, #e2e8f0 50%, #f0f4f8 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+          }
+          @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+          }
+        `}</style>
+      </div>
+    );
+  }
 
   return (
     <div className="tour-details-page" style={{ backgroundColor: '#f8fafc' }}>
@@ -317,12 +343,28 @@ const TourDetails = () => {
                           overflow: 'hidden', 
                           height: '180px', 
                           cursor: 'zoom-in',
-                          transition: 'transform 0.3s ease'
+                          transition: 'transform 0.3s ease',
+                          position: 'relative'
                         }}
                         onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
                         onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
                       >
-                        <img src={img} alt={`Gallery ${i}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <img src={img.image_url || img} alt={img.caption || `Gallery ${i}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        {img.caption && (
+                          <div style={{
+                            position: 'absolute',
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            padding: '8px',
+                            background: 'linear-gradient(transparent, rgba(0,0,0,0.7))',
+                            color: '#fff',
+                            fontSize: '0.75rem',
+                            fontWeight: 600
+                          }}>
+                            {img.caption}
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -705,17 +747,29 @@ const TourDetails = () => {
            }}
          >
            <div style={{ position: 'relative', maxWidth: '90%', maxHeight: '90%' }}>
-             <img 
-               src={selectedImage} 
-               alt="Zoomed" 
-               style={{ 
-                 maxWidth: '100%',
-                 maxHeight: '85vh',
-                 borderRadius: '8px',
-                 boxShadow: '0 0 50px rgba(0,0,0,0.5)',
-                 animation: 'zoom 0.3s ease'
-               }} 
-             />
+              <img 
+                src={selectedImage.image_url || selectedImage} 
+                alt={selectedImage.caption || "Zoomed"} 
+                style={{ 
+                  maxWidth: '100%',
+                  maxHeight: '80vh',
+                  borderRadius: '12px',
+                  boxShadow: '0 0 50px rgba(0,0,0,0.5)',
+                  animation: 'zoom 0.3s ease'
+                }} 
+              />
+              {selectedImage.caption && (
+                <div style={{
+                  marginTop: '1.5rem',
+                  color: '#fff',
+                  textAlign: 'center',
+                  fontSize: '1.1rem',
+                  fontWeight: 600,
+                  textShadow: '0 2px 4px rgba(0,0,0,0.5)'
+                }}>
+                  {selectedImage.caption}
+                </div>
+              )}
              <button 
                onClick={(e) => { e.stopPropagation(); setSelectedImage(null); }} // Prevent closing when clicking button
                style={{

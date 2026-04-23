@@ -146,28 +146,22 @@ const Footer = () => {
               <svg viewBox="0 0 780 500" height="22" xmlns="http://www.w3.org/2000/svg"><circle cx="299.6" cy="250" r="167.7" fill="#EB001B" /><circle cx="480.4" cy="250" r="167.7" fill="#F79E1B" /><path d="M390 116.1a167.5 167.5 0 00-63 133.9 167.5 167.5 0 0063 133.9 167.5 167.5 0 0063-133.9 167.5 167.5 0 00-63-133.9z" fill="#FF5F00" /></svg>
             </div>
             {/* Pix */}
-            <div style={{ backgroundColor: '#fff', padding: '8px 16px', borderRadius: '6px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-              <svg width="20" height="20" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+            {/* Pix */}
+            <div style={{ backgroundColor: '#fff', padding: '6px 14px', borderRadius: '8px', height: '42px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', border: '1px solid #e2e8f0' }}>
+              <svg width="22" height="22" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
                 <path d="M179.2 179.2c-10.5 10.5-24.4 16.2-39.2 16.2s-28.7-5.8-39.2-16.2l-37-37c-2-2-5.2-2-7.2 0l-37 37c-3 3-5.5 6.3-7.6 9.8H27.4l47.5 47.5c21.6 21.6 56.8 21.6 78.4 0l47.5-47.5h-2.3c-5.1-7.4-11.9-13.5-19.3-9.8z" fill="#32BCAD" />
                 <path d="M56.8 93.6l37 37c2 2 5.2 2 7.2 0l37-37c10.5-10.5 24.4-16.2 39.2-16.2s28.7 5.8 39.2 16.2l2.3-9.8h2.3L173.3 36.3c-21.6-21.6-56.8-21.6-78.4 0L47.4 83.8H59c-2.1 3.5-4.6 6.8-7.6 9.8h5.4z" fill="#32BCAD" />
                 <path d="M236.3 94.9L200.5 59.1l-21.3 21.3c-10.5 10.5-24.4 16.2-39.2 16.2s-28.7-5.8-39.2-16.2l-37-37c-2-2-5.2-2-7.2 0l-37 37L0 59.1v0L19.7 94.9 0 130.7v0l19.6-21.3 37 37c2 2 5.2 2 7.2 0l37-37c10.5-10.5 24.4-16.2 39.2-16.2s28.7 5.8 39.2 16.2l21.3 21.3 36.1-36.1L256 130.7v0l-19.7-35.8z" fill="#32BCAD" />
               </svg>
-              <span style={{ color: '#32BCAD', fontWeight: 900, fontSize: '1rem', letterSpacing: '0.5px' }}>PIX</span>
+              <span style={{ color: '#32BCAD', fontWeight: 900, fontSize: '0.95rem', letterSpacing: '0.5px' }}>PIX</span>
             </div>
             {/* Boleto */}
-            <div style={{ backgroundColor: '#fff', padding: '8px 16px', borderRadius: '6px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <div style={{ backgroundColor: '#fff', padding: '6px 14px', borderRadius: '8px', height: '42px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', border: '1px solid #e2e8f0' }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect x="1" y="4" width="22" height="16" rx="2" stroke="#333" strokeWidth="1.5" />
-                <line x1="4" y1="8" x2="4" y2="16" stroke="#333" strokeWidth="2" />
-                <line x1="7" y1="8" x2="7" y2="16" stroke="#333" strokeWidth="1" />
-                <line x1="9" y1="8" x2="9" y2="16" stroke="#333" strokeWidth="2" />
-                <line x1="12" y1="8" x2="12" y2="16" stroke="#333" strokeWidth="1" />
-                <line x1="14" y1="8" x2="14" y2="16" stroke="#333" strokeWidth="1.5" />
-                <line x1="16.5" y1="8" x2="16.5" y2="16" stroke="#333" strokeWidth="2" />
-                <line x1="19" y1="8" x2="19" y2="16" stroke="#333" strokeWidth="1" />
-                <line x1="20.5" y1="8" x2="20.5" y2="16" stroke="#333" strokeWidth="1.5" />
+                <path d="M5 8v8M8 8v8M10 8v8M13 8v8M15 8v8M18 8v8" stroke="#333" strokeWidth="1.5" strokeLinecap="round"/>
               </svg>
-              <span style={{ color: '#333', fontWeight: 900, fontSize: '0.85rem', letterSpacing: '0.5px' }}>BOLETO</span>
+              <span style={{ color: '#333', fontWeight: 900, fontSize: '0.8rem', letterSpacing: '0.5px' }}>BOLETO</span>
             </div>
           </div>
 

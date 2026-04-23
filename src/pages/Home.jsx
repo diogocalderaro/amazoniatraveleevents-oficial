@@ -110,10 +110,13 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    const timer1 = setInterval(() => setHeroIdx1(prev => (prev + 1) % heroImageList.length), 5000);
-    const timer2 = setInterval(() => setHeroIdx2(prev => (prev + 1) % heroImageList.length), 6500);
-    const timer3 = setInterval(() => setHeroIdx3(prev => (prev + 1) % heroImageList.length), 8000);
-    return () => { clearInterval(timer1); clearInterval(timer2); clearInterval(timer3); };
+    // Single interval to update all images with different offsets to avoid repetition
+    const interval = setInterval(() => {
+      setHeroIdx1(prev => (prev + 1) % heroImageList.length);
+      setHeroIdx2(prev => (prev + 2) % heroImageList.length);
+      setHeroIdx3(prev => (prev + 3) % heroImageList.length);
+    }, 4500); // Slightly faster transition as requested
+    return () => clearInterval(interval);
   }, []);
 
   const carouselRef = React.useRef(null);
@@ -306,7 +309,7 @@ const Home = () => {
                 fontWeight: 900,
                 letterSpacing: '-2px'
               }}>
-                <span style={{ color: '#FFD700' }}>PASSEIO TURÍSTICO</span><br className="hide-mobile"/>REGIONAL
+                <span style={{ color: '#FFD700', textShadow: '0 2px 10px rgba(255, 215, 0, 0.3)' }}>PASSEIO TURÍSTICO</span><br className="hide-mobile"/>EXCLUSIVO
               </h1>
 
               {/* Discount Badge */}
@@ -469,7 +472,12 @@ const Home = () => {
              <Calendar style={{ color: '#FFD700', flexShrink: 0 }} />
              <div style={{ width: '100%' }}>
                 <p style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase', marginBottom: '2px' }}>Data de Ida</p>
-                <input id="date-ida" type="date" style={{ border: 'none', background: 'transparent', outline: 'none', fontWeight: 600, fontFamily: 'inherit', fontSize: '16px', color: '#333', width: '100%', cursor: 'pointer' }} />
+                <input 
+                  id="date-ida" 
+                  type="date" 
+                  className="date-input-custom"
+                  style={{ border: 'none', background: 'transparent', outline: 'none', fontWeight: 600, fontFamily: 'inherit', fontSize: '15px', color: '#333', width: '100%', cursor: 'pointer' }} 
+                />
              </div>
           </label>
           <label 
@@ -486,7 +494,12 @@ const Home = () => {
              <Calendar style={{ color: '#FFD700', flexShrink: 0 }} />
              <div style={{ width: '100%' }}>
                 <p style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase', marginBottom: '2px' }}>Data de Volta</p>
-                <input id="date-volta" type="date" style={{ border: 'none', background: 'transparent', outline: 'none', fontWeight: 600, fontFamily: 'inherit', fontSize: '16px', color: '#333', width: '100%', cursor: 'pointer' }} />
+                <input 
+                  id="date-volta" 
+                  type="date" 
+                  className="date-input-custom"
+                  style={{ border: 'none', background: 'transparent', outline: 'none', fontWeight: 600, fontFamily: 'inherit', fontSize: '15px', color: '#333', width: '100%', cursor: 'pointer' }} 
+                />
              </div>
           </label>
           <div className="search-field" style={{ flex: 1, minWidth: '150px', display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 1rem' }}>
@@ -919,9 +932,15 @@ const Home = () => {
           .home-packages-carousel { scroll-snap-type: x mandatory !important; }
           .package-item { width: 100% !important; min-width: 100% !important; scroll-snap-align: center !important; flex: 0 0 100% !important; }
           .carousel-dots { display: flex !important; }
+        }
+
+        .date-input-custom::-webkit-calendar-picker-indicator {
+          display: none;
+        }
+        
         @keyframes heroFade {
-          from { opacity: 0.1; transform: scale(0.96); }
-          to { opacity: 1; transform: scale(1); }
+          from { opacity: 0; transform: scale(1.05); filter: blur(5px); }
+          to { opacity: 1; transform: scale(1); filter: blur(0); }
         }
 
         @media (max-width: 768px) {

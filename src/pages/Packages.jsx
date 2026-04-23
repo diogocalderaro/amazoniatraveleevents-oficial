@@ -330,6 +330,21 @@ const Packages = () => {
         .packages-grid-layout {
           display: grid;
         }
+        .package-card-new {
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .package-card-new:hover {
+          transform: translateY(-8px);
+          box-shadow: 0 12px 30px rgba(0,0,0,0.12) !important;
+        }
+        .package-card-new:hover .pkg-img-hover {
+          transform: scale(1.1);
+        }
+        .nav-arrow-btn:hover {
+          background-color: #000 !important;
+          color: #FFD700 !important;
+          transform: scale(1.1);
+        }
         @media (max-width: 991px) {
           .packages-grid-layout {
             grid-template-columns: 1fr !important;
