@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { 
   MapPin, Star, Clock, Calendar, Check, Users, Navigation, 
   ChevronRight, Share2, Heart, ShieldCheck, Info, FileText, 
@@ -60,23 +61,7 @@ const TourDetails = () => {
     }
   }, [tourData?.id]);
 
-  // Update SEO Meta Tags
-  useEffect(() => {
-    if (tourData) {
-      document.title = `${tourData.title} | Amazônia Travel e Events`;
-      
-      let metaDescription = document.querySelector('meta[name="description"]');
-      if (!metaDescription) {
-        metaDescription = document.createElement('meta');
-        metaDescription.name = 'description';
-        document.head.appendChild(metaDescription);
-      }
-      // Removendo HTML e pegando primeiros 150 caracteres para descrição SEO
-      const cleanDesc = (tourData.description || '').replace(/<[^>]+>/g, '');
-      const shortDesc = cleanDesc.substring(0, 150) + (cleanDesc.length > 150 ? '...' : '');
-      metaDescription.content = `Reserve o pacote ${tourData.title}. ${shortDesc}`;
-    }
-  }, [tourData]);
+
 
   async function fetchTour() {
     try {
@@ -220,6 +205,14 @@ const TourDetails = () => {
 
   return (
     <div className="tour-details-page" style={{ backgroundColor: '#f8fafc' }}>
+      <Helmet>
+        <title>{`${tourData.title} | Amazônia Travel e Events`}</title>
+        <meta name="description" content={`Reserve o pacote ${tourData.title}. ${(tourData.description || '').replace(/<[^>]+>/g, '').substring(0, 150)}...`} />
+        <meta property="og:title" content={`${tourData.title} | Amazônia Travel e Events`} />
+        <meta property="og:description" content={`Explore ${tourData.location} com a Amazonia Travel e Events.`} />
+        <meta property="og:image" content={tourData.image_url} />
+      </Helmet>
+
 
 
       {/* Internal Navigation Tabs */}

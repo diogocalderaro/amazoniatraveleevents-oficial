@@ -5,6 +5,7 @@ import { supabase } from '../../lib/supabase';
 const PainelDashboard = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchDashboard();
@@ -13,6 +14,7 @@ const PainelDashboard = () => {
   async function fetchDashboard() {
     try {
       setLoading(true);
+      setError(null);
       let fetchErrors = [];
       
       const { data: revData, error: revError } = await supabase
@@ -77,7 +79,7 @@ const PainelDashboard = () => {
         
       if (fetchErrors.length > 0) {
         console.error('Erros no fetch do dashboard:', fetchErrors);
-        alert('Erro ao carregar os dados do banco: ' + fetchErrors.join(' | '));
+        setError('Erro ao carregar dados: ' + fetchErrors.join(' | '));
       }
 
       setData({
@@ -92,12 +94,22 @@ const PainelDashboard = () => {
       });
     } catch (err) {
       console.error('Error fetching dashboard data:', err);
+      setError('Erro de conexão. Verifique sua internet e tente novamente.');
     } finally {
       setLoading(false);
     }
   }
 
   if (loading) return <div className="admin-page"><div className="admin-loading">Carregando...</div></div>;
+
+  if (error) return (
+    <div className="admin-page">
+      <div className="admin-card" style={{ padding: '2rem', textAlign: 'center' }}>
+        <p style={{ color: 'var(--admin-danger)', marginBottom: '1rem' }}>{error}</p>
+        <button className="admin-btn admin-btn-primary" onClick={fetchDashboard}>Tentar Novamente</button>
+      </div>
+    </div>
+  );
 
   const stats = data?.stats || {};
   const statusColors = {

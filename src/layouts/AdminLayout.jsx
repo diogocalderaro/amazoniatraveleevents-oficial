@@ -6,20 +6,31 @@ import Topbar from '../components/admin/Topbar';
 import '../styles/admin.css';
 
 const AdminLayout = () => {
-  const { user, loading } = useAuth();
+  const { user, loading, sessionReady } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  // Still loading initial session check (including possible token refresh)
   if (loading) {
     return (
       <div className="admin-layout dark-theme" style={{ justifyContent: 'center', alignItems: 'center' }}>
-        <div className="admin-loading">Carregando...</div>
+        <div className="admin-loading">Verificando sessão...</div>
       </div>
     );
   }
 
+  // No user after loading complete — redirect to login
   if (!user) {
     return <Navigate to="/painel/login" replace />;
+  }
+
+  // User exists but session not yet validated (token refresh in progress)
+  if (!sessionReady) {
+    return (
+      <div className="admin-layout dark-theme" style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <div className="admin-loading">Restaurando sessão...</div>
+      </div>
+    );
   }
 
   return (
@@ -41,3 +52,4 @@ const AdminLayout = () => {
 };
 
 export default AdminLayout;
+

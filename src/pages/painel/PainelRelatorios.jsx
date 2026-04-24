@@ -28,7 +28,7 @@ const PainelRelatorios = () => {
       const totalRevenue = salesData?.reduce((acc, s) => acc + (s.total_price || 0), 0) || 0;
       const count = salesData?.length || 0;
 
-      // 2. Calculate top packages locally from salesData
+      // 2. Calculate top packages locally
       const packageCounts = {};
       salesData?.forEach(s => {
         if (s.package_title) {
@@ -42,14 +42,37 @@ const PainelRelatorios = () => {
         .map(([title, val]) => ({ package_title: title, ...val }))
         .sort((a, b) => b.reservations - a.reservations);
 
+      // 3. Monthly revenue calculation
+      const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+      const monthlyMap = {};
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const key = `${monthNames[d.getMonth()]} ${d.getFullYear()}`;
+        monthlyMap[key] = 0;
+      }
+      salesData?.forEach(s => {
+        const d = new Date(s.created_at);
+        const key = `${monthNames[d.getMonth()]} ${d.getFullYear()}`;
+        if (monthlyMap[key] !== undefined) monthlyMap[key] += (s.total_price || 0);
+      });
+      const monthlyRevenue = Object.entries(monthlyMap).map(([month, revenue]) => ({ month, revenue }));
+
+      // 4. Status distribution (all reservations, not just period)
+      const { data: allRes, error: allErr } = await supabase
+        .from('reservations')
+        .select('status');
+      
+      const statusDist = { pendente: 0, confirmada: 0, cancelada: 0, concluida: 0 };
+      if (!allErr && allRes) {
+        allRes.forEach(r => { if (statusDist[r.status] !== undefined) statusDist[r.status]++; });
+      }
+
       setData({
-        sales: {
-          sales: salesData || [],
-          totalRevenue,
-          count
-        },
+        sales: { sales: salesData || [], totalRevenue, count },
         topPackages,
-        monthlyRevenue: []
+        monthlyRevenue,
+        statusDistribution: statusDist,
+        totalReservations: allRes?.length || 0
       });
     } catch (err) { 
       console.error('Error fetching reports:', err); 
@@ -157,7 +180,35 @@ const PainelRelatorios = () => {
         </div>
       )}
 
-      {/* Top Packages */}
+      {/* Status Distribution */}
+      {data?.statusDistribution && data.totalReservations > 0 && (
+        <div className="admin-card" style={{ marginBottom: '1.5rem' }}>
+          <div className="card-header"><h3><Package size={18} /> Distribuição de Reservas</h3></div>
+          <div style={{ padding: '1.5rem' }}>
+            {[
+              { key: 'confirmada', label: 'Confirmadas', color: '#10b981' },
+              { key: 'concluida', label: 'Concluídas', color: '#3b82f6' },
+              { key: 'pendente', label: 'Pendentes', color: '#f59e0b' },
+              { key: 'cancelada', label: 'Canceladas', color: '#ef4444' }
+            ].map(st => {
+              const count = data.statusDistribution[st.key] || 0;
+              const pct = data.totalReservations > 0 ? (count / data.totalReservations * 100).toFixed(0) : 0;
+              return (
+                <div key={st.key} style={{ marginBottom: '1.25rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                    <span style={{ fontWeight: 700, fontSize: '0.9rem', color: '#334155' }}>{st.label}</span>
+                    <span style={{ fontWeight: 800, fontSize: '0.9rem', color: st.color }}>{count} ({pct}%)</span>
+                  </div>
+                  <div style={{ height: '8px', backgroundColor: '#f1f5f9', borderRadius: '4px', overflow: 'hidden' }}>
+                    <div style={{ height: '100%', width: `${pct}%`, backgroundColor: st.color, borderRadius: '4px', transition: 'width 0.5s ease' }} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {data?.topPackages?.length > 0 && (
         <div className="admin-card" style={{ marginBottom: '1.5rem' }}>
           <div className="card-header"><h3><Package size={18} /> Pacotes Mais Vendidos</h3></div>

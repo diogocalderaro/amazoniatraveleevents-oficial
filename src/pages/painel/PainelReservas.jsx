@@ -64,6 +64,38 @@ const PainelReservas = () => {
   const statusIcons = { pendente: Clock, confirmada: CheckCircle, cancelada: XCircle, concluida: CheckCircle };
   const statusLabels = { pendente: 'Pendente', confirmada: 'Confirmada', cancelada: 'Cancelada', concluida: 'Concluída' };
 
+  // Token Validator
+  const [tokenInput, setTokenInput] = useState('');
+  const [tokenResult, setTokenResult] = useState(null);
+  const [tokenSearched, setTokenSearched] = useState(false);
+
+  async function validateToken() {
+    if (!tokenInput.trim()) return;
+    setTokenResult('loading');
+    setTokenSearched(true);
+    try {
+      const { data, error } = await supabase
+        .from('reservations')
+        .select('*')
+        .eq('token', tokenInput.trim().toUpperCase())
+        .maybeSingle();
+      if (error) throw error;
+      setTokenResult(data || 'not_found');
+    } catch (err) {
+      console.error('Token validation error:', err);
+      setTokenResult('not_found');
+    }
+  }
+
+  async function checkInToken(id) {
+    try {
+      const { error } = await supabase.from('reservations').update({ status: 'concluida' }).eq('id', id);
+      if (error) throw error;
+      setTokenResult(prev => ({ ...prev, status: 'concluida' }));
+      fetchReservations();
+    } catch (err) { console.error('Check-in error:', err); }
+  }
+
   const statCounts = {
     todos: reservations.length,
     pendente: reservations.filter(r => r.status === 'pendente').length,
@@ -79,6 +111,68 @@ const PainelReservas = () => {
         <div>
           <h1 className="admin-page-title">Reservas</h1>
           <p className="admin-page-subtitle">Gerencie as reservas feitas pelo site.</p>
+        </div>
+      </div>
+
+      {/* Token Validator */}
+      <div className="admin-card" style={{ marginBottom: '1.5rem', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#f8fafc' }}>
+        <div style={{ padding: '1.5rem' }}>
+          <h3 style={{ margin: '0 0 0.75rem 0', fontSize: '1rem', fontWeight: 800, color: '#FFD700', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <CheckCircle size={18} /> Validar Token de Check-in
+          </h3>
+          <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+            <div className="search-input-wrapper" style={{ flex: 1 }}>
+              <Search size={18} className="search-icon" style={{ color: '#94a3b8' }} />
+              <input className="search-input" style={{ width: '100%', borderRadius: '8px', textTransform: 'uppercase', letterSpacing: '2px', fontFamily: 'monospace', fontWeight: 700, backgroundColor: '#0f172a', border: '1px solid #475569', color: '#f8fafc' }} placeholder="Digite o código (ex: AMZ-XXXX)" value={tokenInput} onChange={e => setTokenInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && validateToken()} />
+            </div>
+            <button className="admin-btn admin-btn-success" onClick={validateToken} style={{ whiteSpace: 'nowrap' }}>
+              <CheckCircle size={16} /> Validar
+            </button>
+          </div>
+          {tokenSearched && tokenResult && tokenResult !== 'loading' && (
+            <div style={{ marginTop: '1rem' }}>
+              {tokenResult === 'not_found' ? (
+                <div style={{ padding: '1.25rem', backgroundColor: '#fef2f2', borderRadius: '12px', border: '1px solid #fecaca', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <XCircle size={22} color="#ef4444" />
+                  <div>
+                    <p style={{ fontWeight: 800, color: '#991b1b', margin: 0 }}>Token não encontrado</p>
+                    <p style={{ fontSize: '0.85rem', color: '#b91c1c', margin: '4px 0 0 0' }}>Verifique se o código foi digitado corretamente.</p>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ padding: '1.25rem', backgroundColor: '#fff', borderRadius: '12px', border: `2px solid ${statusColors[tokenResult.status]}` }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+                    <div>
+                      <p style={{ fontWeight: 900, fontSize: '1.1rem', margin: 0, color: '#0f172a' }}>{tokenResult.customer_name}</p>
+                      <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '2px 0 0 0' }}>{tokenResult.customer_phone} • {tokenResult.customer_email || 'Sem email'}</p>
+                    </div>
+                    <span className="status-badge" style={{ backgroundColor: statusColors[tokenResult.status] + '20', color: statusColors[tokenResult.status], fontSize: '0.85rem', padding: '6px 14px' }}>
+                      {statusLabels[tokenResult.status]}
+                    </span>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem', padding: '1rem', backgroundColor: '#f8fafc', borderRadius: '8px' }}>
+                    <div><p style={{ fontSize: '0.7rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', margin: 0 }}>Pacote</p><p style={{ fontWeight: 700, margin: '4px 0 0 0', color: '#0f172a' }}>{tokenResult.package_title || '-'}</p></div>
+                    <div><p style={{ fontSize: '0.7rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', margin: 0 }}>Data Viagem</p><p style={{ fontWeight: 700, margin: '4px 0 0 0', color: '#0f172a' }}>{tokenResult.travel_date ? new Date(tokenResult.travel_date).toLocaleDateString('pt-BR') : '-'}</p></div>
+                    <div><p style={{ fontSize: '0.7rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', margin: 0 }}>Pessoas</p><p style={{ fontWeight: 700, margin: '4px 0 0 0', color: '#0f172a' }}>{tokenResult.guests}</p></div>
+                    <div><p style={{ fontSize: '0.7rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', margin: 0 }}>Valor Total</p><p style={{ fontWeight: 900, margin: '4px 0 0 0', color: '#166534', fontSize: '1.1rem' }}>R$ {(tokenResult.total_price || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p></div>
+                  </div>
+                  {tokenResult.status === 'confirmada' && (
+                    <button className="admin-btn admin-btn-success" onClick={() => checkInToken(tokenResult.id)} style={{ marginTop: '1rem', width: '100%', justifyContent: 'center' }}><Check size={18} /> Realizar Check-in</button>
+                  )}
+                  {tokenResult.status === 'concluida' && (
+                    <div style={{ marginTop: '1rem', padding: '0.75rem', backgroundColor: '#eff6ff', borderRadius: '8px', textAlign: 'center', fontWeight: 700, color: '#1d4ed8', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}><CheckCircle size={18} /> Check-in já realizado</div>
+                  )}
+                  {tokenResult.status === 'pendente' && (
+                    <div style={{ marginTop: '1rem', padding: '0.75rem', backgroundColor: '#fffbeb', borderRadius: '8px', textAlign: 'center', fontWeight: 700, color: '#92400e', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}><Clock size={18} /> Reserva pendente de confirmação</div>
+                  )}
+                  {tokenResult.status === 'cancelada' && (
+                    <div style={{ marginTop: '1rem', padding: '0.75rem', backgroundColor: '#fef2f2', borderRadius: '8px', textAlign: 'center', fontWeight: 700, color: '#991b1b', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}><XCircle size={18} /> Reserva cancelada</div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+          {tokenResult === 'loading' && <div style={{ marginTop: '1rem', textAlign: 'center', color: '#64748b', fontWeight: 600 }}>Buscando...</div>}
         </div>
       </div>
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { 
   Play, MapPin, Star, Calendar, Clock, 
   ChevronRight, ArrowRight, Shield, Award, 
@@ -33,11 +34,19 @@ const Home = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [activeFaq, setActiveFaq] = useState(null);
   const [activeSlide, setActiveSlide] = useState(0);
-  const [heroIdx1, setHeroIdx1] = useState(0);
-  const [heroIdx2, setHeroIdx2] = useState(1);
-  const [heroIdx3, setHeroIdx3] = useState(2);
+  const [dateIda, setDateIda] = useState('');
+  const [dateVolta, setDateVolta] = useState('');
 
   const heroImageList = [gal010, gal011, gal012, gal001, gal002, gal003, gal004, gal005, gal006, gal008, gal009, gal013];
+  // Pick 3 unique random images on each page load (static, no animation)
+  const [heroIndices] = useState(() => {
+    const indices = Array.from({ length: heroImageList.length }, (_, i) => i);
+    for (let i = indices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+    return indices.slice(0, 3);
+  });
   
   const [packagesData, setPackagesData] = useState([]);
   const [blogPosts, setBlogPosts] = useState([]);
@@ -109,15 +118,7 @@ const Home = () => {
     fetchTestimonials();
   }, []);
 
-  useEffect(() => {
-    // Single interval to update all images with different offsets to avoid repetition
-    const interval = setInterval(() => {
-      setHeroIdx1(prev => (prev + 1) % heroImageList.length);
-      setHeroIdx2(prev => (prev + 2) % heroImageList.length);
-      setHeroIdx3(prev => (prev + 3) % heroImageList.length);
-    }, 4500); // Slightly faster transition as requested
-    return () => clearInterval(interval);
-  }, []);
+
 
   const carouselRef = React.useRef(null);
   const isHoveredRef = React.useRef(false);
@@ -214,6 +215,11 @@ const Home = () => {
 
   return (
     <div className="home-page">
+      <Helmet>
+        <title>Amazonia Travel e Events | Explore a Selva</title>
+        <meta name="description" content="Agência de turismo em Manaus especializada em pacotes exclusivos, passeios e eventos na Amazônia. Explore o Rio Negro e a floresta com segurança." />
+        <meta name="keywords" content="Amazonia Travel, Turismo Manaus, Passeios Amazônia, Rio Negro, Selva Amazônica" />
+      </Helmet>
       {/* Lightbox Modal */}
       {selectedImage && (
         <div 
@@ -303,13 +309,14 @@ const Home = () => {
             <div style={{ maxWidth: '650px' }}>
               <h1 style={{ 
                 color: '#fff',
-                fontSize: 'clamp(2.3rem, 10vw, 6rem)',
+                fontSize: 'clamp(1.8rem, 8vw, 6rem)',
                 marginBottom: '1rem',
                 lineHeight: 1,
                 fontWeight: 900,
-                letterSpacing: '-2px'
+                letterSpacing: '-2px',
+                overflowWrap: 'break-word'
               }}>
-                <span style={{ color: '#FFD700', textShadow: '0 2px 10px rgba(255, 215, 0, 0.3)' }}>PASSEIO TURÍSTICO</span><br className="hide-mobile"/>EXCLUSIVO
+                <span style={{ color: '#FFD700', textShadow: '0 2px 10px rgba(255, 215, 0, 0.3)' }}>PASSEIO TURÍSTICO</span><br />EXCLUSIVO
               </h1>
 
               {/* Discount Badge */}
@@ -331,7 +338,7 @@ const Home = () => {
                 boxShadow: '0 10px 30px rgba(255, 215, 0, 0.3)',
                 zIndex: 5
               }}>
-                <span style={{ fontSize: '1.2rem', color: '#000', fontWeight: 900 }}>Saída todos os dias</span>
+                <span style={{ fontSize: '1.1rem', color: '#000', fontWeight: 900, lineHeight: 1.2 }}>Parcelamos em até 10x</span>
               </div>
 
               <div style={{ marginBottom: '2.5rem' }}>
@@ -378,8 +385,7 @@ const Home = () => {
             <div className="hero-images hide-mobile" style={{ position: 'relative', height: '500px' }}>
               {/* Image 1 (Top Left) */}
               <img 
-                key={`img1-${heroIdx1}`}
-                src={heroImageList[heroIdx1]} 
+                src={heroImageList[heroIndices[0]]} 
                 alt="Exploração 1" 
                 loading="lazy"
                 style={{ 
@@ -387,14 +393,12 @@ const Home = () => {
                   width: '320px', height: '220px', objectFit: 'cover',
                   borderRadius: '20px', border: '8px solid #fff',
                   boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
-                  transform: 'rotate(-10deg)', zIndex: 3,
-                  animation: 'heroFade 2s ease-in-out'
+                  transform: 'rotate(-10deg)', zIndex: 3
                 }} 
               />
               {/* Image 2 (Middle) */}
               <img 
-                key={`img2-${heroIdx2}`}
-                src={heroImageList[heroIdx2]} 
+                src={heroImageList[heroIndices[1]]} 
                 alt="Exploração 2" 
                 loading="lazy"
                 style={{ 
@@ -402,14 +406,12 @@ const Home = () => {
                   width: '380px', height: '260px', objectFit: 'cover',
                   borderRadius: '20px', border: '8px solid #fff',
                   boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
-                  transform: 'rotate(5deg)', zIndex: 4,
-                  animation: 'heroFade 2s ease-in-out'
+                  transform: 'rotate(5deg)', zIndex: 4
                 }} 
               />
               {/* Image 3 (Bottom) */}
               <img 
-                key={`img3-${heroIdx3}`}
-                src={heroImageList[heroIdx3]} 
+                src={heroImageList[heroIndices[2]]} 
                 alt="Exploração 3" 
                 loading="lazy"
                 style={{ 
@@ -417,8 +419,7 @@ const Home = () => {
                   width: '350px', height: '240px', objectFit: 'cover',
                   borderRadius: '20px', border: '8px solid #fff',
                   boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
-                  transform: 'rotate(-5deg)', zIndex: 5,
-                  animation: 'heroFade 2s ease-in-out'
+                  transform: 'rotate(-5deg)', zIndex: 5
                 }} 
               />
             </div>
@@ -472,12 +473,16 @@ const Home = () => {
              <Calendar style={{ color: '#FFD700', flexShrink: 0 }} />
              <div style={{ width: '100%' }}>
                 <p style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase', marginBottom: '2px' }}>Data de Ida</p>
-                <input 
-                  id="date-ida" 
-                  type="date" 
-                  className="date-input-custom"
-                  style={{ border: 'none', background: 'transparent', outline: 'none', fontWeight: 600, fontFamily: 'inherit', fontSize: '15px', color: '#333', width: '100%', cursor: 'pointer' }} 
-                />
+                <div style={{ position: 'relative' }}>
+                  <input 
+                    id="date-ida" 
+                    type="date" 
+                    value={dateIda}
+                    onChange={e => setDateIda(e.target.value)}
+                    className="date-input-custom"
+                    style={{ border: 'none', background: 'transparent', outline: 'none', fontWeight: 600, fontFamily: 'inherit', fontSize: '15px', color: '#333', width: '100%', cursor: 'pointer' }} 
+                  />
+                </div>
              </div>
           </label>
           <label 
@@ -494,12 +499,16 @@ const Home = () => {
              <Calendar style={{ color: '#FFD700', flexShrink: 0 }} />
              <div style={{ width: '100%' }}>
                 <p style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase', marginBottom: '2px' }}>Data de Volta</p>
-                <input 
-                  id="date-volta" 
-                  type="date" 
-                  className="date-input-custom"
-                  style={{ border: 'none', background: 'transparent', outline: 'none', fontWeight: 600, fontFamily: 'inherit', fontSize: '15px', color: '#333', width: '100%', cursor: 'pointer' }} 
-                />
+                <div style={{ position: 'relative' }}>
+                  <input 
+                    id="date-volta" 
+                    type="date" 
+                    value={dateVolta}
+                    onChange={e => setDateVolta(e.target.value)}
+                    className="date-input-custom"
+                    style={{ border: 'none', background: 'transparent', outline: 'none', fontWeight: 600, fontFamily: 'inherit', fontSize: '15px', color: '#333', width: '100%', cursor: 'pointer' }} 
+                  />
+                </div>
              </div>
           </label>
           <div className="search-field" style={{ flex: 1, minWidth: '150px', display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 1rem' }}>
@@ -526,7 +535,7 @@ const Home = () => {
       </div>
 
       {/* Popular Packages Section */}
-      <section style={{ paddingTop: '3rem', backgroundColor: '#f8fafc' }}>
+      <section style={{ paddingTop: '3rem', backgroundColor: '#ffffff' }}>
         <div className="container">
           <div className="section-title">
             <h2 style={{ fontSize: '2.5rem', fontWeight: 800, textAlign: 'center', marginBottom: '1rem' }}>Pacotes de Viagem Populares</h2>

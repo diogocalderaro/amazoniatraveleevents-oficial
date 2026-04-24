@@ -6,6 +6,7 @@ import { supabase } from '../../lib/supabase';
 const PainelDestinos = () => {
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => { fetchPackages(); }, []);
@@ -13,18 +14,23 @@ const PainelDestinos = () => {
   async function fetchPackages() {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      setError(null);
+      const { data, error: fetchError } = await supabase
         .from('packages')
         .select('*')
         .order('created_at', { ascending: false });
       
-      console.log('Fetched packages counts:', data?.length);
-      if (error) {
-        console.error('Supabase error fetching packages:', error);
+      if (fetchError) {
+        console.error('Supabase error fetching packages:', fetchError);
+        setError(`Erro ao carregar pacotes: ${fetchError.message}`);
+        setPackages([]);
+        return;
       }
+      console.log('Fetched packages count:', data?.length);
       setPackages(data || []);
     } catch (err) { 
-      console.error('Error fetching packages:', err); 
+      console.error('Error fetching packages:', err);
+      setError('Erro de conexão ao carregar pacotes. Verifique sua internet.');
     } finally { 
       setLoading(false); 
     }
@@ -67,6 +73,15 @@ const PainelDestinos = () => {
   }
 
   if (loading) return <div className="admin-page"><div className="admin-loading">Carregando...</div></div>;
+
+  if (error) return (
+    <div className="admin-page">
+      <div className="admin-card" style={{ padding: '2rem', textAlign: 'center' }}>
+        <p style={{ color: 'var(--admin-danger)', marginBottom: '1rem' }}>{error}</p>
+        <button className="admin-btn admin-btn-primary" onClick={fetchPackages}>Tentar Novamente</button>
+      </div>
+    </div>
+  );
 
   return (
     <div className="admin-page">

@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Phone, Mail, Globe, Instagram, Facebook, Twitter, Youtube, ExternalLink } from 'lucide-react';
+import { MapPin, Phone, Mail, Instagram, Facebook } from 'lucide-react';
 import logoWhite from '../assets/logo-branco.png';
 import cadasturLogo from '../assets/cadastur-logo.png';
 import tripadvisorLogo from '../assets/tripadvisor.svg';
-import asaasLogo from '../assets/asaas.png';
+
 
 const Footer = () => {
   return (
@@ -49,11 +49,12 @@ const Footer = () => {
             Empresa especializada em Turismo regionais, nacionais e internacionais.<br /><br />Serviços: Passeios, Excursões, Traslados, Passagens e Eventos  etc.
           </p>
           <div style={{ display: 'flex', gap: '1rem' }}>
-            {[Facebook, Twitter, Youtube, Instagram].map((Icon, i) => (
-              <a key={i} href="#" style={{ color: 'rgba(255,255,255,0.8)', transition: 'color 0.3s' }} onMouseEnter={(e) => e.target.style.color = '#FFD700'} onMouseLeave={(e) => e.target.style.color = 'rgba(255,255,255,0.8)'}>
-                <Icon size={20} />
-              </a>
-            ))}
+            <a href="https://www.facebook.com/AMAZONIATRAVELEEVENTS" target="_blank" rel="noopener noreferrer" style={{ color: 'rgba(255,255,255,0.8)', transition: 'color 0.3s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#FFD700'} onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.8)'}>
+              <Facebook size={20} />
+            </a>
+            <a href="https://www.instagram.com/amazoniatraveleevents/" target="_blank" rel="noopener noreferrer" style={{ color: 'rgba(255,255,255,0.8)', transition: 'color 0.3s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#FFD700'} onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.8)'}>
+              <Instagram size={20} />
+            </a>
           </div>
         </div>
 
@@ -70,10 +71,7 @@ const Footer = () => {
               <Mail size={20} style={{ color: '#FFD700', flexShrink: 0 }} />
               <span>contato@amazoniatraveleevents.com</span>
             </div>
-            <div style={{ display: 'flex', gap: '12px', color: 'rgba(255,255,255,0.7)', fontSize: '0.95rem' }}>
-              <ExternalLink size={20} style={{ color: '#FFD700', flexShrink: 0 }} />
-              <span>www.amazoniatraveleevents.com</span>
-            </div>
+
 
             <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <a href="https://wa.me/5592993502913" target="_blank" rel="noopener noreferrer" style={{
@@ -131,42 +129,27 @@ const Footer = () => {
 
         {/* Column 4: Payment & WhatsApp */}
         <div>
-          <h4 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '1rem', color: '#FFD700' }}>Formas de pagamento</h4>
-          <p style={{ color: 'rgba(255,255,255,0.9)', marginBottom: '1.5rem', fontSize: '1rem', fontWeight: 600 }}>
-            Adquira seus Tours com Segurança. Pague com:
-          </p>
+          <h4 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '1.5rem', color: '#FFD700' }}>Formas de pagamento</h4>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '2.5rem' }}>
-            {/* Visa */}
-            <div style={{ backgroundColor: '#fff', padding: '8px 16px', borderRadius: '6px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg viewBox="0 0 780 500" height="18" xmlns="http://www.w3.org/2000/svg"><path d="M293.2 348.7l33.4-195.7h53.4l-33.4 195.7zM540.9 157.5c-10.6-4-27.2-8.3-47.9-8.3-52.8 0-90 26.6-90.3 64.7-.3 28.2 26.6 43.9 46.9 53.3 20.8 9.6 27.8 15.8 27.7 24.4-.1 13.2-16.6 19.2-32 19.2-21.4 0-32.7-3-50.3-10.3l-6.9-3.1-7.5 43.8c12.5 5.5 35.6 10.2 59.6 10.5 56.2 0 92.6-26.3 93-67.1.2-22.4-14.1-39.4-45.1-53.4-18.8-9.1-30.3-15.1-30.2-24.3 0-8.1 9.7-16.8 30.8-16.8 17.6-.3 30.3 3.6 40.2 7.6l4.8 2.3 7.2-42.5zM676.3 153h-41.3c-12.8 0-22.4 3.5-28 16.3L520.3 348.7h56.2s9.2-24.1 11.3-29.4c6.1 0 60.8.1 68.6.1 1.6 6.9 6.5 29.3 6.5 29.3h49.7l-36.3-195.7zm-65.9 126.2c4.4-11.3 21.4-54.7 21.4-54.7-.3.5 4.4-11.4 7.1-18.8l3.6 17s10.3 47 12.4 56.5h-44.5zM232.8 153L180.4 282l-5.6-27.1c-9.7-31.3-40-65.2-73.9-82.2l47.9 173.9h56.6l84.2-195.6h-56.8" fill="#1A1F71" /><path d="M131.9 153H48.8l-.6 3.6c67.2 16.2 111.7 55.4 130.1 102.5L160 172.1c-3.2-12.4-12.6-16-28.1-16" fill="#F9A533" /></svg>
-            </div>
-            {/* Mastercard */}
-            <div style={{ backgroundColor: '#fff', padding: '8px 16px', borderRadius: '6px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg viewBox="0 0 780 500" height="22" xmlns="http://www.w3.org/2000/svg"><circle cx="299.6" cy="250" r="167.7" fill="#EB001B" /><circle cx="480.4" cy="250" r="167.7" fill="#F79E1B" /><path d="M390 116.1a167.5 167.5 0 00-63 133.9 167.5 167.5 0 0063 133.9 167.5 167.5 0 0063-133.9 167.5 167.5 0 00-63-133.9z" fill="#FF5F00" /></svg>
-            </div>
-            {/* Pix */}
-            {/* Pix */}
-            <div style={{ backgroundColor: '#fff', padding: '6px 14px', borderRadius: '8px', height: '42px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', border: '1px solid #e2e8f0' }}>
-              <svg width="22" height="22" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
-                <path d="M179.2 179.2c-10.5 10.5-24.4 16.2-39.2 16.2s-28.7-5.8-39.2-16.2l-37-37c-2-2-5.2-2-7.2 0l-37 37c-3 3-5.5 6.3-7.6 9.8H27.4l47.5 47.5c21.6 21.6 56.8 21.6 78.4 0l47.5-47.5h-2.3c-5.1-7.4-11.9-13.5-19.3-9.8z" fill="#32BCAD" />
-                <path d="M56.8 93.6l37 37c2 2 5.2 2 7.2 0l37-37c10.5-10.5 24.4-16.2 39.2-16.2s28.7 5.8 39.2 16.2l2.3-9.8h2.3L173.3 36.3c-21.6-21.6-56.8-21.6-78.4 0L47.4 83.8H59c-2.1 3.5-4.6 6.8-7.6 9.8h5.4z" fill="#32BCAD" />
-                <path d="M236.3 94.9L200.5 59.1l-21.3 21.3c-10.5 10.5-24.4 16.2-39.2 16.2s-28.7-5.8-39.2-16.2l-37-37c-2-2-5.2-2-7.2 0l-37 37L0 59.1v0L19.7 94.9 0 130.7v0l19.6-21.3 37 37c2 2 5.2 2 7.2 0l37-37c10.5-10.5 24.4-16.2 39.2-16.2s28.7 5.8 39.2 16.2l21.3 21.3 36.1-36.1L256 130.7v0l-19.7-35.8z" fill="#32BCAD" />
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '1.5rem' }}>
+            {/* PayPal Logo */}
+            <div style={{ backgroundColor: '#fff', padding: '16px 28px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="120" height="32" viewBox="0 0 124 33">
+                <path d="M46.211 6.749h-6.839a.95.95 0 0 0-.939.802l-2.766 17.537a.57.57 0 0 0 .564.658h3.265a.95.95 0 0 0 .939-.803l.746-4.73a.95.95 0 0 1 .938-.803h2.165c4.505 0 7.105-2.18 7.784-6.5.306-1.89.013-3.375-.872-4.415-.972-1.142-2.696-1.746-4.985-1.746zM47 13.154c-.374 2.454-2.249 2.454-4.062 2.454h-1.032l.724-4.583a.57.57 0 0 1 .563-.481h.473c1.235 0 2.4 0 3.002.704.359.42.469 1.044.332 1.906zM66.654 13.075h-3.275a.57.57 0 0 0-.563.481l-.145.916-.229-.332c-.709-1.029-2.29-1.373-3.868-1.373-3.619 0-6.71 2.741-7.312 6.586-.313 1.918.132 3.752 1.22 5.031.998 1.176 2.426 1.666 4.125 1.666 2.916 0 4.533-1.875 4.533-1.875l-.146.91a.57.57 0 0 0 .562.66h2.95a.95.95 0 0 0 .939-.803l1.77-11.209a.568.568 0 0 0-.561-.658zm-4.565 6.374c-.316 1.871-1.801 3.127-3.695 3.127-.951 0-1.711-.305-2.199-.883-.484-.574-.668-1.391-.514-2.301.295-1.855 1.805-3.152 3.67-3.152.93 0 1.686.309 2.184.892.499.589.697 1.411.554 2.317zM84.096 13.075h-3.291a.954.954 0 0 0-.787.417l-4.539 6.686-1.924-6.425a.953.953 0 0 0-.912-.678h-3.234a.57.57 0 0 0-.541.754l3.625 10.638-3.408 4.811a.57.57 0 0 0 .465.9h3.287a.949.949 0 0 0 .781-.408l10.946-15.8a.57.57 0 0 0-.468-.895z" fill="#253B80"/>
+                <path d="M94.992 6.749h-6.84a.95.95 0 0 0-.938.802l-2.766 17.537a.569.569 0 0 0 .562.658h3.51a.665.665 0 0 0 .656-.562l.785-4.971a.95.95 0 0 1 .938-.803h2.164c4.506 0 7.105-2.18 7.785-6.5.307-1.89.012-3.375-.873-4.415-.971-1.142-2.694-1.746-4.983-1.746zm.789 6.405c-.373 2.454-2.248 2.454-4.062 2.454h-1.031l.725-4.583a.568.568 0 0 1 .562-.481h.473c1.234 0 2.4 0 3.002.704.359.42.468 1.044.331 1.906zM115.434 13.075h-3.273a.567.567 0 0 0-.562.481l-.145.916-.23-.332c-.709-1.029-2.289-1.373-3.867-1.373-3.619 0-6.709 2.741-7.311 6.586-.312 1.918.131 3.752 1.219 5.031 1 1.176 2.426 1.666 4.125 1.666 2.916 0 4.533-1.875 4.533-1.875l-.146.91a.57.57 0 0 0 .564.66h2.949a.95.95 0 0 0 .938-.803l1.771-11.209a.571.571 0 0 0-.565-.658zm-4.565 6.374c-.314 1.871-1.801 3.127-3.695 3.127-.949 0-1.711-.305-2.199-.883-.484-.574-.666-1.391-.514-2.301.297-1.855 1.805-3.152 3.67-3.152.93 0 1.686.309 2.184.892.501.589.699 1.411.554 2.317zM119.295 7.23l-2.807 17.858a.569.569 0 0 0 .562.658h2.822a.949.949 0 0 0 .939-.803l2.768-17.536a.57.57 0 0 0-.562-.659h-3.16a.571.571 0 0 0-.562.482z" fill="#179BD7"/>
+                <path d="M7.266 29.154l.523-3.322-1.165-.027H1.061L4.927 1.292a.316.316 0 0 1 .314-.268h9.38c3.114 0 5.263.648 6.385 1.927.526.6.861 1.227 1.023 1.917.17.724.173 1.589.007 2.644l-.012.077v.676l.526.298a3.69 3.69 0 0 1 1.065.812c.45.513.741 1.165.864 1.938.127.795.085 1.741-.123 2.812-.24 1.232-.628 2.305-1.152 3.183a6.547 6.547 0 0 1-1.825 2c-.696.494-1.523.869-2.458 1.109-.906.236-1.939.355-3.072.355h-.73a2.259 2.259 0 0 0-2.235 1.909l-.055.299-1.151 7.295-.042.215a.182.182 0 0 1-.182.155H7.266z" fill="#253B80"/>
+                <path d="M23.048 7.667c-.028.179-.06.362-.096.55-1.237 6.351-5.469 8.545-10.874 8.545H9.326c-.661 0-1.218.48-1.321 1.132L6.596 26.83l-.399 2.533a.704.704 0 0 0 .695.814h4.881c.578 0 1.069-.42 1.16-.99l.048-.248.919-5.832.059-.32a1.166 1.166 0 0 1 1.152-.993h.727c4.699 0 8.381-1.909 9.457-7.429.449-2.307.217-4.228-.971-5.579a4.665 4.665 0 0 0-1.276-1.019z" fill="#179BD7"/>
+                <path d="M21.754 7.151a9.757 9.757 0 0 0-1.203-.267 15.284 15.284 0 0 0-2.426-.177h-7.352a1.152 1.152 0 0 0-1.153.993L8.05 17.605l-.045.289a1.336 1.336 0 0 1 1.321-1.132h2.752c5.405 0 9.637-2.195 10.874-8.545.037-.188.068-.371.096-.55a6.594 6.594 0 0 0-1.017-.429l-.277-.087z" fill="#222D65"/>
               </svg>
-              <span style={{ color: '#32BCAD', fontWeight: 900, fontSize: '0.95rem', letterSpacing: '0.5px' }}>PIX</span>
             </div>
-            {/* Boleto */}
-            <div style={{ backgroundColor: '#fff', padding: '6px 14px', borderRadius: '8px', height: '42px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', border: '1px solid #e2e8f0' }}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="1" y="4" width="22" height="16" rx="2" stroke="#333" strokeWidth="1.5" />
-                <path d="M5 8v8M8 8v8M10 8v8M13 8v8M15 8v8M18 8v8" stroke="#333" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
-              <span style={{ color: '#333', fontWeight: 900, fontSize: '0.8rem', letterSpacing: '0.5px' }}>BOLETO</span>
-            </div>
-          </div>
 
-          <div style={{ marginTop: '1rem' }}>
-            <img src={asaasLogo} alt="Asaas" style={{ height: '80px', width: 'auto' }} />
+            <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7EB53F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Pague com segurança
+            </p>
+            <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.85rem', fontWeight: 500, margin: '-10px 0 0 24px' }}>
+              Aceitamos cartões de débito e crédito
+            </p>
           </div>
         </div>
       </div>
