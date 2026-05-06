@@ -66,7 +66,7 @@ const TourDetails = () => {
   async function fetchTour() {
     try {
       setIsLoading(true);
-      const isUuid = id.length > 20; // Rough check for UUID vs Slug
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
       const query = supabase
         .from('packages')
         .select(`
