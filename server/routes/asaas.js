@@ -3,8 +3,8 @@ import axios from 'axios';
 
 const router = express.Router();
 
-const ASAAS_API_KEY = process.env.ASAAS_API_KEY || '$aae.U2FsdGVkX19PPrEay6f9aUq8pZ6I8pZ6I8pZ6I8pZ6I=';
-const ASAAS_API_URL = 'https://www.asaas.com/api/v3';
+const ASAAS_API_KEY = process.env.ASAAS_API_KEY || '$aact_hmlg_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OjdmMjRkZTEwLTNmODYtNGZhMC04ZjM0LTNiNDAyYjVjNDBmNDo6JGFhY2hfOTk1NDNmNTItYjBlOC00ZTdlLWJkNDMtYTY5NmI2ZWU0YmZl';
+const ASAAS_API_URL = process.env.ASAAS_API_URL || 'https://sandbox.asaas.com/api/v3';
 
 // Create PIX Payment
 router.post('/create-pix', async (req, res) => {
