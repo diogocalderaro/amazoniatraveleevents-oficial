@@ -53,7 +53,7 @@ const AsaasPayment = ({ pixData, onPaymentConfirmed }) => {
   }
 
   return (
-    <div className="asaas-payment-ui fade-in">
+    <div className="asaas-payment-ui fade-in" style={{ width: '100%', maxWidth: '100%', overflow: 'hidden' }}>
       <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
         <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.5rem' }}>Pague com PIX</h3>
         <p style={{ color: '#64748b', fontSize: '0.9rem' }}>Aponte a câmera do seu banco para o QR Code abaixo</p>
@@ -66,13 +66,14 @@ const AsaasPayment = ({ pixData, onPaymentConfirmed }) => {
         border: '2px solid #f1f5f9',
         textAlign: 'center',
         marginBottom: '2rem',
-        position: 'relative'
+        position: 'relative',
+        maxWidth: '100%'
       }}>
         {pixData?.qrCodeImage ? (
           <img 
             src={'data:image/png;base64,' + pixData.qrCodeImage} 
             alt="QR Code PIX" 
-            style={{ width: '240px', height: '240px', margin: '0 auto 1rem auto', display: 'block' }}
+            style={{ width: '100%', maxWidth: '240px', height: 'auto', margin: '0 auto 1rem auto', display: 'block' }}
           />
         ) : (
           <div style={{ height: '240px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8' }}>
@@ -85,7 +86,7 @@ const AsaasPayment = ({ pixData, onPaymentConfirmed }) => {
         </div>
       </div>
 
-      <div style={{ marginBottom: '2rem' }}>
+      <div style={{ marginBottom: '2rem', maxWidth: '100%' }}>
         <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, marginBottom: '0.5rem', color: '#64748b', textTransform: 'uppercase' }}>Ou copie o código abaixo</label>
         <div style={{ 
           display: 'flex', 
@@ -93,10 +94,12 @@ const AsaasPayment = ({ pixData, onPaymentConfirmed }) => {
           padding: '0.5rem', 
           borderRadius: '12px', 
           border: '1px solid #e2e8f0',
-          alignItems: 'center'
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '10px'
         }}>
           <div style={{ 
-            flex: 1, 
+            flex: '1 1 200px', 
             padding: '0.5rem 0.75rem', 
             fontSize: '0.8rem', 
             color: '#334155', 
@@ -122,7 +125,7 @@ const AsaasPayment = ({ pixData, onPaymentConfirmed }) => {
               fontSize: '0.85rem',
               fontWeight: 600,
               transition: 'all 0.2s',
-              minWidth: '100px',
+              flex: '0 0 auto',
               justifyContent: 'center'
             }}
           >
@@ -133,17 +136,17 @@ const AsaasPayment = ({ pixData, onPaymentConfirmed }) => {
 
       <div style={{ 
         display: 'grid', 
-        gridTemplateColumns: '1fr 1fr', 
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
         gap: '1rem',
         fontSize: '0.8rem',
         color: '#64748b'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: '#f8fafc', padding: '1rem', borderRadius: '12px' }}>
-          <Smartphone size={20} color="#7EB53F" />
+          <Smartphone size={20} color="#7EB53F" style={{ flexShrink: 0 }} />
           <span>Abra o app do seu banco</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: '#f8fafc', padding: '1rem', borderRadius: '12px' }}>
-          <ShieldCheck size={20} color="#7EB53F" />
+          <ShieldCheck size={20} color="#7EB53F" style={{ flexShrink: 0 }} />
           <span>Pagamento seguro via Asaas</span>
         </div>
       </div>
