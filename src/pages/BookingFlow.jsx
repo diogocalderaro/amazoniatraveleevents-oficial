@@ -16,7 +16,7 @@ import { supabasePublic as supabase } from '../lib/supabase';
 const BookingFlow = () => {
   const { cartItems, removeFromCart, clearCart, cartTotal } = useCart();
   const [step, setStep] = useState(1);
-  const [paymentMethod, setPaymentMethod] = useState('credit_card');
+  const [paymentMethod, setPaymentMethod] = useState('pix');
   const [itemToRemove, setItemToRemove] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -521,17 +521,14 @@ const BookingFlow = () => {
                 </div>
 
                 <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  Escolha o Método de Pagamento <ShieldCheck size={20} style={{ color: '#7EB53F' }} />
+                  Método de Pagamento <ShieldCheck size={20} style={{ color: '#7EB53F' }} />
                 </h3>
                 <div style={{ marginBottom: '2.5rem' }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem', marginBottom: '1.5rem', maxWidth: '300px' }}>
                     
                     {/* Payment Options Cards */}
                     {[
-                      { id: 'credit_card', label: 'Cartão de Crédito', icon: <CreditCard /> },
-                      { id: 'debit_card', label: 'Cartão de Débito', icon: <CreditCard /> },
-                      { id: 'pix', label: 'PIX QR Code', icon: <QrCode /> },
-                      { id: 'boleto', label: 'Boleto', icon: <FileText /> }
+                      { id: 'pix', label: 'PIX QR Code', icon: <QrCode /> }
                     ].map(method => (
                       <div 
                         key={method.id}
