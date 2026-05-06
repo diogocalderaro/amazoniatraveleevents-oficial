@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import AsaasPayment from '../components/AsaasPayment';
 import { 
   Calendar, MapPin, Trash2, Check, ArrowRight, 
   ChevronRight, CreditCard, Banknote, User, 
@@ -24,8 +25,12 @@ const BookingFlow = () => {
     firstName: '',
     lastName: '',
     phone: '',
-    email: ''
+    email: '',
+    cpfCnpj: ''
   });
+
+  const [pixData, setPixData] = useState(null);
+  const [showPixScreen, setShowPixScreen] = useState(false);
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
@@ -66,8 +71,8 @@ const BookingFlow = () => {
   };
 
   const handleFinalizeBooking = async () => {
-    if (!customerForm.firstName || !customerForm.lastName || !customerForm.phone || !customerForm.email) {
-      alert('Por favor, preencha todos os campos obrigatórios.');
+    if (!customerForm.firstName || !customerForm.lastName || !customerForm.phone || !customerForm.email || !customerForm.cpfCnpj) {
+      alert('Por favor, preencha todos os campos obrigatórios, incluindo CPF/CNPJ.');
       return;
     }
 
@@ -111,9 +116,9 @@ const BookingFlow = () => {
           travel_date: item.date,
           guests: item.guests,
           total_price: item.price,
-          status: 'pendente',
+          status: paymentMethod === 'pix' ? 'aguardando_pagamento' : 'pendente',
           token: newToken,
-          notes: `Método de pagamento: ${paymentMethod}`
+          notes: `Método: ${paymentMethod} | CPF: ${customerForm.cpfCnpj}`
         };
       });
 
@@ -124,7 +129,34 @@ const BookingFlow = () => {
         throw dbError;
       }
 
-      // 4. Send confirmation email via Edge Function
+      // 4. Handle PIX Payment with Asaas
+      if (paymentMethod === 'pix') {
+        const asaasRes = await fetch('/api/asaas/create-pix', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            customer: {
+              name: fullName,
+              email: customerForm.email,
+              cpfCnpj: customerForm.cpfCnpj.replace(/\D/g, ''),
+              phone: customerForm.phone
+            },
+            total: cartTotal,
+            description: `Reserva Amazonia Travel - ${newToken}`
+          })
+        });
+
+        const asaasData = await asaasRes.json();
+        if (asaasData.success) {
+          setPixData(asaasData);
+          setShowPixScreen(true);
+          return; // Stay on step 2 but show PIX UI
+        } else {
+          throw new Error(asaasData.error || 'Erro ao gerar PIX');
+        }
+      }
+
+      // 5. Send confirmation email via Edge Function (for non-pix or direct)
       try {
         await supabase.functions.invoke('send-booking-confirmation', {
           body: {
@@ -212,14 +244,14 @@ const BookingFlow = () => {
         );
       case 'pix':
         return (
-          <div className="payment-form fade-in" style={{ backgroundColor: '#f8fafc', padding: '2rem', borderRadius: '12px', marginTop: '1rem', border: '1px solid #e2e8f0', textAlign: 'center' }}>
-            <div style={{ marginBottom: '1rem', color: '#32bcad' }}><QrCode size={120} style={{ margin: '0 auto' }} /></div>
-            <h4 style={{ fontSize: '1rem', fontWeight: 800, marginBottom: '0.5rem' }}>Escaneie o QR Code</h4>
-            <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: '1rem' }}>Abra o app do seu banco e aponte a câmera para o código acima.</p>
-            <div style={{ backgroundColor: '#fff', padding: '0.75rem', borderRadius: '8px', border: '1px dashed #ccc', fontSize: '0.8rem', wordBreak: 'break-all' }}>
-              00020126360014br.gov.bcb.pix0114+5592993502913520400005303986540410.005802BR5915AmazoniaTravel6006Manaus62070503***6304E2B4
+          <div className="payment-form fade-in" style={{ backgroundColor: '#f8fafc', padding: '1.5rem', borderRadius: '12px', marginTop: '1rem', border: '1px solid #e2e8f0' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1rem', color: '#7EB53F' }}>
+              <QrCode size={20} />
+              <h4 style={{ fontSize: '0.9rem', fontWeight: 800 }}>Pagamento via PIX</h4>
             </div>
-            <button style={{ marginTop: '1rem', background: 'none', border: 'none', color: '#32bcad', fontWeight: 700, cursor: 'pointer', fontSize: '0.85rem' }}>Copiar código PIX</button>
+            <p style={{ fontSize: '0.85rem', color: '#64748b', lineHeight: 1.5 }}>
+              Ao clicar em finalizar, um QR Code será gerado para o pagamento instantâneo. Sua reserva será confirmada assim que o pagamento for detectado.
+            </p>
           </div>
         );
       case 'boleto':
@@ -482,6 +514,10 @@ const BookingFlow = () => {
                     <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#444', marginBottom: '0.5rem' }}>E-mail<span style={{ color: '#ef4444' }}>*</span></label>
                     <input type="email" name="email" value={customerForm.email} onChange={handleFormChange} required style={{ width: '100%', padding: '0.85rem', borderRadius: '8px', border: '1px solid #ddd', outline: 'none' }} placeholder="email@exemplo.com" />
                   </div>
+                  <div className="input-field">
+                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#444', marginBottom: '0.5rem' }}>CPF ou CNPJ<span style={{ color: '#ef4444' }}>*</span></label>
+                    <input type="text" name="cpfCnpj" value={customerForm.cpfCnpj} onChange={handleFormChange} required style={{ width: '100%', padding: '0.85rem', borderRadius: '8px', border: '1px solid #ddd', outline: 'none' }} placeholder="000.000.000-00" />
+                  </div>
                 </div>
 
                 <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -519,7 +555,16 @@ const BookingFlow = () => {
                   </div>
 
                   {/* Payment Details Sub-Screen */}
-                  {renderPaymentSubScreen()}
+                  {showPixScreen ? (
+                    <AsaasPayment 
+                      pixData={pixData} 
+                      onPaymentConfirmed={() => {
+                        clearCart();
+                        setStep(3);
+                        setShowPixScreen(false);
+                      }} 
+                    />
+                  ) : renderPaymentSubScreen()}
                 </div>
 
                 <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
