@@ -66,35 +66,29 @@ const TourDetails = () => {
   async function fetchTour() {
     try {
       setIsLoading(true);
-      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-      const query = supabase
-        .from('packages')
-        .select(`
-          *,
-          highlights:package_highlights(*),
-          itinerary:package_itinerary(*),
-          included:package_included(*),
-          excluded:package_excluded(*),
-          gallery:package_gallery(*),
-          features:package_features(*),
-          plans:package_plans(*)
-        `);
-      
-      let { data, error } = await (isUuid 
-        ? query.eq('id', id).single() 
-        : query.eq('slug', id).single());
+      const queryText = `
+        *,
+        highlights:package_highlights(*),
+        itinerary:package_itinerary(*),
+        included:package_included(*),
+        excluded:package_excluded(*),
+        gallery:package_gallery(*),
+        features:package_features(*),
+        plans:package_plans(*)
+      `;
 
-      // Se falhou buscando por slug, tenta buscar por ID como último recurso
-      if ((error || !data) && !isUuid) {
-        const secondTry = await supabase.from('packages').select('*').eq('id', id).single();
-        if (!secondTry.error && secondTry.data) {
-          data = secondTry.data;
-          error = null;
-        }
+      // Tentativa 1: Buscar por ID (mais comum no banco atual)
+      let result = await supabase.from('packages').select(queryText).eq('id', id).maybeSingle();
+      
+      // Tentativa 2: Se não achou por ID, tenta por SLUG
+      if (!result.data) {
+        result = await supabase.from('packages').select(queryText).eq('slug', id).maybeSingle();
       }
 
+      const { data, error } = result;
+
       if (error || !data) {
-        console.error('Error fetching tour:', error);
+        console.error('Passeio não encontrado:', id);
         navigate('/destinos');
         return;
       }
