@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from 'react-router-dom';
 import Home from './pages/Home';
 import TourDetails from './pages/TourDetails';
 import BookingFlow from './pages/BookingFlow';
@@ -61,7 +61,7 @@ function App() {
               <Route path="/pagina/:slug" element={<PageContent />} />
               
               {/* Redirects for old English paths */}
-              <Route path="/tour/:id" element={<Navigate to="/passeio/:id" replace />} />
+              <Route path="/tour/:id" element={<NavigateToTour />} />
               <Route path="/checkout" element={<Navigate to="/reservar" replace />} />
               <Route path="/destinations" element={<Navigate to="/destinos" replace />} />
               <Route path="/pacotes" element={<Navigate to="/destinos" replace />} />
@@ -100,6 +100,11 @@ function App() {
       </CartProvider>
     </AuthProvider>
   );
+}
+
+function NavigateToTour() {
+  const { id } = useParams();
+  return <Navigate to={`/passeio/${id}`} replace />;
 }
 
 export default App;

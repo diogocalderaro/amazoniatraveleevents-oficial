@@ -80,9 +80,18 @@ const TourDetails = () => {
           plans:package_plans(*)
         `);
       
-      const { data, error } = await (isUuid 
+      let { data, error } = await (isUuid 
         ? query.eq('id', id).single() 
         : query.eq('slug', id).single());
+
+      // Se falhou buscando por slug, tenta buscar por ID como último recurso
+      if ((error || !data) && !isUuid) {
+        const secondTry = await supabase.from('packages').select('*').eq('id', id).single();
+        if (!secondTry.error && secondTry.data) {
+          data = secondTry.data;
+          error = null;
+        }
+      }
 
       if (error || !data) {
         console.error('Error fetching tour:', error);
