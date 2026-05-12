@@ -9,8 +9,8 @@ const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
 const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-const ASAAS_API_KEY = process.env.ASAAS_API_KEY || '$aact_hmlg_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OjdmMjRkZTEwLTNmODYtNGZhMC04ZjM0LTNiNDAyYjVjNDBmNDo6JGFhY2hfOTk1NDNmNTItYjBlOC00ZTdlLWJkNDMtYTY5NmI2ZWU0YmZl';
-const ASAAS_API_URL = process.env.ASAAS_API_URL || 'https://sandbox.asaas.com/api/v3';
+const ASAAS_API_KEY = process.env.ASAAS_API_KEY;
+const ASAAS_API_URL = process.env.ASAAS_API_URL || 'https://www.asaas.com/api/v3';
 
 // Create PIX Payment
 router.post('/create-pix', async (req, res) => {
@@ -50,7 +50,7 @@ router.post('/create-pix', async (req, res) => {
 
     // 4. Save Payment Relation to Supabase
     const { error: dbError } = await supabase.from('payments').insert({
-      reservation_id: null, // We link by token/externalReference mostly, but let's store metadata
+      reservation_token: reservationToken,
       asaas_payment_id: paymentId,
       asaas_customer_id: asaasCustomerId,
       status: 'PENDING',
