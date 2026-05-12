@@ -142,7 +142,8 @@ const BookingFlow = () => {
               phone: customerForm.phone
             },
             total: cartTotal,
-            description: `Reserva Amazonia Travel - ${newToken}`
+            description: `Reserva Amazonia Travel - ${newToken}`,
+            reservationToken: newToken
           })
         });
 
