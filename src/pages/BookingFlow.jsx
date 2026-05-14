@@ -131,7 +131,7 @@ const BookingFlow = () => {
 
       // 4. Handle PIX Payment with Asaas
       if (paymentMethod === 'pix') {
-        const asaasRes = await fetch('/api/asaas/create-pix', {
+        const asaasRes = await fetch('https://amazoniatraveleevents-oficial.vercel.app/api/asaas/create-pix', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
