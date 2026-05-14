@@ -582,32 +582,32 @@ const BookingFlow = () => {
                     Voltar
                   </button>
                   <button 
+                    className="btn-primary" 
                     onClick={handleFinalizeBooking}
-                    disabled={isLoading}
-                    style={{
+                    disabled={isProcessing}
+                    style={{ 
                       flex: 1,
-                      padding: '1rem 2.5rem',
+                      padding: '1rem', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center', 
+                      gap: '10px',
                       backgroundColor: '#000',
                       color: '#fff',
                       border: 'none',
                       borderRadius: '8px',
                       fontSize: '1rem',
                       fontWeight: 800,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px',
-                      cursor: isLoading ? 'not-allowed' : 'pointer',
                       transition: 'all 0.3s ease',
                       position: 'relative',
                       overflow: 'hidden'
                     }}
                   >
-                    {isLoading ? (
+                    {isProcessing ? (
                       <div className="btn-spinner"></div>
                     ) : (
                       <>
-                        FINALIZAR RESERVA <ArrowRight size={20} />
+                        GERAR QR CODE <ArrowRight size={20} />
                       </>
                     )}
                   </button>
