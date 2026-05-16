@@ -20,7 +20,7 @@ const AsaasPayment = ({ pixData, onPaymentConfirmed }) => {
 
     const checkStatus = async () => {
       try {
-        const res = await fetch('/api/asaas/payment-status/' + pixData.paymentId);
+        const res = await fetch('https://amazoniatraveleevents-oficial.vercel.app/api/asaas/payment-status/' + pixData.paymentId);
         const data = await res.json();
         
         if (data.status === 'CONFIRMED' || data.status === 'RECEIVED') {
@@ -104,8 +104,7 @@ const AsaasPayment = ({ pixData, onPaymentConfirmed }) => {
             fontSize: '0.8rem', 
             color: '#334155', 
             overflow: 'hidden', 
-            textOverflow: 'ellipsis', 
-            whiteSpace: 'nowrap',
+            wordBreak: 'break-all',
             fontFamily: 'monospace'
           }}>
             {pixData?.payload || 'Carregando código...'}
