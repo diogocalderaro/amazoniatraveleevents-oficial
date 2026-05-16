@@ -319,46 +319,9 @@ const Home = () => {
                 <span style={{ color: '#FFD700', textShadow: '0 2px 10px rgba(255, 215, 0, 0.3)' }}>PASSEIO TURÍSTICO</span><br />EXCLUSIVO
               </h1>
 
-              {/* Discount Badge */}
-              <div className="discount-badge" style={{
-                position: 'absolute',
-                top: '5%',
-                right: '5%',
-                width: '150px',
-                height: '150px',
-                backgroundColor: '#FFD700',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                textAlign: 'center',
-                padding: '1rem',
-                fontWeight: 800,
-                transform: 'rotate(-10deg)',
-                boxShadow: '0 10px 30px rgba(255, 215, 0, 0.3)',
-                zIndex: 5
-              }}>
-                <span style={{ fontSize: '1.1rem', color: '#000', fontWeight: 900, lineHeight: 1.2 }}>Parcelamos em até 10x</span>
-              </div>
+              {/* Discount Badge - OCULTO temporariamente */}
 
-              <div style={{ marginBottom: '2.5rem' }}>
-                <p style={{ color: 'rgba(255,255,255,0.6)', fontWeight: 700, textTransform: 'uppercase', fontSize: '0.9rem', marginBottom: '1.5rem', letterSpacing: '2px' }}>TODOS OS PACOTES INCLUEM</p>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                   {[
-                     "Seguro de Viagem", "Reserva de Hotéis",
-                     "Voo de Volta", "Passagens de Avião",
-                     "Acomodação", "Serviços de Visto",
-                     "Aluguel de Veículos", "Suporte 24h"
-                   ].map((feat, i) => (
-                     <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <div style={{ color: '#FFD700' }}>
-                           <CheckCircle2 size={18} fill="#FFD700" color="#000" />
-                        </div>
-                        <span style={{ fontWeight: 600, color: 'rgba(255,255,255,0.8)' }}>{feat}</span>
-                     </div>
-                   ))}
-                </div>
-              </div>
+              {/* Features list - OCULTA temporariamente */}
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', flexWrap: 'wrap' }}>
                 <button 

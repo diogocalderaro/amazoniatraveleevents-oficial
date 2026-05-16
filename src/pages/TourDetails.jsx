@@ -151,8 +151,7 @@ const TourDetails = () => {
       image: tourData.image_url
     };
     addToCart(cartData);
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 5000);
+    navigate('/reservar');
   };
 
   const openWhatsApp = () => {
@@ -623,6 +622,12 @@ const TourDetails = () => {
                   onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-3px)'; }}
                   onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; }}
                 >
+                  {/* Discount Badge - OCULTO */}
+                  {/* <div className="discount-badge" style={{ ... }}>Parcelamos em até 10x</div> */}
+
+                  {/* Features List - OCULTA */}
+                  {/* <div style={{ marginBottom: '2.5rem' }}>... TODOS OS PACOTES INCLUEM ...</div> */}
+
                   {isLoading ? (
                     <div className="spinner"></div>
                   ) : (

@@ -584,7 +584,7 @@ const BookingFlow = () => {
                   <button 
                     className="btn-primary" 
                     onClick={handleFinalizeBooking}
-                    disabled={isProcessing}
+                    disabled={isLoading}
                     style={{ 
                       flex: 1,
                       padding: '1rem', 
@@ -603,7 +603,7 @@ const BookingFlow = () => {
                       overflow: 'hidden'
                     }}
                   >
-                    {isProcessing ? (
+                    {isLoading ? (
                       <div className="btn-spinner"></div>
                     ) : (
                       <>
